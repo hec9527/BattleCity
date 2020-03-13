@@ -1,5 +1,5 @@
-import keyboard, { Keyboard } from '@src/util/keyboard';
-import Config from '@src/config/keys';
+import keyboard, { Keyboard } from '@/util/keyboard';
+import Config from '@/config/keys';
 
 // maybe some other controler willbe add
 describe('keyboard control test', () => {

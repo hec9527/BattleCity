@@ -5,7 +5,8 @@ const path = require('path');
 
 const resolve = (dir, sub = './src/') => path.resolve(__dirname, sub, dir);
 
-module.exports = {
+/** @type {import("@types/webpack").Configuration} */
+const config = {
   mode: 'development',
 
   entry: resolve('index.ts'),
@@ -16,8 +17,12 @@ module.exports = {
     publicPath: '/',
   },
 
+  devtool: 'source-map',
+
   resolve: {
-    // 如果写 则必须包含'.js' 否则会找不到部分库文件
+    alias: {
+      '@': resolve(''),
+    },
     extensions: ['.ts', '.js', '.scss'],
   },
 
@@ -54,7 +59,7 @@ module.exports = {
     // quiet: true,
     // noInfo: true,
     stats: {
-      modules: false,
+      // modules: false,
       debug: false,
       colors: true,
     },
@@ -79,3 +84,5 @@ module.exports = {
     }),
   ],
 };
+
+module.exports = config;

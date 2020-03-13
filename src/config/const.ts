@@ -39,3 +39,9 @@ export const GAME_PROTECTER_TICK = 300;
 
 /** 奖励持续时间 */
 export const GAME_REWARD_TICK = 200;
+
+/** 坦克转向延迟，防止无限转向 */
+export const GAME_TANK_CHANGEDIR_TICK = 5;
+
+/** 坦克爆炸持续时间 */
+export const GAME_TANK_EXPLODE_TICK = 30;

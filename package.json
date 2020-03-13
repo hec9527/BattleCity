@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest --coverage --config ./jest.config.js",
     "start": "npm run dev",
-    "dev": "webpack-dev-server",
+    "dev": "webpack serve",
     "reinstall": "rm -rf node_modules && npm i",
     "tsc": "cd Typescript && tsc -w",
     "build": "webpack"
@@ -52,7 +52,7 @@
     "typescript": "^3.9.7",
     "url-loader": "^4.1.0",
     "webpack": "^5.4.0",
-    "webpack-cli": "^3.3.12",
+    "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.0"
   }
 }

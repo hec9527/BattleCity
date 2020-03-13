@@ -4,20 +4,33 @@
 
 import EntityMoveAble from './entity-moveable';
 import Tank from './tank';
+// import Tank from './tank';
+
+interface IBulletOption {
+  world: GameWorld;
+  rect: EntityRect;
+  tank: Tank;
+  camp: Camp;
+  level?: number;
+  direction?: Direction;
+  speed?: number;
+}
 
 class Bullet extends EntityMoveAble {
-  private tank: Tank;
+  private tank: any;
   // protected img!: CanvasImageSource;
   public readonly level: number;
 
-  constructor(options: BulletOption) {
+  constructor(options: IBulletOption) {
     super({ ...options });
+
     this.tank = options.tank;
-    this.level = options.level;
+    this.level = options.level || 1;
+    this.speed = options.speed || 1;
   }
 
   public die() {
-    this.tank.distoryBullet(this);
+    this.tank;
     super.die();
   }
 

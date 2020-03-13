@@ -3,7 +3,7 @@
  * 测试+DOM，window对象
  */
 
-import util, {
+import {
   $,
   getType,
   getCanvas,
@@ -12,7 +12,7 @@ import util, {
   getLocationPath,
   isOppositeDirection,
   Ticker,
-} from '@src/util/index';
+} from '@/util/index';
 
 describe('Util test', () => {
   describe('getCanvas function test', () => {
@@ -100,10 +100,6 @@ describe('Util test', () => {
     expect(getType(() => {})).toBe('Function');
     expect(getType(Symbol('s'))).toBe('Symbol');
     expect(getType(undefined)).toBe('Undefined');
-  });
-
-  test('util tools should export default {}', () => {
-    expect(util).toEqual({});
   });
 
   test('getLocationPath should return string', () => {

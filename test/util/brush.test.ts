@@ -1,5 +1,5 @@
-import { getCanvas } from '@src/util';
-import { brush } from '@src/util/brush';
+import { getCanvas } from '@/util';
+import { brush } from '@/util/brush';
 
 describe('brush test', () => {
   test('brush should have property bg, main, misc', () => {

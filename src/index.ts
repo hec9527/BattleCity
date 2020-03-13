@@ -1,20 +1,10 @@
-import Print from './util/print';
+import Print from '@/util/print';
 import Source from './loader/index';
 import './assets/scss/index';
-import game from './game';
 
-// Print.copyright();
-// Print.debug('debug');
-// Print.info('info');
-// Print.warn('warn');
-// Print.error('error');
+import Win from '@/win/win';
 
-const source = Source.getSource(() => {
+Source.getSource(source => {
   Print.info('游戏资源加载完毕');
-  console.log(source.isLoaded());
-
-  console.log(source.IMAGES.Cache.myTank);
-
-  document.body.innerHTML = '';
-  document.body.append(source.IMAGES.Cache.getScoreDouble);
+  new Win(source);
 });

@@ -37,27 +37,6 @@ declare type RewardType = 0 | 1 | 2 | 3 | 4 | 5;
 /** 笔刷类型, 不同的笔刷操作不同的图层 */
 declare type BrushType = 'bg' | 'misc' | 'main';
 
-declare type ICtx = {
-  clear(clearAll: boolean);
-  clear(x: number, y: number, w: number, h: number): void;
-  clear(x?: number | boolean, y?: number, w?: number, h?: number): void;
-  draw(
-    img: CanvasImageSource,
-    sx: number,
-    wy: number,
-    sw: number,
-    sh: number,
-    x: number,
-    y: number,
-    w: number,
-    h: number
-  ): void;
-};
-
-declare type ICtx = {
-  [T in BrushType]: CanvasRenderingContext2D;
-};
-
 declare interface AnyFunction {
   (...args: any[]): any;
 }
@@ -82,11 +61,6 @@ declare interface EntityOption {
 declare interface MoveAbleEntityOption extends EntityOption {
   speed?: number;
   direction?: Direction;
-}
-
-declare interface TankOption extends MoveAbleEntityOption {
-  life?: number;
-  level?: number;
 }
 
 declare interface RewardOption extends EntityOption {

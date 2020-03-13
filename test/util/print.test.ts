@@ -1,5 +1,5 @@
-import { getType } from '@src/util/';
-import print from '@src/util/print';
+import { getType } from '@/util/';
+import print from '@/util/print';
 
 describe('print class test', () => {
   const methods = ['debug', 'info', 'warn', 'error', 'log'] as const;

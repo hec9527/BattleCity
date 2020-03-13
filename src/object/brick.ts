@@ -5,13 +5,9 @@
 import Entity from './entity';
 
 class Brick extends Entity {
-  changeImg() {
-    //
-  }
+  update() {}
 
-  update() {
-    //
-  }
+  draw() {}
 }
 
 export default Brick;

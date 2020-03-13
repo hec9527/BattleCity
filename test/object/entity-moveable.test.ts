@@ -10,8 +10,8 @@
  *     isCollisionEntity
  */
 
-import MoveAble from '@src/object/entity-moveable';
-import { GAME_BATTLEFIELD_HEIGHT as Size } from '@src/config/const';
+import MoveAble from '@/object/entity-moveable';
+import { GAME_BATTLEFIELD_HEIGHT as Size } from '@/config/const';
 
 class MoveAbleInstance extends MoveAble {
   constructor(camp?: Camp, speed?: number, direction?: Direction, rect?: EntityRect) {

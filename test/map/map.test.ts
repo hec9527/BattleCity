@@ -1,6 +1,6 @@
-import map, { Maps } from '@src/map/index';
-import mapData from '@src/map/mapDatas';
-import { getType } from '@src/util';
+import map, { Maps } from '@/map/index';
+import mapData from '@/map/mapDatas';
+import { getType } from '@/util';
 
 const mockMap = new Array(13);
 

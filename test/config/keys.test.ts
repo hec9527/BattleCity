@@ -1,5 +1,5 @@
-import keys from '@src/config/keys';
-import { getType } from '@src/util';
+import keys from '@/config/keys';
+import { getType } from '@/util';
 
 describe('control keys test', () => {
   const comKey = ['Up', 'Down', 'Left', 'Right', 'Double', 'Single'] as const;

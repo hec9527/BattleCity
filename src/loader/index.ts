@@ -2,20 +2,9 @@
  * 资源加载类
  */
 
+import Print from '../util/print';
 import Images from './images';
 import Sounds from './sounds';
-
-// webpack API 资源加载测试
-// const files = require.context('../assets/img/', false, /\.png/, 'sync');
-
-// console.log(files.keys());
-
-// const models = files.keys().map(key => {
-//   return files(key).default;
-// });
-
-// document.body.style.background = `url(${models[8]})`;
-// document.body.style.backgroundRepeat = 'no-repeat';
 
 class Source {
   private static instance?: Source;
@@ -25,12 +14,12 @@ class Source {
   public IMAGES: Images;
   public SOUNDS: Sounds;
 
-  private constructor(callback?: () => void) {
+  private constructor(callback?: (source: Source) => void) {
     let loaded = 0;
     const onload = () => {
       if (++loaded >= 2) {
         this._isLoaded = true;
-        callback && callback();
+        callback && callback(this);
       }
     };
 
@@ -43,12 +32,16 @@ class Source {
     return this._isLoaded;
   }
 
-  public static getSource(callback?: AnyFunction) {
+  public static getSource(callback?: (source: Source) => void) {
     if (!Source.instance) {
       Source.instance = new Source(callback);
+    } else {
+      callback?.(Source.instance);
     }
     return Source.instance;
   }
 }
+
+Source.getSource(() => Print.info('资源加载完毕'));
 
 export default Source;

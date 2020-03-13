@@ -4,12 +4,12 @@
  * @time 2020-12-5 16:03:25
  */
 
-// import imgUrl from '@src/assets/img/text.png';
-// import mp3Url from '@src/assets/audio/attack.mp3';
+// import imgUrl from '@/assets/img/text.png';
+// import mp3Url from '@/assets/audio/attack.mp3';
 
-import Source from '@src/loader/index';
-// import Images from '@src/loader/images';
-// import Sounds from '@src/loader/sounds';
+import Source from '@/loader/index';
+// import Images from '@/loader/images';
+// import Sounds from '@/loader/sounds';
 
 describe('Game resource load test', () => {
   test('source should be defined', () => {

@@ -1,4 +1,4 @@
-import Entity from '@src/object/entity';
+import Entity from '@/object/entity';
 
 /**
  *  实体类

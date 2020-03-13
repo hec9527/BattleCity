@@ -3,7 +3,7 @@
  * @author  hec9527
  */
 
-import Print from '@src/util/print';
+import Print from '@/util/print';
 import maps from './mapDatas';
 
 type mapData = Array<Array<number>>;

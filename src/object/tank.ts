@@ -2,26 +2,33 @@
  * 坦克类
  */
 
-import AllyTank from './tank-ally';
-import Brick from './brick';
-import Bullet from './bullet';
 import Entity from './entity';
-import Ctx from '@src/util/brush';
-import EnemyTank from './tank-enemy';
+import Bullet from './bullet';
 import EntityMoveAble from './entity-moveable';
-import Reward from './reward';
-import Source from '@src/loader/index';
-import { Ticker, getDistance, getBulletPos } from '../util/index';
+import Source from '../loader/index';
+import { getBulletPos, getCanvas } from '../util/index';
+import { Ticker, TickerList } from '@/util/ticker';
 import {
-  GAME_PROTECTER_TICK as TICK_T,
-  GAME_TANK_BIRTH_TICK as TICK_B,
-  GAME_TANK_SHOOT_TICK as TICK_S,
-  GAME_TANK_MOVE_STATUS_TICK as TICK_M,
+  GAME_PROTECTER_TICK,
+  GAME_TANK_BIRTH_TICK,
+  GAME_TANK_SHOOT_TICK,
+  GAME_TANK_MOVE_STATUS_TICK,
+  GAME_TANK_EXPLODE_TICK,
+  GAME_BATTLEFIELD_PADDING_LEFT,
+  GAME_BATTLEFIELD_PADDING_TOP,
 } from '../config/const';
 
-const IMAGES = Source.getSource().IMAGES.Cache;
+interface ITankOption {
+  world: GameWorld;
+  rect: EntityRect;
+  direction: Direction;
+  life?: number;
+  level?: number;
+  BulletNum?: number;
+}
 
-const ChangeStatus: (s: 0 | 1) => 0 | 1 = s => +!s as 0 | 1;
+const IMAGES = Source.getSource().IMAGES.Cache;
+const SOUND = Source.getSource().SOUNDS;
 
 abstract class Tank extends EntityMoveAble {
   // basic info
@@ -35,28 +42,45 @@ abstract class Tank extends EntityMoveAble {
   // status
   protected isCanShoot = true;
   protected wheelStatus: 0 | 1 = 0;
-  protected birthStatus: 0 | 1 = 0;
   protected deathStatus: 0 | 1 = 0;
+  protected birthStatus: 0 | 1 | 2 | 3 = 2;
   protected protecterStatus: 0 | 1 = 0;
 
-  // spirte
-  protected spirte!: CanvasImageSource;
-  protected birthSprite!: CanvasImageSource;
-  protected deathSprite!: CanvasImageSource;
-  protected protecterSprite!: CanvasImageSource;
+  // spirte 子类可能需要覆盖图片
+  protected spirte: CanvasImageSource = IMAGES.enemyTank;
 
-  // Tickers
-  protected shootTicker = Ticker(TICK_S);
-  protected birthTicker = Ticker(TICK_B, ChangeStatus.bind({}, this.birthStatus), 5);
-  protected deathTicker = Ticker(TICK_B, ChangeStatus.bind({}, this.deathStatus), 5);
-  protected protecterTicker = Ticker(TICK_T, ChangeStatus.bind({}, this.protecterStatus), 5);
-  protected wheelStatusTicker = Ticker(TICK_M);
+  // Ticker
+  private tickerList: TickerList = new TickerList();
+  private protectTicker?: Ticker;
+  private shootTicker?: Ticker;
+  private wheelTicker: Ticker = new Ticker(
+    GAME_TANK_MOVE_STATUS_TICK,
+    () => (this.wheelStatus = this.wheelStatus === 1 ? 0 : 1),
+    true
+  );
+  private birthTicker: Ticker = new Ticker(
+    GAME_TANK_BIRTH_TICK,
+    () => (this.birthStatus = this.birthStatus < 3 ? (this.birthStatus++ as 0 | 1 | 2 | 3) : 0),
+    true
+  );
+  private deatchTicker: Ticker = new Ticker(
+    GAME_TANK_EXPLODE_TICK,
+    () => (this.deathStatus = this.deathStatus === 1 ? 0 : 1),
+    true
+  );
 
-  constructor(option: TankOption) {
+  constructor(option: ITankOption) {
     super(option);
     this.direction = option.direction || 0;
     this.life = option.life || 1;
     this.level = option.level || 1;
+    this.BulletNum = option.BulletNum || 1;
+
+    this.tickerList.addTick(
+      new Ticker(GAME_TANK_BIRTH_TICK, () => {
+        this.lifeCircle = 'survival';
+      })
+    );
   }
 
   /**
@@ -75,58 +99,6 @@ abstract class Tank extends EntityMoveAble {
     this.rect = [x, y, w, h];
   }
 
-  protected move(entityList: Entity[]): void {
-    if (this.speed === 0) return;
-    let nextRect = this.getNextRect();
-
-    this.wheelStatusTicker(ChangeStatus.bind({}, this.wheelStatus));
-
-    /** 碰撞到边界 */
-    if (this.isCollisionBorderNextFrame()) {
-      if (this instanceof EnemyTank) {
-        this.changeDirection();
-      }
-      nextRect = this.rect;
-    } else {
-      entityList.forEach(entity => {
-        if (entity === this) return;
-
-        // 坦克 <---> 奖励
-        if (entity instanceof Reward) {
-          if (this.isCollisionEntityNextFrame(entity.rect)) {
-            this.getReward(entity.rewardType);
-            entity.die();
-          }
-        }
-
-        // 坦克 <---> 坦克
-        else if (entity instanceof Tank) {
-          if (this.isCollisionEntityNextFrame(entity.rect)) {
-            const distanceCurren = getDistance(this.rect, entity.rect);
-            const distanceNextTick = getDistance(nextRect, entity.rect);
-            if (distanceNextTick < distanceCurren) {
-              nextRect = this.rect;
-              if (this instanceof EnemyTank) this.changeDirection();
-            }
-          }
-        }
-
-        // 坦克 <---> 砖块
-        else if (entity instanceof Brick) {
-          if (this.isCollisionEntityNextFrame(entity.rect)) {
-            nextRect = this.rect;
-            if (this instanceof EnemyTank) this.changeDirection();
-          }
-        }
-      });
-    }
-    this.rect = nextRect;
-  }
-
-  public distoryBullet(bullet: Bullet): void {
-    this.Bullets.delete(bullet);
-  }
-
   protected shoot(): void {
     /** isCanShoot用于控制连续射击间隔，Bullets.size用于控制发射子弹的数量  */
     if (!this.isCanShoot || this.Bullets.size >= this.BulletNum) return;
@@ -135,15 +107,26 @@ abstract class Tank extends EntityMoveAble {
       new Bullet({
         rect: getBulletPos(this.direction, x, y),
         tank: this,
-        level: this.level,
         world: this.world,
         camp: this.camp,
+        level: this.level,
       })
     );
     this.isCanShoot = false;
+    this.shootTicker = new Ticker(GAME_TANK_SHOOT_TICK, () => {
+      this.isCanShoot = true;
+    });
+    this.tickerList.addTick(this.shootTicker);
   }
 
   protected addProtector(): void {
+    if (this.protectTicker) {
+      this.tickerList.delTick(this.protectTicker);
+    }
+    this.protectTicker = new Ticker(GAME_PROTECTER_TICK, () => {
+      this.isProtected = false;
+    });
+    this.tickerList.addTick(this.protectTicker);
     this.isProtected = true;
   }
 
@@ -153,47 +136,49 @@ abstract class Tank extends EntityMoveAble {
 
   protected abstract addLife(): void;
 
+  /** 子弹死亡 */
+  public bulletDie(bulet: Bullet) {
+    this.Bullets.delete(bulet);
+    this.shootTicker?.isAlive() && this.tickerList.delTick(this.shootTicker);
+    this.isCanShoot = true;
+  }
+
   /**
    * - 正在执行出生动画或者受保护的个体暂时免疫死亡
    * - 否则 life-- (仅限我方坦克)
    */
-  public die() {
+  public die(bullet?: Bullet) {
     this.lifeCircle === 'death';
+    this.isCollision = false;
+    this.tickerList.addTick(
+      new Ticker(GAME_TANK_EXPLODE_TICK, () => {
+        this.tickerList.clearTick();
+        super.die();
+      })
+    );
   }
 
-  // 真正的死亡
-  private realDeath() {
-    if (this.isProtected || this.lifeCircle === 'birth') {
-      return false;
-    } else if (this.life > 1) {
-      this.life = 1;
-      this.level = this instanceof AllyTank ? 1 : this.level;
-      return false;
-    }
-    super.die();
-  }
-
-  public update(): void {
+  public update(EntityList: Entity[]): void {
     // update ticker
-    // wheelStatusTicker 在移动的时候调用
-    this.lifeCircle === 'birth' && this.birthTicker(() => this.lifeCircle === 'survival');
-    this.lifeCircle === 'death' && this.deathTicker(() => this.realDeath());
-    !this.isCanShoot && this.shootTicker(() => (this.isCanShoot = true));
-    this.isProtected && this.protecterTicker(() => (this.isProtected = false));
+    this.tickerList.updateTick();
   }
 
   public draw(): void {
+    let [x, y, w, h] = this.rect;
+    x += GAME_BATTLEFIELD_PADDING_LEFT;
+    y += GAME_BATTLEFIELD_PADDING_TOP;
+
     // 绘制保护罩
     if (this.isProtected) {
-      Ctx.misc.draw(this.protecterSprite, 0, 0, 32, 32, ...this.rect);
+      this.ctx.drawImage(IMAGES.tool, 0, 32, 32, 32, x, y, w, h);
     }
     // 绘制坦克自身  出生动画 / 死亡动画 / 生存
     if (this.lifeCircle === 'survival') {
-      Ctx.main.draw(this.spirte, 0, 0, 32, 32, ...this.rect);
+      this.ctx.drawImage(this.spirte, 0, 0, 32, 32, x, y, w, h);
     } else if (this.lifeCircle === 'birth') {
-      Ctx.misc.draw(this.birthSprite, 0, 0, 32, 32, ...this.rect);
+      this.ctx.drawImage(IMAGES.bonus, this.birthStatus * 32, 64, 32, 32, x, y, w, h);
     } else {
-      Ctx.misc.draw(this.deathSprite, 0, 0, 32, 32, ...this.rect);
+      this.ctx.drawImage(IMAGES.explode, 0, 0, 32, 32, x, y, w, h);
     }
   }
 }

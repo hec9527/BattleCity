@@ -4,12 +4,22 @@
 
 import Tank from './tank';
 
+interface IAllyTankOption {
+  world: GameWorld;
+  isDeputy: boolean;
+}
+
+const BIRTH_POS = [
+  [128, 0, 32, 32],
+  [192, 0, 32, 32],
+] as EntityRect[];
+
 class AllyTank extends Tank {
-  constructor(options: TankOption) {
-    super(options);
+  constructor(options: IAllyTankOption) {
+    super({ world: options.world, rect: BIRTH_POS[options.isDeputy ? 1 : 0], direction: 0 });
   }
 
-  changeImg(): void {
+  move() {
     //
   }
 
@@ -25,9 +35,7 @@ class AllyTank extends Tank {
     //
   }
 
-  public update(): void {
-    //
-  }
+  public update(): void {}
 }
 
 export default AllyTank;
