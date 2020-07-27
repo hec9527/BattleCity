@@ -18,7 +18,10 @@
     "h5",
     "canvas"
   ],
-  "author": "hec9527",
+  "author": {
+    "name": "hec9527",
+    "email": "hec9527@foxmail.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/hec9527/BattleCity/issues"
