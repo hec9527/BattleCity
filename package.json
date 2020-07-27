@@ -1,0 +1,30 @@
+{
+  "name": "battlecity",
+  "version": "0.0.1",
+  "description": "Battle City base on H5, play and  enjoy it",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hec9527/BattleCity.git"
+  },
+  "keywords": [
+    "Javascript",
+    "h5",
+    "canvas"
+  ],
+  "author": "hec9527",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hec9527/BattleCity/issues"
+  },
+  "homepage": "https://github.com/hec9527/BattleCity#readme",
+  "dependencies": {
+    "typescript": "^3.9.7"
+  }
+}

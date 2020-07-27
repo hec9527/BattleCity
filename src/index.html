@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Battle City</title>
+    <link rel="stylesheet" href="./css/index.css" />
+  </head>
+
+  <body>
+    <div id="continer">
+      <div id="gameBox">
+        <canvas id="canvas" width="516" height="456"></canvas>
+      </div>
+      <div id="wall"></div>
+      <div id="mesBox">
+        <div id="tips">
+          <h3>游戏操作</h3>
+          <div id="tips_player1">
+            <span id="player1">玩家一：<br /></span>
+            <span id="player1_mes">
+              上 : W &nbsp; 下 : S &nbsp; 左 ：A &nbsp; 右 ：D&nbsp;<br />
+              连发/取消：J&nbsp; 单发/确认:K<br />
+              开始/暂停：B
+            </span>
+          </div>
+          <div id="tips_player2">
+            <span id="player2">玩家二：<br /></span>
+            <span id="player2_mes">
+              上 ：↑ &nbsp; 下 ：↑ &nbsp; 左 :← &nbsp; 右 : →<br />
+              单发 : ； &nbsp; 连续 : ’
+            </span>
+          </div>
+        </div>
+        <div id="copyRight">
+          <div id="myLoge">
+            DISIGN BY HECHUN
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 加载背景音乐 -->
+    <audio id="bgsound" src="" preload="true">
+      <source src="audio/attack.mp3" />
+      <source src="audio/attackOver.mp3" />
+      <source src="audio/bomb.mp3" />
+      <source src="audio/eat.mp3" />
+      <source src="audio/explode.mp3" />
+      <source src="audio/life.mp3" />
+      <source src="audio/misc.mp3" />
+      <source src="audio/over.mp3" />
+      <source src="audio/pause.mp3" />
+      <source src="audio/start.mp3" />
+    </audio>
+
+    <script src="./js/index.js" async></script>
+  </body>
+</html>
