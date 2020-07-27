@@ -1,0 +1,93 @@
+* {
+    padding: 0;
+    margin: 0;
+    user-select: none;
+}
+#continer {
+    overflow: hidden;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 900px;
+    height: 600px;
+    border: 1px solid rgba(117, 115, 115, 0.753);
+    box-shadow: 8px 6px 10px rgba(117, 115, 115, 0.453);
+}
+#gameBox {
+    width: 600px;
+    height: 600px;
+    box-sizing: padding-box;
+    position: absolute;
+}
+#wall {
+    width: 1px;
+    height: 100%;
+    background: rgba(117, 115, 115, 0.753);
+    position: absolute;
+    left: 600px;
+    top: 0;
+}
+#mesBox {
+    text-align: center;
+    width: 300px;
+    height: 100%;
+    box-sizing: border-box;
+    position: absolute;
+    right: 0;
+}
+/* 背景层 */
+#canvas {
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    border: 1px solid rgba(117, 115, 115, 0.753);
+    background: #000;
+}
+#tips {
+    width: 100%;
+    height: 60%;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    color: #4e4e4e;
+}
+#player1,
+#player2 {
+    position: relative;
+    margin: 15px;
+    display: block;
+    width: 70%;
+    text-align: left;
+    font-size: 16px;
+    font-weight: bolder;
+}
+#player1_mes,
+#player2_mes {
+    font-size: 14px;
+}
+#copyRight {
+    position: absolute;
+    bottom: 50px;
+    right: 45px;
+    font-size: 10px;
+    color: grey;
+}
+
+h3 {
+    -webkit-background-clip: text !important;
+    font-weight: 900;
+    background-clip: text;
+    padding: 30px;
+    color: transparent;
+    background: url(./image/text.png);
+}
