@@ -2,13 +2,13 @@
 
 # Battle City
 
-![version](https://img.shields.io/badge/version-0.0.1-3963bc.svg)
-![node version](https://img.shields.io/badge/node-6.17.1+-3963bc.svg)
-![License](https://img.shields.io/badge/license-MIT-3963bc.svg)
-![mocha](https://img.shields.io/badge/test-mocha-3963bc.svg)
-![javascript](https://img.shields.io/badge/js-Es11-3963bc.svg)
-![typescript](https://img.shields.io/badge/ts-3.9.7-3963bc.svg)
-![author](https://img.shields.io/badge/author-hec9527-3963bc.svg)
+![version](./svg/version-0.0.1-3963bc.svg)
+![node version](./svg/node-6.17.1+-3963bc.svg)
+![License](./svg/license-MIT-3963bc.svg)
+![mocha](./svg/test-mocha-3963bc.svg)
+![javascript](./svg/js-Es11-3963bc.svg)
+![typescript](./svg/ts-3.9.7-3963bc.svg)
+![author](./svg/author-hec9527-3963bc.svg)
 
 </div>
 
