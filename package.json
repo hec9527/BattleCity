@@ -7,7 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "init": "npm i && npm run serve",
+    "test": "jest --coverage --config ./jest.config.js",
+    "serve": "serve -l 10086 src",
+    "reinstall": "rm -rf node_modules && npm i"
   },
   "repository": {
     "type": "git",
@@ -29,5 +32,11 @@
   "homepage": "https://github.com/hec9527/BattleCity#readme",
   "dependencies": {
     "typescript": "^3.9.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "jest": "^26.1.0",
+    "serve": "^11.3.2"
   }
 }
