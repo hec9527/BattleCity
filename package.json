@@ -2,6 +2,7 @@
   "name": "battlecity",
   "version": "0.0.1",
   "description": "Battle City base on H5, play and  enjoy it",
+  "type": "module",
   "main": "index.js",
   "directories": {
     "test": "test"
