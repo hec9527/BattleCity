@@ -14,6 +14,7 @@
   const GAME_ASSETS_IMAGE = new Images();
   const GAME_ASSETS_SOUND = new Sound();
   const GAME_LONG_KEYBORAD = new KeyBorad();
+  const GAME_CONFIG_CUSTOME_MAP = [];
   const GAME_CONFIG_KEYS = {
     p1: {
       up: 87,
@@ -35,13 +36,25 @@
   };
   const GAME_ARGS_CONFIG = {
     RANK: 1, // 当前关卡
-    MAPEDIT: [], // 自定义地图
+    MAPEDIT: false, // 自定义地图
     PLAYERNUM: 1, // 玩家数量
     HISTORY: [], // 历史最高
     PLAYERS: [{ life: 3, tank: null }],
   };
-
   let GAME_CURRENT_WINDOW = null;
+
+  for (let i = 0; i < 13; i++) GAME_CONFIG_CUSTOME_MAP.push(new Array(13).fill(0));
+
+  /** 自定义地图可能会导致Boss和围墙 被修改，需要修复它们 */
+  function fixMap(fixFence = false) {
+    console.log(GAME_CONFIG_CUSTOME_MAP);
+    GAME_CONFIG_CUSTOME_MAP[12][6] = 15; // Boss 标志
+    GAME_CONFIG_CUSTOME_MAP[11][5] = [0, 0, 0, 1]; // 32 * 32 方块被分为4块， 4个数字分别记录左上、右上、左下、右下的方块的状态，1存在，0不存在
+    GAME_CONFIG_CUSTOME_MAP[11][6] = [0, 0, 1, 1];
+    GAME_CONFIG_CUSTOME_MAP[11][7] = [0, 0, 1, 0];
+    GAME_CONFIG_CUSTOME_MAP[12][5] = [0, 1, 0, 1];
+    GAME_CONFIG_CUSTOME_MAP[12][7] = [1, 0, 1, 0];
+  }
 
   /** 计时器  按帧计数 */
   function Tickers(ticks = 30) {
@@ -179,8 +192,8 @@
     };
 
     Promise.all(loadSound()).then(
-      () => (isLoad = true),
-      () => new Error('音频加载失败')
+      () => (isLoad = true) && Printer.info('音频加载完成'),
+      () => new Error('音频加载失败') && window.location.reload()
     );
 
     this.isLoad = function () {
@@ -262,8 +275,8 @@
     };
 
     Promise.all(loadImg()).then(
-      () => (isLoad = true),
-      () => new Error('图片加载失败')
+      () => (isLoad = true) && Printer.info('图片加载完成'),
+      () => new Error('图片加载失败') && window.location.reload()
     );
 
     /** 是否加载完成 */
@@ -419,11 +432,6 @@
         this.entity[key].forEach(set.add);
       }
     }
-    /** 销毁当前窗口 */
-    distroy(next) {
-      this.isOver = true;
-      GAME_CURRENT_WINDOW = next;
-    }
     /** 更新窗体 */
     update() {
       this.getAllEntity();
@@ -500,12 +508,27 @@
   class WinMapEdit extends Win {
     constructor() {
       super();
+      this.anima();
+    }
+
+    update() {
+      //
+    }
+
+    draw() {
+      super.draw();
+      this.ctx.fillStyle = '#e3e3e3';
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillStyle = '#000';
+      this.ctx.fillRect(35, 20, 416, 416);
     }
   }
 
   (function main() {
     if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 0);
-    GAME_CURRENT_WINDOW = new WinStart();
+    // GAME_CURRENT_WINDOW = new WinStart();
+    GAME_CURRENT_WINDOW = new WinMapEdit();
+    fixMap(true);
   })();
 
   setTimeout(() => {
