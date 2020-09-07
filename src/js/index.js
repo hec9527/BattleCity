@@ -10,7 +10,38 @@
  */
 
 (function () {
-  const printer = new Print();
+  const Printer = new Print();
+  const GAME_ASSETS_IMAGE = new Images();
+  const GAME_ASSETS_SOUND = new Sound();
+  const GAME_LONG_KEYBORAD = new KeyBorad();
+  const GAME_CONFIG_KEYS = {
+    p1: {
+      up: 87,
+      down: 83,
+      left: 65,
+      right: 68,
+      single: 71,
+      double: 72,
+      start: 66,
+    },
+    p2: {
+      up: 38,
+      down: 40,
+      left: 37,
+      right: 39,
+      single: 75,
+      double: 76,
+    },
+  };
+  const GAME_ARGS_CONFIG = {
+    RANK: 1, // 当前关卡
+    MAPEDIT: [], // 自定义地图
+    PLAYERNUM: 1, // 玩家数量
+    HISTORY: [], // 历史最高
+    PLAYERS: [{ life: 3, tank: null }],
+  };
+
+  let GAME_CURRENT_WINDOW = null;
 
   /** 计时器  按帧计数 */
   function Tickers(ticks = 30) {
@@ -82,7 +113,7 @@
   function KeyBorad() {
     const pressed = new Set();
     const blocked = new Set();
-    const blockTicks = 100; // 连续响应间隔
+    const blockTicks = 150; // 连续响应间隔
     let isPasued = false;
 
     window.addEventListener('keydown', (e) => {
@@ -93,12 +124,12 @@
       }
     });
 
-    window.addEventListener('keuup', (e) => {
+    window.addEventListener('keyup', (e) => {
       pressed.delete(e.keyCode);
     });
 
     /** 是否已经按下某个按键 , 非连续响应 */
-    this.isPress = function (keyCode) {
+    this.isPressedKey = function (keyCode) {
       if (pressed.has(keyCode) && !blocked.has(keyCode)) {
         blocked.add(keyCode);
         setTimeout(() => blocked.delete(keyCode), blockTicks);
@@ -135,7 +166,7 @@
         return new Promise((resolve, reject) => {
           const player = new Audio();
           const timer = setTimeout(() => {
-            printer.error(`音频加载失败 ${path(key)}`);
+            Printer.error(`音频加载失败 ${path(key)}`);
             reject();
           }, 5000);
           player.oncanplay = () => {
@@ -157,7 +188,7 @@
     };
     this.play = function (fName) {
       if (!list.includes(fName)) {
-        return printer.error(`未注册的音频文件: ${fName}`);
+        return Printer.error(`未注册的音频文件: ${fName}`);
       }
       const player = new Audio();
       player.oncanplay = () => player.play() && console.log(1);
@@ -178,7 +209,7 @@
         return new Promise((resolve, reject) => {
           const image = new Image();
           const timer = setTimeout(() => {
-            printer.error(`图片加载失败  ${path(key)}`);
+            Printer.error(`图片加载失败  ${path(key)}`);
             reject();
           }, 5000);
           image.onload = function () {
@@ -323,22 +354,6 @@
     this.getGameOver = () => getOtherSprite('over', 8, 248, 160, 0, 1, 1, 2);
   }
 
-  const imgs = new Images();
-  setTimeout(() => {
-    const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
-    let img = imgs.getBonus();
-    console.log(img);
-    // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
-    // img = img[3][0][3];
-    // console.log(img);
-    // ctx.drawImage(img[1][0][0], 150, 150);
-    for (let i = 0; i < img.length; i++) {
-      ctx.drawImage(img[i], 50 + 32 * (i - 0), 160);
-    }
-    // ctx.drawImage(img[0], 0, 0);
-    console.log('draw');
-  }, 200);
-
   /** 实体类 */
   class Entity {
     constructor(options) {
@@ -371,10 +386,13 @@
   /** 游戏窗体类 */
   class Win {
     constructor() {
-      this.tickers = new Set();
+      const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
+      this.canvas = canvas;
+      this.ctx = ctx;
+      this.isOver = false;
       this.entity = {
         pre: new Set(),
-        com: new set(),
+        com: new Set(),
         sub: new Set(),
         all: new Set(),
       };
@@ -390,29 +408,118 @@
     }
     /** 删除实体演员 */
     delEntity(entity) {
-      if (this.entity.pre.has(entity)) {
-        this.entity.pre.delete(entity);
-      } else if (this.entity.sub.has(entity)) {
-        this.entity.sub.delete(entity);
-      } else if (this.entity.com.has(entity)) {
-        this.entity.com.delete(entity);
+      for (let key of ['pre', 'sub', 'com']) {
+        this.entity[key].has(entity) && this.entity[key].delete(entity);
       }
     }
     /** 获取所有entity */
     getAllEntity() {
-      // this.entity.all = Array.from()
+      const set = (this.entity.all = new Set());
+      for (let key of ['pre', 'sub', 'com']) {
+        this.entity[key].forEach(set.add);
+      }
     }
-    /** 添加计时器 */
-    addTicker(ticker) {
-      this.tickers.add(ticker);
-    }
-    /** 删除计时器 */
-    delTicker(ticker) {
-      this.tickers.delete(ticker);
+    /** 销毁当前窗口 */
+    distroy(next) {
+      this.isOver = true;
+      GAME_CURRENT_WINDOW = next;
     }
     /** 更新窗体 */
     update() {
       this.getAllEntity();
     }
+    /** 绘制演员 */
+    draw() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.entity.all.forEach((entity) => entity.draw());
+    }
+    /** 循环渲染 */
+    anima() {
+      this.update();
+      this.draw();
+      window.requestAnimationFrame(() => !this.isOver && this.anima());
+    }
   }
+
+  /** 游戏开始窗体 */
+  class WinStart extends Win {
+    constructor() {
+      super();
+      this.cPosIndex = 0;
+      this.flagPos = [310, 345, 380];
+      this.bgImage = this.getBackground();
+      this.anima();
+    }
+
+    getBackground() {
+      const { canvas, ctx } = new Tool().getCanvas(516, 456);
+      ctx.fillStyle = '#fff';
+      ctx.font = '28px SimSun, Songti SC';
+      ctx.drawImage(GAME_ASSETS_IMAGE.getLogo()[0], 70, 95); // logo 376 * 160
+      ctx.fillText('1P - Hi  20000', 50, 50);
+      ctx.fillText('2P - Hi  20000', 320, 50);
+      ctx.fillText('1 PLAYER', 200, this.flagPos[0]);
+      ctx.fillText('2 PLAYERS', 200, this.flagPos[1]);
+      ctx.fillText('MAPEDITOR', 200, this.flagPos[2]);
+      return canvas;
+    }
+
+    taggleWindow() {
+      console.log('start');
+      if (this.cPosIndex === 2) {
+        // GAME_CURRENT_WINDOW = new WinMapEdit();
+        console.log('地图编辑器');
+      } else {
+        // GAME_CURRENT_WINDOW = new WinRankPick();
+        console.log('关卡选择');
+        if (this.cPosIndex === 1) {
+          GAME_ARGS_CONFIG.PLAYERS.push({ life: 3, tank: null });
+        }
+      }
+      this.isOver = true;
+    }
+
+    update() {
+      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.up)) {
+        this.cPosIndex = this.cPosIndex <= 0 ? 2 : this.cPosIndex - 1;
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.down)) {
+        this.cPosIndex = this.cPosIndex >= 2 ? 0 : this.cPosIndex + 1;
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.start)) {
+        this.taggleWindow();
+      }
+    }
+
+    draw() {
+      super.draw();
+      this.ctx.drawImage(GAME_ASSETS_IMAGE.getPlayerOneTank()[0][1][0], 160, this.flagPos[this.cPosIndex] - 28);
+      this.ctx.drawImage(this.bgImage, 0, 0);
+    }
+  }
+
+  /** 地图编辑器窗口 */
+  class WinMapEdit extends Win {
+    constructor() {
+      super();
+    }
+  }
+
+  (function main() {
+    if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 0);
+    GAME_CURRENT_WINDOW = new WinStart();
+  })();
+
+  setTimeout(() => {
+    const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
+    let img = GAME_ASSETS_IMAGE.getLogo();
+    console.log(img);
+    // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
+    // img = img[3][0][3];
+    // console.log(img);
+    // ctx.drawImage(img[1][0][0], 150, 150);
+    // for (let i = 0; i < img.length; i++) {
+    //   ctx.drawImage(img[i], 50 + 32 * (i - 0), 160);
+    // }
+    // ctx.drawImage(img[0], 0, 0);
+    console.log('draw');
+  }, 200);
 })();

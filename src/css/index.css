@@ -2,6 +2,8 @@
   padding: 0;
   margin: 0;
   user-select: none;
+  /* TODO 删除 */
+  opacity: 0.6;
 }
 html,
 body {
