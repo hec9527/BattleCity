@@ -14,6 +14,7 @@
   const GAME_ASSETS_IMAGE = new Images();
   const GAME_ASSETS_SOUND = new Sound();
   const GAME_LONG_KEYBORAD = new KeyBorad();
+  const GAME_LONG_MAPDATA = []; // 地图数据
   const GAME_CONFIG_CUSTOME_MAP = [];
   const GAME_CONFIG_KEYS = {
     p1: {
@@ -446,8 +447,8 @@
     anima() {
       this.update();
       this.draw();
-      window.requestAnimationFrame(() => !this.isOver && this.anima());
-      // setTimeout(() => !this.isOver && this.anima(), 50);
+      // window.requestAnimationFrame(() => !this.isOver && this.anima());
+      setTimeout(() => !this.isOver && this.anima(), 50);
     }
   }
 
@@ -583,6 +584,7 @@
     }
   }
 
+  /** 关卡选择界面 */
   class WinRankPick extends Win {
     constructor() {
       super();
@@ -601,7 +603,7 @@
       }
       if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.start)) {
         this.listenKey = false;
-        setTimeout(() => (this.isOver = true), 500);
+        setTimeout(() => (this.isOver = true), 50);
         GAME_ASSETS_SOUND.play('start');
         GAME_CURRENT_WINDOW = new WinBattle();
       }
@@ -610,7 +612,7 @@
     drawFont() {
       this.ctx.fillStyle = '#444';
       this.ctx.font = '18px prstart, Songti';
-      this.ctx.fillText(`关卡 ${GAME_ARGS_CONFIG.RANK}`, 225, 228);
+      this.ctx.fillText(`STAGE ${GAME_ARGS_CONFIG.RANK}`, 200, 228);
     }
 
     draw() {
@@ -627,6 +629,79 @@
   class WinBattle extends Win {
     constructor() {
       super();
+      this.isBegin = false;
+      this.coverHeight = 228;
+      this.map = GAME_ARGS_CONFIG.MAPEDIT ? GAME_CONFIG_CUSTOME_MAP : GAME_LONG_MAPDATA[GAME_ARGS_CONFIG.RANK];
+      this.background = this.getBackground();
+      this.enemyTnakRemain = 20;
+      this.enemyTnakAlive = 0;
+      this.drawEnemyFlag();
+      this.anima();
+    }
+
+    getBackground() {
+      const { canvas, ctx } = new Tool().getCanvas(516, 456);
+      ctx.fillStyle = '#e3e3e3';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(35, 20, 416, 416);
+      return canvas;
+    }
+
+    generateEnemyTank() {
+      if (this.enemyTnakRemain > 0) {
+        this.enemyTnakRemain--;
+        // 生成敌方坦克
+      }
+    }
+
+    update() {
+      // 拉幕效果
+      if (this.coverHeight > 0) {
+        this.coverHeight -= 10;
+      }
+      // 通关条件 -- 地方坦克为0，场上地方坦克为0
+      // if()
+    }
+
+    drawEnemyFlag() {
+      this.ctx.fillStyle = '#e3e3e3';
+      this.ctx.fillRect(460, 31, 40, 180);
+      let x = 0;
+      let y = 0;
+      for (let i = 1; i <= this.enemyTnakRemain; ) {
+        if (i++ % 2 === 0) {
+          x++;
+        } else {
+          x--;
+          y++;
+        }
+        this.ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[0], 480 + x * 16, 25 + y * 16);
+      }
+    }
+
+    drawAllyFlag() {
+      this.ctx.fillStyle = '#e3e3e3';
+      this.ctx.fillStyle = '#e3000078';
+      this.ctx.fillRect(460, 250, 48, 160);
+      this.ctx.fillStyle = '#e30000';
+      this.ctx.font = '18px prstart, Songti';
+      this.ctx.fillText('1P', 465, 280);
+      // this.ctx.fillText(GAME_ARGS_CONFIG.)
+      //  TODO 添加我方坦克标识
+    }
+
+    draw() {
+      this.ctx.clearRect(35, 20, 416, 416);
+      this.ctx.drawImage(this.background, 0, 0);
+      // cover 绘制
+      this.drawEnemyFlag();
+      this.drawAllyFlag();
+      if (this.coverHeight > 0) {
+        this.ctx.fillStyle = '#e3e3e3';
+        this.ctx.fillRect(0, 0, 516, this.coverHeight);
+        this.ctx.fillRect(0, 456 - this.coverHeight, 516, this.coverHeight);
+      }
     }
   }
 
@@ -635,23 +710,26 @@
     setTimeout(() => {
       // GAME_CURRENT_WINDOW = new WinStart();
       // GAME_CURRENT_WINDOW = new WinMapEdit();
-      GAME_CURRENT_WINDOW = new WinRankPick();
-      fixMap(true);
+      // GAME_CURRENT_WINDOW = new WinRankPick();
+      GAME_CURRENT_WINDOW = new WinBattle();
+      // fixMap(true);
     }, 0);
   })();
 
   setTimeout(() => {
     const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
-    let img = GAME_ASSETS_IMAGE.getLogo();
-    console.log(img);
-    // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
-    // img = img[3][0][3];
+    // ctx.fillStyle = '#e3e3e3';
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // let img = GAME_ASSETS_IMAGE.getTankFlag();
     // console.log(img);
-    // ctx.drawImage(img[1][0][0], 150, 150);
+    // // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
+    // // img = img[3][0][3];
+    // // console.log(img);
+    // // ctx.drawImage(img[1][0][0], 150, 150);
     // for (let i = 0; i < img.length; i++) {
     //   ctx.drawImage(img[i], 50 + 32 * (i - 0), 160);
     // }
-    // ctx.drawImage(img[0], 0, 0);
+    // // ctx.drawImage(img[0], 0, 0);
     console.log('draw');
   }, 200);
 })();

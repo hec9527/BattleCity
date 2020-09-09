@@ -21,7 +21,7 @@ body::after {
   position: absolute;
   width: 1000000px;
   height: 100vh;
-  background: #fffe;
+  background: #0007;
 }
 
 @font-face {
