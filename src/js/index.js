@@ -17,21 +17,21 @@
   const GAME_CONFIG_CUSTOME_MAP = [];
   const GAME_CONFIG_KEYS = {
     p1: {
-      up: 87,
-      down: 83,
-      left: 65,
-      right: 68,
-      single: 71,
-      double: 72,
-      start: 66,
+      up: 87, // w
+      down: 83, // s
+      left: 65, // a
+      right: 68, // d
+      a: 71, // single g
+      b: 72, // double h
+      start: 66, // b
     },
     p2: {
       up: 38,
       down: 40,
       left: 37,
       right: 39,
-      single: 75,
-      double: 76,
+      a: 75, // single
+      b: 76, // double
     },
   };
   const GAME_ARGS_CONFIG = {
@@ -47,13 +47,13 @@
 
   /** 自定义地图可能会导致Boss和围墙 被修改，需要修复它们 */
   function fixMap(fixFence = false) {
-    console.log(GAME_CONFIG_CUSTOME_MAP);
     GAME_CONFIG_CUSTOME_MAP[12][6] = 15; // Boss 标志
-    GAME_CONFIG_CUSTOME_MAP[11][5] = [0, 0, 0, 1]; // 32 * 32 方块被分为4块， 4个数字分别记录左上、右上、左下、右下的方块的状态，1存在，0不存在
-    GAME_CONFIG_CUSTOME_MAP[11][6] = [0, 0, 1, 1];
-    GAME_CONFIG_CUSTOME_MAP[11][7] = [0, 0, 1, 0];
-    GAME_CONFIG_CUSTOME_MAP[12][5] = [0, 1, 0, 1];
-    GAME_CONFIG_CUSTOME_MAP[12][7] = [1, 0, 1, 0];
+    GAME_CONFIG_CUSTOME_MAP[11][5] = 18;
+    GAME_CONFIG_CUSTOME_MAP[11][6] = 4;
+    GAME_CONFIG_CUSTOME_MAP[11][7] = 17;
+    GAME_CONFIG_CUSTOME_MAP[12][5] = 3;
+    GAME_CONFIG_CUSTOME_MAP[12][7] = 5;
+    console.log('fixmap --> ', GAME_CONFIG_CUSTOME_MAP);
   }
 
   /** 计时器  按帧计数 */
@@ -446,7 +446,8 @@
     anima() {
       this.update();
       this.draw();
-      window.requestAnimationFrame(() => !this.isOver && this.anima());
+      // window.requestAnimationFrame(() => !this.isOver && this.anima());
+      setTimeout(() => !this.isOver && this.anima(), 50);
     }
   }
 
@@ -458,6 +459,8 @@
       this.cStatusTick = 0;
       this.flagPos = [315, 350, 385];
       this.bgImage = this.getBackground();
+      this.ctx.fillStyle = '#000';
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.anima();
     }
 
@@ -471,14 +474,14 @@
       ctx.font = '18px prstart, Songti SC';
       ctx.fillText('1 PLAYER', 200, this.flagPos[0]);
       ctx.fillText('2 PLAYERS', 200, this.flagPos[1]);
-      ctx.fillText('MAPEDITOR', 200, this.flagPos[2]);
+      ctx.fillText('CONSTRUCTOR', 200, this.flagPos[2]);
       return canvas;
     }
 
     taggleWindow() {
       console.log('start');
       if (this.cPosIndex === 2) {
-        GAME_CURRENT_WINDOW = new WinMapEdit();
+        setTimeout(() => (GAME_CURRENT_WINDOW = new WinMapEdit()), 0);
         console.log('地图编辑器');
       } else {
         // GAME_CURRENT_WINDOW = new WinRankPick();
@@ -516,27 +519,75 @@
   class WinMapEdit extends Win {
     constructor() {
       super();
+      this.map = GAME_CONFIG_CUSTOME_MAP;
+      this.flagPos = { x: 0, y: 0 };
+      this.flagTick = 0;
       this.anima();
     }
 
+    taggleWindow() {
+      fixMap();
+      this.isOver = true;
+      setTimeout(() => (GAME_CURRENT_WINDOW = new WinStart()), 0);
+    }
+
     update() {
-      //
+      // 修改索引
+      const indexAdd = (index) => (index === 14 ? index + 3 : index < 20 ? index + 1 : 0);
+      const indexReduce = (index) => (index === 17 ? index - 3 : index > 0 ? index - 1 : 20);
+
+      // 完成
+      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.start)) {
+        return this.taggleWindow();
+      }
+
+      // 移动
+      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.up) && this.flagPos.y > 0) {
+        this.flagPos.y--;
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.down) && this.flagPos.y < 12) {
+        this.flagPos.y++;
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.left) && this.flagPos.x > 0) {
+        this.flagPos.x--;
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.right) && this.flagPos.x < 12) {
+        this.flagPos.x++;
+      }
+      // 填充
+      let brickIndex = this.map[this.flagPos.y][this.flagPos.x];
+      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.a)) {
+        brickIndex = indexReduce(brickIndex);
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.b)) {
+        brickIndex = indexAdd(brickIndex);
+      }
+      this.map[this.flagPos.y][this.flagPos.x] = brickIndex;
     }
 
     draw() {
-      super.draw();
+      // clear
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = '#e3e3e3';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = '#000';
       this.ctx.fillRect(35, 20, 416, 416);
+      // draw brick
+      for (let col = 0; col <= 12; col++) {
+        for (let row = 0; row <= 12; row++) {
+          this.ctx.drawImage(GAME_ASSETS_IMAGE.getBrick()[this.map[row][col]], col * 32 + 35, row * 32 + 20);
+        }
+      }
+      // draw flag
+      ++this.flagTick > 7 &&
+        this.ctx.drawImage(GAME_ASSETS_IMAGE.getPlayerOneTank()[0][0][0], this.flagPos.x * 32 + 35, this.flagPos.y * 32 + 20);
+      this.flagTick > 15 && (this.flagTick = 0);
     }
   }
 
   (function main() {
-    if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 0);
-    GAME_CURRENT_WINDOW = new WinStart();
-    // GAME_CURRENT_WINDOW = new WinMapEdit();
-    fixMap(true);
+    if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
+    setTimeout(() => {
+      // GAME_CURRENT_WINDOW = new WinStart();
+      GAME_CURRENT_WINDOW = new WinMapEdit();
+      fixMap(true);
+    }, 0);
   })();
 
   setTimeout(() => {
