@@ -75,6 +75,7 @@
 
   /** Tool 工具类 */
   function Tool() {
+    let cacheElement = {}; // 缓存DOM中 canvas元素
     /** 获取当前路径 */
     this.getPwd = function () {
       const index = window.location.href.lastIndexOf('/');
@@ -83,10 +84,12 @@
 
     /** 获取canvas */
     this.getCanvas = function (w, h, c) {
+      if (c && cacheElement.c === c) return cacheElement.el;
       const canvas = c ? document.getElementById(c) : document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       canvas.width = w;
       canvas.height = h === undefined ? w : h;
+      c && (cacheElement = { c, el: { canvas, ctx } });
       return { canvas, ctx };
     };
   }
@@ -319,7 +322,7 @@
     this.getPlayerOneTank = () => {
       if (sprite.playOne) return sprite.playOne;
       let lis = [];
-      for (let i = 0; i < 4; i++) lis = lis.concat(getTankSprite(`playerOne${i}`, 2, i, i + 1));
+      for (let i = 0; i < 4; i++) lis = lis.concat(getTankSprite(`playerOne${i}`, 6, i, i + 1));
       return (sprite.playOne = lis);
     };
 
@@ -370,29 +373,32 @@
   /** 实体类 */
   class Entity {
     constructor(options) {
-      this.camp = options.camp || 'neutral'; // ally enemy
-      this.pos = options.pos || [0, 0];
-      this.bPos = options.bPos || [0, 0];
-      this.img = options.img;
+      const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
+      this.canvas = canvas;
+      this.ctx = ctx;
+      this.rect = options.rect; // 实体位置，大小
+      this.rectLast = this.rect;
+      this.img = options.img; // 实体贴图
+      this.camp = options.camp || 0; // -1 敌人   1 友军
       this.speed = options.speed || 0;
-      this.width = options.width || 32;
       this.collision = options.collision || true; // 参与碰撞检测
-      this.priority = 0; // 绘制优先级，先绘制的显示在下面
-      this.dir = 'top'; // left right bottom
+      this.priority = 0; // 绘制优先级，先绘制的显示在下面  1  0  -1
+      this.dir = 1; // 1上   2右   3下    4左
+      this.hasChange = false; // 缓存更改状态，没有修改的不同重新绘制    只有在位置、贴图、方向修改之后才会重新绘制
     }
 
     move() {
-      if (this.speed === 0) {
-        return false;
-      }
+      if (this.speed === 0) return false;
     }
 
-    update() {
-      //
+    clearRect() {
+      if (!this.hasChange) return false;
+      this.ctx = clearRect(...this.rectLast);
+      this.rectLast = [...this.rect];
     }
 
     draw() {
-      //
+      if (!this.hasChange) return false;
     }
   }
 
@@ -433,14 +439,9 @@
       }
     }
     /** 更新窗体 */
-    update() {
-      this.getAllEntity();
-    }
+    update() {}
     /** 绘制演员 */
-    draw() {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.entity.all.forEach((entity) => entity.draw());
-    }
+    draw() {}
     /** 循环渲染 */
     anima() {
       this.update();
@@ -449,12 +450,13 @@
     }
   }
 
-  /** 游戏开始窗体 */
+  /** 开始游戏窗体  游戏模式选择 */
   class WinStart extends Win {
     constructor() {
       super();
       this.cPosIndex = 0;
-      this.flagPos = [310, 345, 380];
+      this.cStatusTick = 0;
+      this.flagPos = [315, 350, 385];
       this.bgImage = this.getBackground();
       this.anima();
     }
@@ -462,10 +464,11 @@
     getBackground() {
       const { canvas, ctx } = new Tool().getCanvas(516, 456);
       ctx.fillStyle = '#fff';
-      ctx.font = '28px SimSun, Songti SC';
+      ctx.font = '14px prstart, Songti SC';
       ctx.drawImage(GAME_ASSETS_IMAGE.getLogo()[0], 70, 95); // logo 376 * 160
-      ctx.fillText('1P - Hi  20000', 50, 50);
-      ctx.fillText('2P - Hi  20000', 320, 50);
+      ctx.fillText('1P - Hi  20000', 30, 50);
+      ctx.fillText('2P - Hi  20000', 300, 50);
+      ctx.font = '18px prstart, Songti SC';
       ctx.fillText('1 PLAYER', 200, this.flagPos[0]);
       ctx.fillText('2 PLAYERS', 200, this.flagPos[1]);
       ctx.fillText('MAPEDITOR', 200, this.flagPos[2]);
@@ -475,7 +478,7 @@
     taggleWindow() {
       console.log('start');
       if (this.cPosIndex === 2) {
-        // GAME_CURRENT_WINDOW = new WinMapEdit();
+        GAME_CURRENT_WINDOW = new WinMapEdit();
         console.log('地图编辑器');
       } else {
         // GAME_CURRENT_WINDOW = new WinRankPick();
@@ -498,9 +501,14 @@
     }
 
     draw() {
-      super.draw();
-      this.ctx.drawImage(GAME_ASSETS_IMAGE.getPlayerOneTank()[0][1][0], 160, this.flagPos[this.cPosIndex] - 28);
+      this.ctx.clearRect(155, this.flagPos[0] - 32, 32, 120);
       this.ctx.drawImage(this.bgImage, 0, 0);
+      this.ctx.drawImage(
+        GAME_ASSETS_IMAGE.getPlayerOneTank()[2][1][++this.cStatusTick > 10 ? 1 : 0],
+        155,
+        this.flagPos[this.cPosIndex] - 25
+      );
+      if (this.cStatusTick > 20) this.cStatusTick = 0;
     }
   }
 
@@ -526,8 +534,8 @@
 
   (function main() {
     if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 0);
-    // GAME_CURRENT_WINDOW = new WinStart();
-    GAME_CURRENT_WINDOW = new WinMapEdit();
+    GAME_CURRENT_WINDOW = new WinStart();
+    // GAME_CURRENT_WINDOW = new WinMapEdit();
     fixMap(true);
   })();
 
