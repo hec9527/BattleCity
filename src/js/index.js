@@ -446,8 +446,8 @@
     anima() {
       this.update();
       this.draw();
-      // window.requestAnimationFrame(() => !this.isOver && this.anima());
-      setTimeout(() => !this.isOver && this.anima(), 50);
+      window.requestAnimationFrame(() => !this.isOver && this.anima());
+      // setTimeout(() => !this.isOver && this.anima(), 50);
     }
   }
 
@@ -481,12 +481,13 @@
     taggleWindow() {
       console.log('start');
       if (this.cPosIndex === 2) {
-        setTimeout(() => (GAME_CURRENT_WINDOW = new WinMapEdit()), 0);
+        GAME_CURRENT_WINDOW = new WinMapEdit();
         console.log('地图编辑器');
       } else {
-        // GAME_CURRENT_WINDOW = new WinRankPick();
+        GAME_CURRENT_WINDOW = new WinRankPick();
         console.log('关卡选择');
         if (this.cPosIndex === 1) {
+          GAME_ARGS_CONFIG.PLAYERNUM = 2;
           GAME_ARGS_CONFIG.PLAYERS.push({ life: 3, tank: null });
         }
       }
@@ -528,6 +529,7 @@
     taggleWindow() {
       fixMap();
       this.isOver = true;
+      GAME_ARGS_CONFIG.MAPEDIT = true;
       setTimeout(() => (GAME_CURRENT_WINDOW = new WinStart()), 0);
     }
 
@@ -581,11 +583,59 @@
     }
   }
 
+  class WinRankPick extends Win {
+    constructor() {
+      super();
+      this.listenKey = true;
+      this.coverHeight = 0; // TO 228
+      this.anima();
+    }
+
+    update() {
+      this.coverHeight <= 228 && (this.coverHeight += 10);
+      if (!this.listenKey) return;
+      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.up)) {
+        GAME_ARGS_CONFIG.RANK++;
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.down)) {
+        GAME_ARGS_CONFIG.RANK = GAME_ARGS_CONFIG.RANK > 1 ? GAME_ARGS_CONFIG.RANK - 1 : 1;
+      }
+      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.start)) {
+        this.listenKey = false;
+        setTimeout(() => (this.isOver = true), 500);
+        GAME_ASSETS_SOUND.play('start');
+        GAME_CURRENT_WINDOW = new WinBattle();
+      }
+    }
+
+    drawFont() {
+      this.ctx.fillStyle = '#444';
+      this.ctx.font = '18px prstart, Songti';
+      this.ctx.fillText(`关卡 ${GAME_ARGS_CONFIG.RANK}`, 225, 228);
+    }
+
+    draw() {
+      this.ctx.fillStyle = '#e3e3e3';
+      this.ctx.fillRect(0, 0, 516, this.coverHeight);
+      this.ctx.fillRect(0, 456 - this.coverHeight, 516, this.coverHeight);
+      if (this.coverHeight >= 228) {
+        this.drawFont();
+      }
+    }
+  }
+
+  /** 战斗界面 */
+  class WinBattle extends Win {
+    constructor() {
+      super();
+    }
+  }
+
   (function main() {
     if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
     setTimeout(() => {
       // GAME_CURRENT_WINDOW = new WinStart();
-      GAME_CURRENT_WINDOW = new WinMapEdit();
+      // GAME_CURRENT_WINDOW = new WinMapEdit();
+      GAME_CURRENT_WINDOW = new WinRankPick();
       fixMap(true);
     }, 0);
   })();
