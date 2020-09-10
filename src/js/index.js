@@ -457,7 +457,7 @@
     constructor() {
       super();
       this.cPosIndex = 0;
-      this.cStatusTick = 0;
+      this.cStatusTick = new Tickers(5);
       this.flagPos = [315, 350, 385];
       this.bgImage = this.getBackground();
       this.ctx.fillStyle = '#000';
@@ -496,6 +496,8 @@
     }
 
     update() {
+      this.cStatusTick.update();
+      // 按键检测
       if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.up)) {
         this.cPosIndex = this.cPosIndex <= 0 ? 2 : this.cPosIndex - 1;
       } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.down)) {
@@ -509,11 +511,10 @@
       this.ctx.clearRect(155, this.flagPos[0] - 32, 32, 120);
       this.ctx.drawImage(this.bgImage, 0, 0);
       this.ctx.drawImage(
-        GAME_ASSETS_IMAGE.getPlayerOneTank()[2][1][++this.cStatusTick > 10 ? 1 : 0],
+        GAME_ASSETS_IMAGE.getPlayerOneTank()[2][1][this.cStatusTick.isTick() ? 1 : 0],
         155,
         this.flagPos[this.cPosIndex] - 25
       );
-      if (this.cStatusTick > 20) this.cStatusTick = 0;
     }
   }
 
@@ -523,7 +524,7 @@
       super();
       this.map = GAME_CONFIG_CUSTOME_MAP;
       this.flagPos = { x: 0, y: 0 };
-      this.flagTick = 0;
+      this.flagTick = new Tickers(7);
       this.anima();
     }
 
@@ -535,6 +536,7 @@
     }
 
     update() {
+      this.flagTick.update();
       // 修改索引
       const indexAdd = (index) => (index === 14 ? index + 3 : index < 20 ? index + 1 : 0);
       const indexReduce = (index) => (index === 17 ? index - 3 : index > 0 ? index - 1 : 20);
@@ -567,6 +569,7 @@
     draw() {
       // clear
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // draw background
       this.ctx.fillStyle = '#e3e3e3';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = '#000';
@@ -578,9 +581,8 @@
         }
       }
       // draw flag
-      ++this.flagTick > 7 &&
+      this.flagTick.isTick() &&
         this.ctx.drawImage(GAME_ASSETS_IMAGE.getPlayerOneTank()[0][0][0], this.flagPos.x * 32 + 35, this.flagPos.y * 32 + 20);
-      this.flagTick > 15 && (this.flagTick = 0);
     }
   }
 
@@ -645,6 +647,9 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#000';
       ctx.fillRect(35, 20, 416, 416);
+      ctx.drawImage(GAME_ASSETS_IMAGE.getBanner()[0], 470, 370);
+      ctx.font = '18px prstart, Songti';
+      ctx.fillText(GAME_ARGS_CONFIG.RANK, 485, 420);
       return canvas;
     }
 
@@ -682,13 +687,18 @@
 
     drawAllyFlag() {
       this.ctx.fillStyle = '#e3e3e3';
-      this.ctx.fillStyle = '#e3000078';
-      this.ctx.fillRect(460, 250, 48, 160);
-      this.ctx.fillStyle = '#e30000';
+      this.ctx.fillRect(460, 250, 48, 110);
+      this.ctx.fillStyle = '#333';
       this.ctx.font = '18px prstart, Songti';
-      this.ctx.fillText('1P', 465, 280);
-      // this.ctx.fillText(GAME_ARGS_CONFIG.)
-      //  TODO 添加我方坦克标识
+      this.ctx.fillText('1P', 465, 270);
+      this.ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[0].life, 485, 290);
+      this.ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[1], 468, 275);
+      // TODO fix
+      if (GAME_ARGS_CONFIG.PLAYERNUM === 2 || true) {
+        this.ctx.fillText('2P', 465, 330);
+        this.ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[0].life, 485, 350);
+        this.ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[1], 468, 335);
+      }
     }
 
     draw() {
@@ -708,10 +718,10 @@
   (function main() {
     if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
     setTimeout(() => {
-      // GAME_CURRENT_WINDOW = new WinStart();
+      GAME_CURRENT_WINDOW = new WinStart();
       // GAME_CURRENT_WINDOW = new WinMapEdit();
       // GAME_CURRENT_WINDOW = new WinRankPick();
-      GAME_CURRENT_WINDOW = new WinBattle();
+      // GAME_CURRENT_WINDOW = new WinBattle();
       // fixMap(true);
     }, 0);
   })();
