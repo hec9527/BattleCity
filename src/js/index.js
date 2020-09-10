@@ -1,11 +1,11 @@
 /**
  * @author     hec9527
- * @time       2020-07-27
- * @change     2020-07-27
+ * @time       2020-01-24
+ * @change     2020-01-24
  * @description
  *      Battle City
  *
- *   1. 采用闭包的方式，防止修改或者使用私有变量
+ *   1. 采用闭包的方式，防止修改游戏运行参数
  *
  */
 
@@ -117,12 +117,14 @@
       console.clear();
       console.log(
         '%c ',
-        `background: url(${Tool.getPwd()}img/UI.png);padding:0px 184px; line-height:136px;margin: 15px calc(50% - 184px);`
+        `background: url(${new Tool().getPwd()}img/UI.png);padding:0px 184px; line-height:136px;margin: 15px calc(50% - 184px);`
       );
+      console.log(`%c@author: hec9527\n@time:   2020-1-24\n@note: \n\n\thi，你好`, 'color:red;font-size:16px;');
       console.log(
-        `%c@author: hec9527\n@time:   2020-1-5\n@description: \n\n\thi，你好。你能看到这条消息，多半也是程序员。无论是不是，请在程序中保留第一作者，虽然微不足道，但这是对原作者的一种鼓励也是继续创作的动力所在。\n\t如果你在使用过程中发现有任何bug，或者优化建议，可以直接发送到我的邮箱:\thec9527@foxmail.com\n\n`,
-        'color:red'
+        `%c这是一个彩蛋，但是我还没想好写啥`,
+        'color:#30A9DE;font-size:32px;padding:35px calc(50% - 256px);background:#30A9DE33;'
       );
+      console.log('%c广告位招租', 'color:#abf;font-size:26px; padding:35px calc(50% - 65px); text-align:center;background: #abf3');
     };
   }
 
@@ -716,13 +718,14 @@
   }
 
   (function main() {
-    if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
+    // if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
     setTimeout(() => {
-      GAME_CURRENT_WINDOW = new WinStart();
+      // GAME_CURRENT_WINDOW = new WinStart();
       // GAME_CURRENT_WINDOW = new WinMapEdit();
       // GAME_CURRENT_WINDOW = new WinRankPick();
       // GAME_CURRENT_WINDOW = new WinBattle();
       // fixMap(true);
+      Printer.copyright();
     }, 0);
   })();
 

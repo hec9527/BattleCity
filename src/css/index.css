@@ -24,11 +24,6 @@ body::after {
   background: #0007;
 }
 
-@font-face {
-  font-family: prstart;
-  src: url('../font/prstart.ttf');
-}
-
 #continer {
   overflow: hidden;
   position: absolute;
