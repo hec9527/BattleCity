@@ -57,7 +57,13 @@
     console.log('fixmap --> ', GAME_CONFIG_CUSTOME_MAP);
   }
 
-  /** 计时器  按帧计数 */
+  /** 倒计时 */
+  function CountDown(count = 0, cb = () => {}) {
+    this.update = () => --count;
+    this.isCount = () => count > 0 && cb();
+  }
+
+  /** 计时器  按帧计数  切换属性 */
   function Tickers(ticks = 30) {
     let flag = false;
     let tick = 0;
@@ -210,7 +216,7 @@
         return Printer.error(`未注册的音频文件: ${fName}`);
       }
       const player = new Audio();
-      player.oncanplay = () => player.play() && console.log(1);
+      player.oncanplay = () => player.play() && console.log('play');
       player.src = path(fName);
     };
   }
@@ -414,32 +420,32 @@
       this.isOver = false;
       this.entity = {
         pre: new Set(),
-        com: new Set(),
         sub: new Set(),
-        all: new Set(),
       };
     }
     /** 添加实体演员 */
     addEntity(entity) {
       if (entity.priority > 0) {
         this.entity.pre.add(entity);
-      } else if (entity.priority < 0) {
+      } else {
         this.entity.sub.add(entity);
       }
-      this.entity.com.add(entity);
     }
     /** 删除实体演员 */
     delEntity(entity) {
-      for (let key of ['pre', 'sub', 'com']) {
-        this.entity[key].has(entity) && this.entity[key].delete(entity);
+      if (entity.priority > 0) {
+        this.entity.pre.delete(entity);
+      } else {
+        this.entity.sub.delete(entity);
       }
     }
     /** 获取所有entity */
     getAllEntity() {
-      const set = (this.entity.all = new Set());
-      for (let key of ['pre', 'sub', 'com']) {
+      const set = new Set();
+      for (let key of ['pre', 'sub']) {
         this.entity[key].forEach(set.add);
       }
+      return set;
     }
     /** 更新窗体 */
     update() {}
@@ -603,7 +609,7 @@
       if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.up)) {
         GAME_ARGS_CONFIG.RANK++;
       } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.down)) {
-        GAME_ARGS_CONFIG.RANK = GAME_ARGS_CONFIG.RANK > 1 ? GAME_ARGS_CONFIG.RANK - 1 : 1;
+        --GAME_ARGS_CONFIG.RANK < 0 && GAME_ARGS_CONFIG.RANK++;
       }
       if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.start)) {
         this.listenKey = false;
@@ -635,14 +641,29 @@
       super();
       this.isBegin = false;
       this.coverHeight = 228;
-      this.map = GAME_ARGS_CONFIG.MAPEDIT ? GAME_CONFIG_CUSTOME_MAP : GAME_LONG_MAPDATA[GAME_ARGS_CONFIG.RANK];
-      this.background = this.getBackground();
+      this.map = GAME_ARGS_CONFIG.MAPEDIT
+        ? GAME_CONFIG_CUSTOME_MAP
+        : GAME_LONG_MAPDATA[GAME_ARGS_CONFIG.RANK] && (GAME_ARGS_CONFIG.MAPEDIT = false);
+      // 延迟定时器
+      this.enemyBirthTick = null; // 敌人出生延迟   200
+      this.allyTankBirthTick = null; // 我方坦克出生延迟 100
+      this.rankPassTick = null; // 通关场景切换延迟 300
+      // 场景参数
       this.enemyTnakRemain = 20;
       this.enemyTnakAlive = 0;
-      this.drawEnemyFlag();
+      this.game_reward = null; // 当前场景的奖励
+      // 相关绘制
+      this.background = this.getBackground();
+      // start
+      // this.generateEnemyTank();
+      // this.generateEnemyTank();
+      // this.generateEnemyTank();
+      this.generateAllyTank();
+      this.generateAllyTank(true);
       this.anima();
     }
 
+    // 几乎不变的内容
     getBackground() {
       const { canvas, ctx } = new Tool().getCanvas(516, 456);
       ctx.fillStyle = '#e3e3e3';
@@ -652,28 +673,7 @@
       ctx.drawImage(GAME_ASSETS_IMAGE.getBanner()[0], 470, 370);
       ctx.font = '18px prstart, Songti';
       ctx.fillText(GAME_ARGS_CONFIG.RANK, 485, 420);
-      return canvas;
-    }
-
-    generateEnemyTank() {
-      if (this.enemyTnakRemain > 0) {
-        this.enemyTnakRemain--;
-        // 生成敌方坦克
-      }
-    }
-
-    update() {
-      // 拉幕效果
-      if (this.coverHeight > 0) {
-        this.coverHeight -= 10;
-      }
-      // 通关条件 -- 地方坦克为0，场上地方坦克为0
-      // if()
-    }
-
-    drawEnemyFlag() {
-      this.ctx.fillStyle = '#e3e3e3';
-      this.ctx.fillRect(460, 31, 40, 180);
+      // 敌方坦克标识
       let x = 0;
       let y = 0;
       for (let i = 1; i <= this.enemyTnakRemain; ) {
@@ -683,50 +683,107 @@
           x--;
           y++;
         }
-        this.ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[0], 480 + x * 16, 25 + y * 16);
+        ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[0], 480 + x * 16, 25 + y * 16);
       }
-    }
-
-    drawAllyFlag() {
-      this.ctx.fillStyle = '#e3e3e3';
-      this.ctx.fillRect(460, 250, 48, 110);
-      this.ctx.fillStyle = '#333';
-      this.ctx.font = '18px prstart, Songti';
-      this.ctx.fillText('1P', 465, 270);
-      this.ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[0].life, 485, 290);
-      this.ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[1], 468, 275);
+      // 我方坦克标识
+      ctx.fillStyle = '#333';
+      ctx.font = '18px prstart, Songti';
+      ctx.fillText('1P', 465, 270);
+      ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[0].life, 485, 290);
+      ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[1], 468, 275);
       // TODO fix
       if (GAME_ARGS_CONFIG.PLAYERNUM === 2 || true) {
-        this.ctx.fillText('2P', 465, 330);
-        this.ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[0].life, 485, 350);
-        this.ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[1], 468, 335);
+        ctx.fillText('2P', 465, 330);
+        ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[0].life, 485, 350);
+        ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[1], 468, 335);
       }
+      return canvas;
+    }
+
+    generateEnemyTank() {
+      this.enemyTnakRemain--;
+      this.enemyTnakAlive++;
+      this.background = this.getBackground();
+    }
+
+    generateAllyTank(isDeputy = false) {
+      //
+    }
+
+    update() {
+      // 拉幕效果
+      if (this.coverHeight > 0) {
+        this.coverHeight -= 10;
+      }
+
+      // 更新计时器
+      this.enemyBirthTick && this.enemyBirthTick.update();
+      this.allyTankBirthTick && this.allyTankBirthTick.update();
+      this.rankPassTick && this.rankPassTick.update();
+
+      // 通关条件 -- 敌方坦克为0，场上敌方坦克为0
+      if (this.enemyTnakRemain <= 0 && this.enemyTnakAlive <= 0) {
+        console.log('pass rank');
+      }
+      // 游戏结束
+      if (
+        (!GAME_ARGS_CONFIG.PLAYERS[0].tank && !GAME_ARGS_CONFIG.PLAYERS[0].life) ||
+        (GAME_ARGS_CONFIG.PLAYERNUM === 2 && !GAME_ARGS_CONFIG.PLAYERS[1].life && !GAME_ARGS_CONFIG.PLAYERS[1].tank)
+      ) {
+        console.log('game over', GAME_ARGS_CONFIG);
+      }
+
+      // 判断是否 需要生成敌方坦克
+      if (this.enemyTnakRemain > 0 && this.enemyTnakAlive <= 5) {
+        let tick = this.enemyBirthTick;
+        console.log(this.enemyBirthTick);
+        !tick && this.generateEnemyTank();
+        tick = new CountDown(200, function () {
+          tick = null;
+        });
+      }
+
+      // 判断是否 需要生成我方坦克
+      if (!GAME_ARGS_CONFIG.PLAYERS[0].tank && GAME_ARGS_CONFIG.PLAYERS[0].life > 0) {
+        // 生成我方坦克1
+      }
+      if (GAME_ARGS_CONFIG.PLAYERNUM === 2 && !GAME_ARGS_CONFIG.PLAYERS[1].tank && GAME_ARGS_CONFIG.PLAYERS[1].life > 0) {
+        // 生成我方坦克2
+      }
+
+      // 更新演员
+      this.getAllEntity().forEach((entity) => entity.update());
     }
 
     draw() {
       this.ctx.clearRect(35, 20, 416, 416);
       this.ctx.drawImage(this.background, 0, 0);
+
       // cover 绘制
-      this.drawEnemyFlag();
-      this.drawAllyFlag();
       if (this.coverHeight > 0) {
         this.ctx.fillStyle = '#e3e3e3';
         this.ctx.fillRect(0, 0, 516, this.coverHeight);
         this.ctx.fillRect(0, 456 - this.coverHeight, 516, this.coverHeight);
       }
+
+      // pre绘制
+      this.entity.pre.forEach((item) => item.draw());
+
+      // comon绘制
+      this.entity.sub.forEach((item) => item.draw());
     }
   }
 
   (function main() {
-    // if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
+    if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
     setTimeout(() => {
       // GAME_CURRENT_WINDOW = new WinStart();
       // GAME_CURRENT_WINDOW = new WinMapEdit();
       // GAME_CURRENT_WINDOW = new WinRankPick();
-      // GAME_CURRENT_WINDOW = new WinBattle();
-      // fixMap(true);
-      Printer.copyright();
-    }, 0);
+      GAME_CURRENT_WINDOW = new WinBattle();
+      fixMap(true);
+      // Printer.copyright();
+    }, 10);
   })();
 
   setTimeout(() => {
