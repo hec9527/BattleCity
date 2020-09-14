@@ -658,6 +658,7 @@
       // this.generateEnemyTank();
       // this.generateEnemyTank();
       // this.generateEnemyTank();
+      // TODO 生成敌方坦克
       this.generateAllyTank();
       this.generateAllyTank(true);
       this.anima();

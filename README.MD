@@ -22,6 +22,10 @@
 
 - [ts 版本](https://github.com/hec9527/BattleCity)
 
+## 关卡数据
+
+[关卡精灵图](https://spritedatabase.net/game/3101)
+
 ## 注意
 
 **_项目采用 MIT 协议授权，任何人都可以修改发布克隆源码，但作者保留署名权_**

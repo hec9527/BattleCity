@@ -10,8 +10,9 @@
   "scripts": {
     "init": "npm i && npm run serve",
     "test": "jest --coverage --config ./jest.config.js",
-    "serve": "serve -l 10086 src",
-    "reinstall": "rm -rf node_modules && npm i"
+    "serve": "serve -l 10086 src/Javascript",
+    "reinstall": "rm -rf node_modules && npm i",
+    "tsc": "cd src/Typescript && tsc -w"
   },
   "repository": {
     "type": "git",
