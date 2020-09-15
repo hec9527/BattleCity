@@ -59,7 +59,7 @@ body::after {
 #wall {
   width: 1px;
   height: 100%;
-  background: rgba(117, 115, 115, 0.753);
+  background: #757373c0;
   position: absolute;
   left: 600px;
   top: 0;
