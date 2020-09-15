@@ -42,6 +42,10 @@
     HISTORY: [], // 历史最高
     PLAYERS: [{ life: 3, tank: null }],
   };
+  const TANK_ALLY_OPTION = {
+    speed: 2,
+    isDeputy: false,
+  };
   let GAME_CURRENT_WINDOW = null;
 
   for (let i = 0; i < 13; i++) GAME_CONFIG_CUSTOME_MAP.push(new Array(13).fill(0));
@@ -57,10 +61,33 @@
     console.log('fixmap --> ', GAME_CONFIG_CUSTOME_MAP);
   }
 
+  /** 边界碰撞检测 是否碰撞边界
+   * @param rect {rect} */
+  function collisionBorder(rect) {
+    if (rect[0] < 0 || rect[0] > 416 || rect[1] < 0 || rect[1] > 416) {
+      return true;
+    }
+    return false;
+  }
+
+  /** 移动
+   * @param rect {rect}
+   * @param dir
+   * @param speed
+   * */
+  function move(rect, dir, speed) {
+    return [
+      dir === 3 ? rect[0] - speed : dir === 1 ? rect[0] + speed : rect[0],
+      dir === 0 ? rect[1] - speed : dir === 2 ? rect[1] + speed : rect[1],
+      rect[3],
+      rect[4],
+    ];
+  }
+
   /** 倒计时 */
-  function CountDown(count = 0, cb = () => {}) {
-    this.update = () => --count;
-    this.isCount = () => count > 0 && cb();
+  function CountDown(count = 0) {
+    this.update = () => count > 0 && --count;
+    this.isCount = () => count > 0;
   }
 
   /** 计时器  按帧计数  切换属性 */
@@ -386,28 +413,95 @@
       this.canvas = canvas;
       this.ctx = ctx;
       this.rect = options.rect; // 实体位置，大小
-      this.rectLast = this.rect;
+      this.rectLast = this.rect; // [x,y,w,h]
       this.img = options.img; // 实体贴图
-      this.camp = options.camp || 0; // -1 敌人   1 友军
-      this.speed = options.speed || 0;
-      this.collision = options.collision || true; // 参与碰撞检测
-      this.priority = 0; // 绘制优先级，先绘制的显示在下面  1  0  -1
-      this.dir = 1; // 1上   2右   3下    4左
-      this.hasChange = false; // 缓存更改状态，没有修改的不同重新绘制    只有在位置、贴图、方向修改之后才会重新绘制
-    }
-
-    move() {
-      if (this.speed === 0) return false;
-    }
-
-    clearRect() {
-      if (!this.hasChange) return false;
-      this.ctx = clearRect(...this.rectLast);
-      this.rectLast = [...this.rect];
+      this.camp = options.camp || 0; // -1 敌人   1 友军  0 中立
+      this.collision = options.collision || 1; // 参与碰撞检测
+      this.priority = 0; // 绘制优先级 1 先绘制，在下面
     }
 
     draw() {
-      if (!this.hasChange) return false;
+      this.ctx.drawImage(this.img, this.rect[0] + 35, this.rect[1] + 20);
+    }
+  }
+
+  /**
+   * 碰撞检测： 边界、坦克、奖励、砖块
+   */
+  class Tank extends Entity {
+    constructor(props) {
+      super(props);
+      this.dir = 1; // 1上   2右   3下    4左
+      this.speed = props.speed || 0; // 移动速度
+      this.bullet = new Set();
+      this.bulletNum = 1; // 默认坦克子弹数量为1
+      this.level = props.level || 1; // 坦克等级
+      this.status = 0; // 状态
+    }
+
+    move() {
+      const rect = move(this.rect, this.dir, this.speed);
+
+      if (collisionBorder(rect)) {
+        //
+      }
+
+      this.rect = [...rect];
+    }
+  }
+
+  class TankAlly extends Tank {
+    constructor(props) {
+      super(props);
+      this.rect = [props.isDeputy ? 320 : 280, 200, 32, 32];
+      this.camp = 1;
+      this.isDeputy = props.isDeputy;
+      this.imgList = props.isDeputy ? GAME_ASSETS_IMAGE.getPlayerTwoTank() : GAME_ASSETS_IMAGE.getPlayerOneTank();
+      this.img = this.getImg();
+    }
+
+    getImg() {
+      return this.imgList[this.level][this.dir][this.status];
+    }
+
+    changeDir(dir) {
+      this.dir = dir;
+      // 上下
+      if (this.dir % 2) {
+        this.rect[1] = (this.rect[1] / 16) * 16;
+      } else {
+        this.rect[0] = (this.rect[0] / 16) * 16;
+      }
+      this.img = this.getImg();
+    }
+
+    update() {
+      const PL = this.isDeputy ? GAME_CONFIG_KEYS.p2 : GAME_CONFIG_KEYS.p1;
+      if (GAME_LONG_KEYBORAD.isPressedKey(PL.up)) {
+        if (this.dir !== 0) {
+          this.changeDir(0);
+        } else {
+          this.move();
+        }
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.right)) {
+        if (this.dir !== 1) {
+          this.changeDir(1);
+        } else {
+          this.move();
+        }
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.down)) {
+        if (this.dir !== 2) {
+          this.changeDir(2);
+        } else {
+          this.move();
+        }
+      } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.left)) {
+        if (this.dir !== 3) {
+          this.changeDir(3);
+        } else {
+          this.move();
+        }
+      }
     }
   }
 
@@ -442,9 +536,8 @@
     /** 获取所有entity */
     getAllEntity() {
       const set = new Set();
-      for (let key of ['pre', 'sub']) {
-        this.entity[key].forEach(set.add);
-      }
+      this.entity.pre.forEach((entity) => set.add(entity));
+      this.entity.sub.forEach((entity) => set.add(entity));
       return set;
     }
     /** 更新窗体 */
@@ -455,8 +548,8 @@
     anima() {
       this.update();
       this.draw();
-      // window.requestAnimationFrame(() => !this.isOver && this.anima());
-      setTimeout(() => !this.isOver && this.anima(), 50);
+      window.requestAnimationFrame(() => !this.isOver && this.anima());
+      // setTimeout(() => !this.isOver && this.anima(), 50);
     }
   }
 
@@ -654,13 +747,15 @@
       this.game_reward = null; // 当前场景的奖励
       // 相关绘制
       this.background = this.getBackground();
+      this.lastTime = new Date();
+      this.frame = 0;
       // start
       // this.generateEnemyTank();
       // this.generateEnemyTank();
       // this.generateEnemyTank();
       // TODO 生成敌方坦克
       this.generateAllyTank();
-      this.generateAllyTank(true);
+      // this.generateAllyTank(true);
       this.anima();
     }
 
@@ -708,7 +803,10 @@
     }
 
     generateAllyTank(isDeputy = false) {
-      //
+      const tank = new TankAlly({ ...TANK_ALLY_OPTION, isDeputy });
+      console.log(tank);
+      this.addEntity(tank);
+      this.background = this.getBackground();
     }
 
     update() {
@@ -735,13 +833,10 @@
       }
 
       // 判断是否 需要生成敌方坦克
-      if (this.enemyTnakRemain > 0 && this.enemyTnakAlive <= 5) {
-        let tick = this.enemyBirthTick;
-        console.log(this.enemyBirthTick);
-        !tick && this.generateEnemyTank();
-        tick = new CountDown(200, function () {
-          tick = null;
-        });
+      if (this.enemyTnakRemain > 0 && this.enemyTnakAlive < 5 && (!this.enemyBirthTick || !this.enemyBirthTick.isCount())) {
+        Printer.info('生成敌方坦克');
+        this.generateEnemyTank();
+        this.enemyBirthTick = new CountDown(30);
       }
 
       // 判断是否 需要生成我方坦克

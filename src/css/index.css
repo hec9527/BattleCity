@@ -26,7 +26,7 @@ body::after {
   position: absolute;
   width: 1000000px;
   height: 100vh;
-  background: #0007;
+  background: #fff7;
 }
 
 #continer {
