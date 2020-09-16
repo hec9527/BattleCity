@@ -18,21 +18,21 @@
   const GAME_CONFIG_CUSTOME_MAP = [];
   const GAME_CONFIG_KEYS = {
     p1: {
-      up: 87, // w
-      down: 83, // s
-      left: 65, // a
-      right: 68, // d
-      a: 71, // single g
-      b: 72, // double h
-      start: 66, // b
+      up: 'w',
+      down: 's',
+      left: 'a',
+      right: 'd',
+      a: 'g', // single g
+      b: 'h', // double h
+      start: 'b', // start
     },
     p2: {
-      up: 38,
-      down: 40,
-      left: 37,
-      right: 39,
-      a: 75, // single
-      b: 76, // double
+      up: 'ArrowUp',
+      down: 'ArrowDown',
+      left: 'ArrowLeft',
+      right: 'ArrowRight',
+      a: 'k', // single
+      b: 'l', // double
     },
   };
   const GAME_ARGS_CONFIG = {
@@ -63,17 +63,15 @@
 
   /** 边界碰撞检测 是否碰撞边界
    * @param rect {rect} */
-  function collisionBorder(rect) {
-    if (rect[0] < 0 || rect[0] > 416 || rect[1] < 0 || rect[1] > 416) {
-      return true;
-    }
-    return false;
+  function isCollisionBorder(rect) {
+    const [x, y, w, h] = rect;
+    return x < 0 || x > 416 - w || y < 0 || y > 416 - h;
   }
 
   /** 移动
    * @param rect {rect}
    * @param dir
-   * @param speed
+   * @param speeddd
    * */
   function move(rect, dir, speed) {
     let [x, y, w, h] = rect;
@@ -172,30 +170,28 @@
     let isPasued = false;
 
     window.addEventListener('keydown', (e) => {
-      // paused key's keyCode 66,  b
-      if ((isPasued && e.keyCode === 66) || !isPasued) {
-        console.log('keyDown: ', e.keyCode);
-        pressed.add(e.keyCode);
+      if ((isPasued && e.key === GAME_CONFIG_KEYS.p1.start) || !isPasued) {
+        pressed.add(e.key);
       }
     });
 
     window.addEventListener('keyup', (e) => {
-      pressed.delete(e.keyCode);
+      pressed.delete(e.key);
+      blocked.delete(e.key);
     });
 
     /** 是否已经按下某个按键 , 非连续响应 */
-    this.isTapKey = function (keyCode) {
-      if (pressed.has(keyCode) && !blocked.has(keyCode)) {
-        blocked.add(keyCode);
-        setTimeout(() => blocked.delete(keyCode), blockTicks);
+    this.isTapKey = function (key) {
+      if (pressed.has(key) && !blocked.has(key)) {
+        blocked.add(key);
         return true;
       }
       return false;
     };
 
     /** 是否已经按下某个按键， 可以快速连续响应 */
-    this.isPressedKey = function (keyCode) {
-      return !blocked.has(keyCode) && pressed.has(keyCode);
+    this.isPressedKey = function (key) {
+      return !blocked.has(key) && pressed.has(key);
     };
 
     /** 游戏是否暂停 */
@@ -418,6 +414,7 @@
   class Entity {
     constructor(options) {
       const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
+      this.word = options.word;
       this.canvas = canvas;
       this.ctx = ctx;
       this.rect = options.rect; // 实体位置，大小
@@ -426,15 +423,24 @@
       this.camp = options.camp || 0; // -1 敌人   1 友军  0 中立
       this.collision = options.collision || 1; // 参与碰撞检测
       this.priority = 0; // 绘制优先级 1 先绘制，在下面
+
+      this.word.addEntity(this);
     }
 
     draw() {
       this.ctx.drawImage(this.img, this.rect[0] + 35, this.rect[1] + 20);
     }
+
+    die() {
+      this.word.delEntity(this);
+    }
   }
 
   /**
    * 碰撞检测： 边界、坦克、奖励、砖块
+   * 我方坦克贴图[level][dir][status]
+   * 敌方坦克贴图[普通/奖励][方向][形态]
+   *
    */
   class Tank extends Entity {
     constructor(props) {
@@ -445,16 +451,42 @@
       this.bulletNum = 1; // 默认坦克子弹数量为1
       this.level = props.level || 1; // 坦克等级
       this.status = 0; // 状态
+      this.tick = 0;
+    }
+
+    changeImg() {
+      return (this.img = this.imgList[this.level][this.dir][this.status]);
     }
 
     move() {
       const rect = move(this.rect, this.dir, this.speed);
 
-      if (collisionBorder(rect)) {
-        //
+      ++this.tick;
+      if (this.tick > 5) {
+        this.tick = 0;
+        this.status = this.status === 0 ? 1 : 0;
+        this.changeImg();
       }
 
-      this.rect = [...rect];
+      if (!isCollisionBorder(rect)) {
+        this.rect = [...rect];
+        //
+      }
+    }
+
+    shoot() {
+      if (this.bullet.size < this.bulletNum) {
+        console.log('shoot');
+        const [x, y] = this.rect;
+        const dirs = {
+          0: [x + 12, y],
+          1: [x + 32, y + 12],
+          2: [x + 12, y + 24],
+          3: [x, y + 12],
+        };
+        const rect = [...dirs[this.dir], 8, 8];
+        this.bullet.add(new Bullet({ dir: this.dir, camp: this.camp, rect, word: this.word, tank: this }));
+      }
     }
   }
 
@@ -465,11 +497,7 @@
       this.camp = 1;
       this.isDeputy = props.isDeputy;
       this.imgList = props.isDeputy ? GAME_ASSETS_IMAGE.getPlayerTwoTank() : GAME_ASSETS_IMAGE.getPlayerOneTank();
-      this.img = this.getImg();
-    }
-
-    getImg() {
-      return this.imgList[this.level][this.dir][this.status];
+      this.img = this.changeImg();
     }
 
     changeDir(dir) {
@@ -480,7 +508,7 @@
       } else {
         this.rect[0] = (this.rect[0] / 16) * 16;
       }
-      this.img = this.getImg();
+      this.changeImg();
     }
 
     update() {
@@ -510,6 +538,36 @@
           this.move();
         }
       }
+
+      if (GAME_LONG_KEYBORAD.isTapKey(PL.a) || GAME_LONG_KEYBORAD.isPressedKey(PL.b)) {
+        this.shoot();
+      }
+    }
+  }
+
+  class Bullet extends Entity {
+    constructor(props) {
+      super(props);
+      this.dir = props.dir;
+      this.rect = props.rect;
+      this.camp = props.camp;
+      this.tank = props.tank;
+      this.speed = props.speed || 4;
+      this.img = GAME_ASSETS_IMAGE.getBullet()[this.dir];
+    }
+
+    update() {
+      const rect = move(this.rect, this.dir, this.speed);
+      // TODO 碰撞检测
+      if (isCollisionBorder(rect)) {
+        this.die();
+      }
+      this.rect = [...rect];
+    }
+
+    die() {
+      this.tank.bullet.delete(this);
+      super.die();
     }
   }
 
@@ -809,7 +867,7 @@
     }
 
     generateAllyTank(isDeputy = false) {
-      const tank = new TankAlly({ ...TANK_ALLY_OPTION, isDeputy });
+      const tank = new TankAlly({ ...TANK_ALLY_OPTION, isDeputy, word: this });
       console.log(tank);
       this.addEntity(tank);
       this.background = this.getBackground();
