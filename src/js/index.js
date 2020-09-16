@@ -449,21 +449,23 @@
   class Tank extends Entity {
     constructor(props) {
       super(props);
-      this.dir = 1; // 1上   2右   3下    4左
+      this.dir = 0; // 0上   1右   2下    3左
       this.speed = props.speed || 1; // 移动速度
       this.bullet = new Set();
       this.bulletNum = 1; // 默认坦克子弹数量为1
       this.level = props.level || 1; // 坦克等级
+      this.life = 1; // 生命
       this.status = 0; // 状态
       this.tickStatus = 0; // 状态计时
       this.tickShoot = 0; // 射击间隔
+      this.isProtected = false; // 保护罩
     }
 
     changeImg() {
       return (this.img = this.imgList[this.level][this.dir][this.status]);
     }
 
-    move() {
+    move(entityLis) {
       const rect = move(this.rect, this.dir, this.speed);
 
       ++this.tickStatus;
@@ -473,9 +475,27 @@
         this.changeImg();
       }
 
+      // 边界
       if (!isCollisionBorder(rect)) {
+        entityLis.forEach((entity) => {
+          if (entity.collision === 0) {
+            // 我方坦克 获得 奖励
+            if (this.camp === 1 && entity instanceof Reward) {
+              // TODO 处理  坦克-奖励  碰撞
+            }
+          } else {
+            // 坦克-坦克 碰撞检测
+            if (entity instanceof Tank) {
+              //
+              // 坦克-砖块 碰撞检测
+            } else if (entity instanceof Brick) {
+              //
+            }
+          }
+        });
         this.rect = [...rect];
-        //
+      } else if (this instanceof TankEnemy) {
+        this.changeDir();
       }
     }
 
@@ -499,7 +519,7 @@
   class TankAlly extends Tank {
     constructor(props) {
       super(props);
-      this.rect = [props.isDeputy ? 320 : 280, 200, 32, 32];
+      this.rect = [props.isDeputy ? 256 : 128, 384, 32, 32];
       this.camp = 1;
       this.isDeputy = props.isDeputy;
       this.imgList = props.isDeputy ? GAME_ASSETS_IMAGE.getPlayerTwoTank() : GAME_ASSETS_IMAGE.getPlayerOneTank();
@@ -517,38 +537,113 @@
       this.changeImg();
     }
 
-    update() {
+    update(lis) {
       this.tickShoot > 0 && --this.tickShoot;
       const PL = this.isDeputy ? GAME_CONFIG_KEYS.p2 : GAME_CONFIG_KEYS.p1;
       if (GAME_LONG_KEYBORAD.isPressedKey(PL.up)) {
         if (this.dir !== 0) {
           this.changeDir(0);
         } else {
-          this.move();
+          this.move(lis);
         }
       } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.right)) {
         if (this.dir !== 1) {
           this.changeDir(1);
         } else {
-          this.move();
+          this.move(lis);
         }
       } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.down)) {
         if (this.dir !== 2) {
           this.changeDir(2);
         } else {
-          this.move();
+          this.move(lis);
         }
       } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.left)) {
         if (this.dir !== 3) {
           this.changeDir(3);
         } else {
-          this.move();
+          this.move(lis);
         }
       }
 
       if (GAME_LONG_KEYBORAD.isTapKey(PL.a) || GAME_LONG_KEYBORAD.isPressedKey(PL.b)) {
         this.shoot();
       }
+    }
+  }
+
+  /**
+   * 敌方坦克类
+   * 贴图索引  [奖励/普通][dir][status]
+   */
+  class TankEnemy extends Tank {
+    constructor(props) {
+      super(props);
+      this.birthIndex = props.birthIndex | 0 || 0;
+      this.rect = [this.birthIndex === 0 ? 0 : this.birthIndex === 1 ? 192 : 384, 0, 32, 32];
+      this.dir = 2;
+      this.camp = 1;
+      this.type = props.type | 0 || 0; // 0 弱、1 基础、 2 快速、 3巨型  巨型坦克有3种不带奖励的
+      this.life = props.type === 3 ? (Math.random() * 4) | 0 : 1;
+      this.reward = this.getRandomReward();
+      this.imgList = this.getImageList();
+      this.img = this.changeImg();
+      this.speed = this.getSpeed();
+    }
+
+    changeDir() {
+      let [x, y, w, h] = this.rect;
+
+      this.dir = (Math.random() * 4) | 0;
+
+      if (this.dir % 2 === 0) {
+        y = ((y / 8) | 0) * 8;
+      } else {
+        x = ((x / 8) | 0) * 8;
+      }
+
+      this.rect = [x, y, w, h];
+      this.changeImg();
+    }
+
+    changeImg() {
+      let index = 0;
+      if (this.reward > 0) {
+        index = this.type === 3 ? 3 : 1;
+      } else {
+        index = this.type === 3 ? this.life - 1 : 0;
+      }
+      return (this.img = this.imgList[index][this.dir][this.status]);
+    }
+
+    getSpeed() {
+      return this.type === 3 ? 0.8 : this.type === 2 ? 2.5 : 1.5;
+    }
+
+    getImageList() {
+      const types = {
+        0: GAME_ASSETS_IMAGE.getEnemyTankWeek,
+        1: GAME_ASSETS_IMAGE.getEnemyTankBase,
+        2: GAME_ASSETS_IMAGE.getEnemyTankFast,
+        3: GAME_ASSETS_IMAGE.getEnemyTankStrong,
+      };
+      return types[this.type]() || types[0]();
+    }
+
+    // 不同坦克携带的奖励不同
+    getRandomReward() {
+      if (this.type < 2) {
+        return (Math.random() * 2) | 0; // 1
+      } else if (this.type < 3) {
+        return (Math.random() * 3) | 0; // 2
+      }
+      return (Math.random() * 5) | 0; // 4
+    }
+
+    update(entityLis) {
+      Math.random() < 0.0001 && this.changeDir();
+      this.shoot();
+      this.move(entityLis);
     }
   }
 
@@ -621,6 +716,19 @@
     }
   }
 
+  /** 奖励类 */
+  class Reward extends Entity {
+    constructor(props) {
+      super(props);
+    }
+  }
+
+  /** 砖块类 */
+  class Brick extends Entity {
+    constructor(props) {
+      super(props);
+    }
+  }
   /** 游戏窗体类 */
   class Win {
     constructor() {
@@ -864,12 +972,8 @@
       // 相关绘制
       this.background = this.getBackground();
       // start
-      // this.generateEnemyTank();
-      // this.generateEnemyTank();
-      // this.generateEnemyTank();
-      // TODO 生成敌方坦克
       this.generateAllyTank();
-      // this.generateAllyTank(true);
+      this.generateAllyTank(true);
       this.anima();
     }
 
@@ -914,6 +1018,7 @@
       this.enemyTnakRemain--;
       this.enemyTnakAlive++;
       this.background = this.getBackground();
+      new TankEnemy({ word: this, birthIndex: Math.random() * 3, type: Math.random() * 4 });
     }
 
     generateAllyTank(isDeputy = false) {
@@ -962,7 +1067,8 @@
       }
 
       // 更新演员
-      this.getAllEntity().forEach((entity) => entity.update());
+      const entityList = this.getAllEntity();
+      entityList.forEach((entity) => entity.update(entityList));
     }
 
     draw() {
