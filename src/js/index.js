@@ -76,12 +76,15 @@
    * @param speed
    * */
   function move(rect, dir, speed) {
-    return [
-      dir === 3 ? rect[0] - speed : dir === 1 ? rect[0] + speed : rect[0],
-      dir === 0 ? rect[1] - speed : dir === 2 ? rect[1] + speed : rect[1],
-      rect[3],
-      rect[4],
-    ];
+    let [x, y, w, h] = rect;
+    const dirs = {
+      0: () => (y -= speed),
+      1: () => (x += speed),
+      2: () => (y += speed),
+      3: () => (x -= speed),
+    };
+    dirs[dir]();
+    return [x, y, w, h];
   }
 
   /** 倒计时 */
@@ -181,13 +184,18 @@
     });
 
     /** 是否已经按下某个按键 , 非连续响应 */
-    this.isPressedKey = function (keyCode) {
+    this.isTapKey = function (keyCode) {
       if (pressed.has(keyCode) && !blocked.has(keyCode)) {
         blocked.add(keyCode);
         setTimeout(() => blocked.delete(keyCode), blockTicks);
         return true;
       }
       return false;
+    };
+
+    /** 是否已经按下某个按键， 可以快速连续响应 */
+    this.isPressedKey = function (keyCode) {
+      return !blocked.has(keyCode) && pressed.has(keyCode);
     };
 
     /** 游戏是否暂停 */
@@ -432,7 +440,7 @@
     constructor(props) {
       super(props);
       this.dir = 1; // 1上   2右   3下    4左
-      this.speed = props.speed || 0; // 移动速度
+      this.speed = props.speed || 1; // 移动速度
       this.bullet = new Set();
       this.bulletNum = 1; // 默认坦克子弹数量为1
       this.level = props.level || 1; // 坦克等级
@@ -599,11 +607,11 @@
     update() {
       this.cStatusTick.update();
       // 按键检测
-      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.up)) {
+      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.up)) {
         this.cPosIndex = this.cPosIndex <= 0 ? 2 : this.cPosIndex - 1;
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.down)) {
+      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.down)) {
         this.cPosIndex = this.cPosIndex >= 2 ? 0 : this.cPosIndex + 1;
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.start)) {
+      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start)) {
         this.taggleWindow();
       }
     }
@@ -643,25 +651,25 @@
       const indexReduce = (index) => (index === 17 ? index - 3 : index > 0 ? index - 1 : 20);
 
       // 完成
-      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.start)) {
+      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start)) {
         return this.taggleWindow();
       }
 
       // 移动
-      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.up) && this.flagPos.y > 0) {
+      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.up) && this.flagPos.y > 0) {
         this.flagPos.y--;
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.down) && this.flagPos.y < 12) {
+      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.down) && this.flagPos.y < 12) {
         this.flagPos.y++;
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.left) && this.flagPos.x > 0) {
+      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.left) && this.flagPos.x > 0) {
         this.flagPos.x--;
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.right) && this.flagPos.x < 12) {
+      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.right) && this.flagPos.x < 12) {
         this.flagPos.x++;
       }
       // 填充
       let brickIndex = this.map[this.flagPos.y][this.flagPos.x];
-      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.a)) {
+      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.a)) {
         brickIndex = indexReduce(brickIndex);
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.b)) {
+      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.b)) {
         brickIndex = indexAdd(brickIndex);
       }
       this.map[this.flagPos.y][this.flagPos.x] = brickIndex;
@@ -699,12 +707,12 @@
     update() {
       this.coverHeight <= 228 && (this.coverHeight += 10);
       if (!this.listenKey) return;
-      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.up)) {
+      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.up)) {
         GAME_ARGS_CONFIG.RANK++;
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.down)) {
+      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.down)) {
         --GAME_ARGS_CONFIG.RANK < 0 && GAME_ARGS_CONFIG.RANK++;
       }
-      if (GAME_LONG_KEYBORAD.isPressedKey(GAME_CONFIG_KEYS.p1.start)) {
+      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start)) {
         this.listenKey = false;
         setTimeout(() => (this.isOver = true), 50);
         GAME_ASSETS_SOUND.play('start');
@@ -747,8 +755,6 @@
       this.game_reward = null; // 当前场景的奖励
       // 相关绘制
       this.background = this.getBackground();
-      this.lastTime = new Date();
-      this.frame = 0;
       // start
       // this.generateEnemyTank();
       // this.generateEnemyTank();
@@ -896,6 +902,5 @@
     //   ctx.drawImage(img[i], 50 + 32 * (i - 0), 160);
     // }
     // // ctx.drawImage(img[0], 0, 0);
-    console.log('draw');
   }, 200);
 })();
