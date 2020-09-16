@@ -68,6 +68,12 @@
     return x < 0 || x > 416 - w || y < 0 || y > 416 - h;
   }
 
+  /** 获取矩形的 中心位置 */
+  function getRectCenter(rect, dir) {
+    const [x, y, w, h] = rect;
+    return [x + w / 2, y + h / 2];
+  }
+
   /** 移动
    * @param rect {rect}
    * @param dir
@@ -418,7 +424,6 @@
       this.canvas = canvas;
       this.ctx = ctx;
       this.rect = options.rect; // 实体位置，大小
-      this.rectLast = this.rect; // [x,y,w,h]
       this.img = options.img; // 实体贴图
       this.camp = options.camp || 0; // -1 敌人   1 友军  0 中立
       this.collision = options.collision || 1; // 参与碰撞检测
@@ -440,7 +445,6 @@
    * 碰撞检测： 边界、坦克、奖励、砖块
    * 我方坦克贴图[level][dir][status]
    * 敌方坦克贴图[普通/奖励][方向][形态]
-   *
    */
   class Tank extends Entity {
     constructor(props) {
@@ -451,7 +455,8 @@
       this.bulletNum = 1; // 默认坦克子弹数量为1
       this.level = props.level || 1; // 坦克等级
       this.status = 0; // 状态
-      this.tick = 0;
+      this.tickStatus = 0; // 状态计时
+      this.tickShoot = 0; // 射击间隔
     }
 
     changeImg() {
@@ -461,9 +466,9 @@
     move() {
       const rect = move(this.rect, this.dir, this.speed);
 
-      ++this.tick;
-      if (this.tick > 5) {
-        this.tick = 0;
+      ++this.tickStatus;
+      if (this.tickStatus > 5) {
+        this.tickStatus = 0;
         this.status = this.status === 0 ? 1 : 0;
         this.changeImg();
       }
@@ -475,21 +480,22 @@
     }
 
     shoot() {
-      if (this.bullet.size < this.bulletNum) {
-        console.log('shoot');
+      if (this.tickShoot <= 0 && this.bullet.size < this.bulletNum) {
         const [x, y] = this.rect;
         const dirs = {
           0: [x + 12, y],
-          1: [x + 32, y + 12],
+          1: [x + 24, y + 12],
           2: [x + 12, y + 24],
           3: [x, y + 12],
         };
         const rect = [...dirs[this.dir], 8, 8];
         this.bullet.add(new Bullet({ dir: this.dir, camp: this.camp, rect, word: this.word, tank: this }));
+        this.tickShoot = 10;
       }
     }
   }
 
+  /** 我方坦克类 */
   class TankAlly extends Tank {
     constructor(props) {
       super(props);
@@ -512,6 +518,7 @@
     }
 
     update() {
+      this.tickShoot > 0 && --this.tickShoot;
       const PL = this.isDeputy ? GAME_CONFIG_KEYS.p2 : GAME_CONFIG_KEYS.p1;
       if (GAME_LONG_KEYBORAD.isPressedKey(PL.up)) {
         if (this.dir !== 0) {
@@ -545,6 +552,7 @@
     }
   }
 
+  /** 子弹类 */
   class Bullet extends Entity {
     constructor(props) {
       super(props);
@@ -565,9 +573,51 @@
       this.rect = [...rect];
     }
 
+    getExplosePos() {
+      const [x, y, w, h] = this.rect;
+      const dirs = {
+        0: [x + w / 2, y],
+        1: [x + w, y + h / 2],
+        2: [x + w / 2, y + h],
+        3: [x, y + h / 2],
+      };
+      return dirs[this.dir];
+    }
+
     die() {
       this.tank.bullet.delete(this);
       super.die();
+      new Explode({ pos: this.getExplosePos(), word: this.word });
+    }
+  }
+
+  /** 爆炸类 */
+  class Explode extends Entity {
+    constructor(props) {
+      super(props);
+      const [x, y] = props.pos;
+      const width = props.isBullet ? 32 : 64;
+      this.isBullet = props.isBullet || true;
+      this.rect = [x - width / 2 + 35, y - width / 2 + 20, width, width];
+      this.imgList = GAME_ASSETS_IMAGE.getExplodeAnima();
+      this.imgIndex = 0;
+      this.tick = 0;
+      this.priority = 0;
+    }
+
+    update() {
+      if (++this.tick % 2 == 0) {
+        if (this.isBullet && ++this.imgIndex > 2) {
+          this.imgIndex = 0;
+        }
+      }
+      if (this.tick > 5) {
+        this.die();
+      }
+    }
+
+    draw() {
+      this.ctx.drawImage(this.imgList[this.imgIndex], ...this.rect);
     }
   }
 
@@ -947,10 +997,10 @@
   })();
 
   setTimeout(() => {
-    const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
+    // const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
     // ctx.fillStyle = '#e3e3e3';
     // ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // let img = GAME_ASSETS_IMAGE.getTankFlag();
+    // let img = GAME_ASSETS_IMAGE.getExplodeAnima();
     // console.log(img);
     // // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
     // // img = img[3][0][3];
