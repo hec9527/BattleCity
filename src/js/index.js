@@ -528,6 +528,11 @@ let SHOW_FPS = true;
         this instanceof TankAlly && GAME_ASSETS_SOUND.play('attack');
       }
     }
+
+    die() {
+      super.die();
+      new Explode({ word: this.word, pos: [this.rect[0] + 16, this.rect[1] + 16] });
+    }
   }
 
   /** 我方坦克类 */
@@ -621,6 +626,7 @@ let SHOW_FPS = true;
       this.dir = 2;
       this.camp = -1; // 敌人阵营
       this.type = props.type | 0 || 0; // 0 弱、1 基础、 2 快速、 3巨型  巨型坦克有3种不带奖励的
+      this.onDie = props.onDie;
       this.life = props.type === 3 ? (Math.random() * 4) | 0 : 1;
       this.reward = this.getRandomReward();
       this.imgList = this.getImageList();
@@ -641,6 +647,11 @@ let SHOW_FPS = true;
 
       this.rect = [x, y, w, h];
       this.changeImg();
+    }
+
+    die() {
+      super.die();
+      this.onDie();
     }
 
     changeImg() {
@@ -1162,7 +1173,8 @@ let SHOW_FPS = true;
         rect,
         word: this,
         onfinish: () => {
-          new TankEnemy({ word: this, rect });
+          new TankEnemy({ word: this, rect, onDie: () => this.enemyTnakAlive-- });
+          !this.enemyBirthTick && (this.enemyBirthTick = new CountDown(100));
           ++this.birthIndex > 2 && (this.birthIndex = 0);
         },
       });
@@ -1174,7 +1186,9 @@ let SHOW_FPS = true;
         rect,
         word: this,
         onfinish: () => {
-          const tank = new TankAlly(inheritTank, { ...TANK_ALLY_OPTION, rect, isDeputy, word: this });
+          new TankAlly(inheritTank, { ...TANK_ALLY_OPTION, rect, isDeputy, word: this });
+          // TODO 添加生成我方坦克的逻辑
+          GAME_ARGS_CONFIG.PLAYERS[isDeputy ? 1 : 0].life--;
         },
       });
       this.background = this.getBackground();
