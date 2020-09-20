@@ -258,6 +258,7 @@
     this.isLoad = function () {
       return isLoad;
     };
+    /** 每次播放生成新的播放对象，对于可以同时存在多个的音效有用 */
     this.play = function (fName) {
       if (!list.includes(fName)) {
         return Printer.error(`未注册的音频文件: ${fName}`);
@@ -531,7 +532,7 @@
     constructor(tank, props) {
       super(props);
       this.inherit(tank); // 部分数据继承上一关卡
-      this.rect = [props.isDeputy ? 256 : 128, 384, 32, 32];
+      this.rect = props.rect;
       this.camp = 1;
       this.isDeputy = props.isDeputy;
       this.imgList = props.isDeputy ? GAME_ASSETS_IMAGE.getPlayerTwoTank() : GAME_ASSETS_IMAGE.getPlayerOneTank();
@@ -599,8 +600,7 @@
   class TankEnemy extends Tank {
     constructor(props) {
       super(props);
-      this.birthIndex = props.birthIndex | 0 || 0;
-      this.rect = [this.birthIndex === 0 ? 0 : this.birthIndex === 1 ? 192 : 384, 0, 32, 32];
+      this.rect = props.rect;
       this.dir = 2;
       this.camp = 1;
       this.type = props.type | 0 || 0; // 0 弱、1 基础、 2 快速、 3巨型  巨型坦克有3种不带奖励的
@@ -700,6 +700,35 @@
       this.tank.bullet.delete(this);
       super.die();
       new Explode({ pos: this.getExplosePos(), word: this.word });
+    }
+  }
+
+  /** 出生动画类 */
+  class BirthAnima extends Entity {
+    constructor(props) {
+      super(props);
+      this.rect = props.rect;
+      this.imgList = GAME_ASSETS_IMAGE.getBirthAnima();
+      console.log(this.imgList);
+      this.imgIndex = 0;
+      this.img = this.imgList[this.imgIndex];
+      this.ticks = 0;
+      this.onfinish = props.onfinish;
+    }
+
+    update() {
+      if (++this.ticks % 4 == 0) {
+        ++this.imgIndex > 3 && (this.imgIndex = 0);
+        this.img = this.imgList[this.imgIndex];
+      }
+      if (this.ticks > 70) {
+        this.die();
+      }
+    }
+
+    die() {
+      this.onfinish();
+      super.die();
     }
   }
 
@@ -986,6 +1015,7 @@
       this.enemyTnakRemain = 20;
       this.enemyTnakAlive = 0;
       this.game_reward = null; // 当前场景的奖励
+      this.birthIndex = 0;
       // 相关绘制
       this.background = this.getBackground();
       // start
@@ -1039,13 +1069,26 @@
       this.enemyTnakRemain--;
       this.enemyTnakAlive++;
       this.background = this.getBackground();
-      new TankEnemy({ word: this, birthIndex: Math.random() * 3, type: Math.random() * 4 });
+      const rect = [this.birthIndex === 0 ? 0 : this.birthIndex === 1 ? 192 : 384, 0, 32, 32];
+      new BirthAnima({
+        rect,
+        word: this,
+        onfinish: () => {
+          new TankEnemy({ word: this, rect });
+          ++this.birthIndex > 2 && (this.birthIndex = 0);
+        },
+      });
     }
 
     generateAllyTank(inheritTank = {}, isDeputy = false) {
-      const tank = new TankAlly(inheritTank, { ...TANK_ALLY_OPTION, isDeputy, word: this });
-      console.log(tank);
-      this.addEntity(tank);
+      const rect = [isDeputy ? 256 : 128, 384, 32, 32];
+      new BirthAnima({
+        rect,
+        word: this,
+        onfinish: () => {
+          const tank = new TankAlly(inheritTank, { ...TANK_ALLY_OPTION, rect, isDeputy, word: this });
+        },
+      });
       this.background = this.getBackground();
     }
 
@@ -1096,18 +1139,18 @@
       this.ctx.clearRect(35, 20, 416, 416);
       this.ctx.drawImage(this.background, 0, 0);
 
-      // cover 绘制
-      if (this.coverHeight > 0) {
-        this.ctx.fillStyle = '#e3e3e3';
-        this.ctx.fillRect(0, 0, 516, this.coverHeight);
-        this.ctx.fillRect(0, 456 - this.coverHeight, 516, this.coverHeight);
-      }
-
       // pre绘制
       this.entity.pre.forEach((item) => item.draw());
 
       // comon绘制
       this.entity.sub.forEach((item) => item.draw());
+
+      // cover 绘制拉幕
+      if (this.coverHeight > 0) {
+        this.ctx.fillStyle = '#e3e3e3';
+        this.ctx.fillRect(0, 0, 516, this.coverHeight);
+        this.ctx.fillRect(0, 456 - this.coverHeight, 516, this.coverHeight);
+      }
     }
   }
 
@@ -1127,7 +1170,7 @@
     // const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
     // ctx.fillStyle = '#e3e3e3';
     // ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // let img = GAME_ASSETS_IMAGE.getExplodeAnima();
+    // let img = GAME_ASSETS_IMAGE.getBirthAnima();
     // console.log(img);
     // // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
     // // img = img[3][0][3];
