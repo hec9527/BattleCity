@@ -537,6 +537,10 @@
       this.isDeputy = props.isDeputy;
       this.imgList = props.isDeputy ? GAME_ASSETS_IMAGE.getPlayerTwoTank() : GAME_ASSETS_IMAGE.getPlayerOneTank();
       this.img = this.changeImg();
+      this.protecter = false;
+      this.tickProtect = null;
+
+      this.removeProtecter = this.removeProtecter.bind(this);
     }
 
     // 新的关卡继承上一关卡的坦克数据
@@ -546,6 +550,13 @@
         this[key] = tank[key];
       }
     }
+
+    /** 添加保护罩 */
+    addProtecter() {
+      this.protecter = new Protecter({ word: this.word, tank: this, onTimeOver: () => this.removeProtecter() });
+    }
+
+    removeProtecter() {}
 
     changeDir(dir) {
       this.dir = dir;
@@ -700,10 +711,10 @@
             entity.die();
             return this.die(true);
           }
-        }else if(entity instanceof Brick){
+        } else if (entity instanceof Brick) {
           // TODO 子弹与砖块的碰撞
         }
-       });
+      });
       this.rect = [...rect];
     }
 
@@ -781,6 +792,14 @@
 
     draw() {
       this.ctx.drawImage(this.imgList[this.imgIndex], ...this.rect);
+    }
+  }
+
+  /** 保护罩类 */
+  class Protecter extends Entity {
+    constructor(props) {
+      super(props);
+      // TODO 完成保护罩类
     }
   }
 
