@@ -200,6 +200,16 @@
       return !blocked.has(key) && pressed.has(key);
     };
 
+    /** 是否按下某个按键 */
+    this.isKeyDown = function (key) {
+      if (!blocked.has(key) && pressed.has(key)) {
+        blocked.add(key);
+        setTimeout(() => blocked.delete(key), blockTicks);
+        return true;
+      }
+      return false;
+    };
+
     /** 游戏是否暂停 */
     this.isPasued = function () {
       return isPasued;
@@ -511,19 +521,29 @@
         const rect = [...dirs[this.dir], 8, 8];
         this.bullet.add(new Bullet({ dir: this.dir, camp: this.camp, rect, word: this.word, tank: this }));
         this.tickShoot = 10;
+        this instanceof TankAlly && GAME_ASSETS_SOUND.play('attack');
       }
     }
   }
 
   /** 我方坦克类 */
   class TankAlly extends Tank {
-    constructor(props) {
+    constructor(tank, props) {
       super(props);
+      this.inherit(tank); // 部分数据继承上一关卡
       this.rect = [props.isDeputy ? 256 : 128, 384, 32, 32];
       this.camp = 1;
       this.isDeputy = props.isDeputy;
       this.imgList = props.isDeputy ? GAME_ASSETS_IMAGE.getPlayerTwoTank() : GAME_ASSETS_IMAGE.getPlayerOneTank();
       this.img = this.changeImg();
+    }
+
+    // 新的关卡继承上一关卡的坦克数据
+    inherit(tank) {
+      console.log('inherit:', tank);
+      for (let key in tank) {
+        this[key] = tank[key];
+      }
     }
 
     changeDir(dir) {
@@ -632,16 +652,13 @@
 
     // 不同坦克携带的奖励不同
     getRandomReward() {
-      if (this.type < 2) {
-        return (Math.random() * 2) | 0; // 1
-      } else if (this.type < 3) {
-        return (Math.random() * 3) | 0; // 2
-      }
-      return (Math.random() * 5) | 0; // 4
+      const rand = Math.random() * 7;
+      return rand > 5 ? (Math.random() * (this.type < 3 ? 2 : 4) + 1) | 0 : 0;
     }
 
     update(entityLis) {
-      Math.random() < 0.0001 && this.changeDir();
+      Math.random() < 0.0005 && this.changeDir();
+      this.tickShoot > 0 && --this.tickShoot;
       this.shoot();
       this.move(entityLis);
     }
@@ -823,11 +840,11 @@
     update() {
       this.cStatusTick.update();
       // 按键检测
-      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.up)) {
+      if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.up)) {
         this.cPosIndex = this.cPosIndex <= 0 ? 2 : this.cPosIndex - 1;
-      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.down)) {
+      } else if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.down)) {
         this.cPosIndex = this.cPosIndex >= 2 ? 0 : this.cPosIndex + 1;
-      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start)) {
+      } else if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.start)) {
         this.taggleWindow();
       }
     }
@@ -849,7 +866,7 @@
       super();
       this.map = GAME_CONFIG_CUSTOME_MAP;
       this.flagPos = { x: 0, y: 0 };
-      this.flagTick = new Tickers(7);
+      this.flagTick = new Tickers(15);
       this.anima();
     }
 
@@ -872,20 +889,20 @@
       }
 
       // 移动
-      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.up) && this.flagPos.y > 0) {
+      if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.up) && this.flagPos.y > 0) {
         this.flagPos.y--;
-      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.down) && this.flagPos.y < 12) {
+      } else if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.down) && this.flagPos.y < 12) {
         this.flagPos.y++;
-      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.left) && this.flagPos.x > 0) {
+      } else if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.left) && this.flagPos.x > 0) {
         this.flagPos.x--;
-      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.right) && this.flagPos.x < 12) {
+      } else if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.right) && this.flagPos.x < 12) {
         this.flagPos.x++;
       }
       // 填充
       let brickIndex = this.map[this.flagPos.y][this.flagPos.x];
-      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.a)) {
+      if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.a)) {
         brickIndex = indexReduce(brickIndex);
-      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.b)) {
+      } else if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.b)) {
         brickIndex = indexAdd(brickIndex);
       }
       this.map[this.flagPos.y][this.flagPos.x] = brickIndex;
@@ -923,12 +940,12 @@
     update() {
       this.coverHeight <= 228 && (this.coverHeight += 10);
       if (!this.listenKey) return;
-      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.up)) {
+      if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.up)) {
         GAME_ARGS_CONFIG.RANK++;
-      } else if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.down)) {
-        --GAME_ARGS_CONFIG.RANK < 0 && GAME_ARGS_CONFIG.RANK++;
+      } else if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.down)) {
+        --GAME_ARGS_CONFIG.RANK < 1 && GAME_ARGS_CONFIG.RANK++;
       }
-      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start)) {
+      if (GAME_LONG_KEYBORAD.isKeyDown(GAME_CONFIG_KEYS.p1.start)) {
         this.listenKey = false;
         setTimeout(() => (this.isOver = true), 50);
         GAME_ASSETS_SOUND.play('start');
@@ -972,8 +989,12 @@
       // 相关绘制
       this.background = this.getBackground();
       // start
-      this.generateAllyTank();
-      this.generateAllyTank(true);
+      if (GAME_ARGS_CONFIG.PLAYERS[0].life > 0 || GAME_ARGS_CONFIG.PLAYERS[0].tank) {
+        this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[0].tank);
+      }
+      if (GAME_ARGS_CONFIG.PLAYERNUM >= 2 && (GAME_ARGS_CONFIG.PLAYERS[1].life > 0 || GAME_ARGS_CONFIG.PLAYERS[1].tank)) {
+        this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[1].tank, true);
+      }
       this.anima();
     }
 
@@ -1021,8 +1042,8 @@
       new TankEnemy({ word: this, birthIndex: Math.random() * 3, type: Math.random() * 4 });
     }
 
-    generateAllyTank(isDeputy = false) {
-      const tank = new TankAlly({ ...TANK_ALLY_OPTION, isDeputy, word: this });
+    generateAllyTank(inheritTank = {}, isDeputy = false) {
+      const tank = new TankAlly(inheritTank, { ...TANK_ALLY_OPTION, isDeputy, word: this });
       console.log(tank);
       this.addEntity(tank);
       this.background = this.getBackground();
@@ -1055,7 +1076,7 @@
       if (this.enemyTnakRemain > 0 && this.enemyTnakAlive < 5 && (!this.enemyBirthTick || !this.enemyBirthTick.isCount())) {
         Printer.info('生成敌方坦克');
         this.generateEnemyTank();
-        this.enemyBirthTick = new CountDown(30);
+        this.enemyBirthTick = new CountDown(100);
       }
 
       // 判断是否 需要生成我方坦克
@@ -1093,10 +1114,10 @@
   (function main() {
     if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
     setTimeout(() => {
-      // GAME_CURRENT_WINDOW = new WinStart();
+      GAME_CURRENT_WINDOW = new WinStart();
       // GAME_CURRENT_WINDOW = new WinMapEdit();
       // GAME_CURRENT_WINDOW = new WinRankPick();
-      GAME_CURRENT_WINDOW = new WinBattle();
+      // GAME_CURRENT_WINDOW = new WinBattle();
       fixMap(true);
       // Printer.copyright();
     }, 10);
