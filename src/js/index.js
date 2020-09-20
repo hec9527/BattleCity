@@ -9,6 +9,9 @@
  *
  */
 
+/** 外部控制变量，是否开启帧数显示 */
+let SHOW_FPS = true;
+
 (function () {
   const Printer = new Print();
   const GAME_ASSETS_IMAGE = new Images();
@@ -537,8 +540,8 @@
       this.isDeputy = props.isDeputy;
       this.imgList = props.isDeputy ? GAME_ASSETS_IMAGE.getPlayerTwoTank() : GAME_ASSETS_IMAGE.getPlayerOneTank();
       this.img = this.changeImg();
-      this.protecter = false;
-      this.tickProtect = null;
+      this.isProtected = false;
+      this.addProtecter();
 
       this.removeProtecter = this.removeProtecter.bind(this);
     }
@@ -553,10 +556,13 @@
 
     /** 添加保护罩 */
     addProtecter() {
-      this.protecter = new Protecter({ word: this.word, tank: this, onTimeOver: () => this.removeProtecter() });
+      new Protecter({ word: this.word, tank: this, onTimeOver: () => this.removeProtecter() });
+      this.isProtected = true;
     }
 
-    removeProtecter() {}
+    removeProtecter() {
+      this.isProtected = false;
+    }
 
     changeDir(dir) {
       this.dir = dir;
@@ -708,8 +714,8 @@
           const varx2 = entity.rect[0] - this.rect[0];
           const vary2 = entity.rect[1] - this.rect[1];
           if ((0 < varx1 && varx1 < 32 && 0 < vary1 && vary1 < 32) || (0 < varx2 && varx2 < 8 && 0 < vary2 && vary2 < 8)) {
-            entity.die();
-            return this.die(true);
+            !entity.isProtected && entity.die();
+            return this.die(!entity.isProtected);
           }
         } else if (entity instanceof Brick) {
           // TODO 子弹与砖块的碰撞
@@ -799,7 +805,29 @@
   class Protecter extends Entity {
     constructor(props) {
       super(props);
-      // TODO 完成保护罩类
+      this.tank = props.tank;
+      this.rect = props.tank.rect;
+      this.imgList = GAME_ASSETS_IMAGE.getProtecter();
+      this.imgIndex = 0;
+      this.img = this.imgList[this.imgIndex];
+      this.onTimeOver = props.onTimeOver || function () {};
+      this.tick = 0;
+    }
+
+    update() {
+      this.rect = this.tank.rect;
+      if (++this.tick % 5 === 0) {
+        ++this.imgIndex > 1 && (this.imgIndex = 0);
+        this.img = this.imgList[this.imgIndex];
+      }
+      if (this.tick > 400) {
+        this.die();
+      }
+    }
+
+    die() {
+      super.die();
+      this.onTimeOver();
     }
   }
 
@@ -822,6 +850,9 @@
       const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
       this.canvas = canvas;
       this.ctx = ctx;
+      this.lastT = new Date();
+      this.tick = 0;
+      this.FPS = 0;
       this.isOver = false;
       this.entity = {
         pre: new Set(),
@@ -859,6 +890,22 @@
     anima() {
       this.update();
       this.draw();
+
+      // show FPS
+      if (SHOW_FPS) {
+        ++this.tick;
+        if (new Date() - this.lastT > 1000) {
+          this.FPS = this.tick;
+          this.tick = 0;
+          this.lastT = new Date();
+        }
+        this.ctx.save();
+        this.ctx.fillStyle = '#abf';
+        this.ctx.font = '8px prstart, Songti';
+        this.ctx.fillText(`FPS:${this.FPS}`, 5, 10);
+        this.ctx.restore();
+      }
+
       window.requestAnimationFrame(() => !this.isOver && this.anima());
       // setTimeout(() => !this.isOver && this.anima(), 50);
     }
@@ -920,7 +967,7 @@
     }
 
     draw() {
-      this.ctx.clearRect(155, this.flagPos[0] - 32, 32, 120);
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.drawImage(this.bgImage, 0, 0);
       this.ctx.drawImage(
         GAME_ASSETS_IMAGE.getPlayerOneTank()[2][1][this.cStatusTick.isTick() ? 1 : 0],
