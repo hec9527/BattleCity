@@ -602,7 +602,7 @@
       super(props);
       this.rect = props.rect;
       this.dir = 2;
-      this.camp = 1;
+      this.camp = -1; // 敌人阵营
       this.type = props.type | 0 || 0; // 0 弱、1 基础、 2 快速、 3巨型  巨型坦克有3种不带奖励的
       this.life = props.type === 3 ? (Math.random() * 4) | 0 : 1;
       this.reward = this.getRandomReward();
@@ -676,12 +676,34 @@
       this.img = GAME_ASSETS_IMAGE.getBullet()[this.dir];
     }
 
-    update() {
+    update(EntityList) {
       const rect = move(this.rect, this.dir, this.speed);
-      // TODO 碰撞检测
+
       if (isCollisionBorder(rect)) {
-        this.die();
+        return this.die(true);
       }
+      /** 子弹的碰撞检测 */
+      EntityList.forEach((entity) => {
+        if (entity === this) return;
+        /** 子弹与子弹 */
+        if (entity instanceof Bullet) {
+          if (Math.abs(this.rect[0] - entity.rect[0]) < 8 && Math.abs(this.rect[1] - entity.rect[1]) < 8) {
+            entity.die();
+            return this.die();
+          }
+        } else if (entity instanceof Tank && this.camp !== entity.camp) {
+          const varx1 = this.rect[0] - entity.rect[0];
+          const vary1 = this.rect[1] - entity.rect[1];
+          const varx2 = entity.rect[0] - this.rect[0];
+          const vary2 = entity.rect[1] - this.rect[1];
+          if ((0 < varx1 && varx1 < 32 && 0 < vary1 && vary1 < 32) || (0 < varx2 && varx2 < 8 && 0 < vary2 && vary2 < 8)) {
+            entity.die();
+            return this.die(true);
+          }
+        }else if(entity instanceof Brick){
+          // TODO 子弹与砖块的碰撞
+        }
+       });
       this.rect = [...rect];
     }
 
@@ -696,10 +718,10 @@
       return dirs[this.dir];
     }
 
-    die() {
+    die(flag = false) {
       this.tank.bullet.delete(this);
       super.die();
-      new Explode({ pos: this.getExplosePos(), word: this.word });
+      flag && new Explode({ pos: this.getExplosePos(), word: this.word });
     }
   }
 
