@@ -524,7 +524,7 @@ let SHOW_FPS = true;
         };
         const rect = [...dirs[this.dir], 8, 8];
         this.bullet.add(new Bullet({ dir: this.dir, camp: this.camp, rect, word: this.word, tank: this }));
-        this.tickShoot = 10;
+        this.tickShoot = 20;
         this instanceof TankAlly && GAME_ASSETS_SOUND.play('attack');
       }
     }
@@ -532,6 +532,7 @@ let SHOW_FPS = true;
     die() {
       super.die();
       new Explode({ word: this.word, pos: [this.rect[0] + 16, this.rect[1] + 16] });
+      GAME_ASSETS_SOUND.play('bomb');
     }
   }
 
@@ -627,7 +628,7 @@ let SHOW_FPS = true;
       this.camp = -1; // 敌人阵营
       this.type = props.type | 0 || 0; // 0 弱、1 基础、 2 快速、 3巨型  巨型坦克有3种不带奖励的
       this.onDie = props.onDie;
-      this.life = props.type === 3 ? (Math.random() * 4) | 0 : 1;
+      this.life = props.type === 3 ? (Math.random() * 3 + 1) | 0 : 1;
       this.reward = this.getRandomReward();
       this.imgList = this.getImageList();
       this.img = this.changeImg();
@@ -650,6 +651,7 @@ let SHOW_FPS = true;
     }
 
     die() {
+      console.log(this);
       super.die();
       this.onDie();
     }
@@ -665,7 +667,7 @@ let SHOW_FPS = true;
     }
 
     getSpeed() {
-      return this.type === 3 ? 0.8 : this.type === 2 ? 2.5 : 1.5;
+      return this.type === 3 ? 0.8 : this.type === 2 ? 2.5 : 1.3;
     }
 
     getImageList() {
@@ -725,7 +727,22 @@ let SHOW_FPS = true;
           const varx2 = entity.rect[0] - this.rect[0];
           const vary2 = entity.rect[1] - this.rect[1];
           if ((0 < varx1 && varx1 < 32 && 0 < vary1 && vary1 < 32) || (0 < varx2 && varx2 < 8 && 0 < vary2 && vary2 < 8)) {
-            !entity.isProtected && entity.die();
+            if (!entity.isProtected) {
+              if (entity instanceof TankEnemy) {
+                if (entity.reward > 0) {
+                  --entity.reward;
+                } else if (entity.life > 1) {
+                  --entity.life;
+                } else {
+                  entity.die();
+                }
+              } else {
+                if (entity.life > 1) {
+                  --entity.life;
+                }
+                entity.die();
+              }
+            }
             return this.die(!entity.isProtected);
           }
         } else if (entity instanceof Brick) {
@@ -1119,10 +1136,10 @@ let SHOW_FPS = true;
       this.background = this.getBackground();
       // start
       if (GAME_ARGS_CONFIG.PLAYERS[0].life > 0 || GAME_ARGS_CONFIG.PLAYERS[0].tank) {
-        this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[0].tank);
+        this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[0].tank || undefined);
       }
       if (GAME_ARGS_CONFIG.PLAYERNUM >= 2 && (GAME_ARGS_CONFIG.PLAYERS[1].life > 0 || GAME_ARGS_CONFIG.PLAYERS[1].tank)) {
-        this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[1].tank, true);
+        this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[1].tank || undefined, true);
       }
       this.anima();
     }
@@ -1169,25 +1186,28 @@ let SHOW_FPS = true;
       this.enemyTnakAlive++;
       this.background = this.getBackground();
       const rect = [this.birthIndex === 0 ? 0 : this.birthIndex === 1 ? 192 : 384, 0, 32, 32];
+      const rand = Math.random() * 100;
+      const type = rand < 35 ? 0 : rand < 60 ? 1 : rand < 85 ? 2 : 3;
       new BirthAnima({
         rect,
         word: this,
         onfinish: () => {
-          new TankEnemy({ word: this, rect, onDie: () => this.enemyTnakAlive-- });
+          new TankEnemy({ word: this, rect, type, onDie: () => this.enemyTnakAlive-- });
           !this.enemyBirthTick && (this.enemyBirthTick = new CountDown(100));
           ++this.birthIndex > 2 && (this.birthIndex = 0);
         },
       });
     }
 
-    generateAllyTank(inheritTank = {}, isDeputy = false) {
+    generateAllyTank(inheritTank = { bulletNum: 2 }, isDeputy = false) {
       const rect = [isDeputy ? 256 : 128, 384, 32, 32];
       new BirthAnima({
         rect,
         word: this,
         onfinish: () => {
-          new TankAlly(inheritTank, { ...TANK_ALLY_OPTION, rect, isDeputy, word: this });
-          // TODO 添加生成我方坦克的逻辑
+          const tank = new TankAlly(inheritTank, { ...TANK_ALLY_OPTION, rect, isDeputy, word: this });
+          console.log('我方坦克：', tank);
+          // TODO 添加生成我方坦克的逻辑  借life
           GAME_ARGS_CONFIG.PLAYERS[isDeputy ? 1 : 0].life--;
         },
       });
@@ -1207,7 +1227,7 @@ let SHOW_FPS = true;
 
       // 通关条件 -- 敌方坦克为0，场上敌方坦克为0
       if (this.enemyTnakRemain <= 0 && this.enemyTnakAlive <= 0) {
-        console.log('pass rank');
+        // console.log('pass rank');
       }
       // 游戏结束
       if (
@@ -1269,15 +1289,16 @@ let SHOW_FPS = true;
   })();
 
   setTimeout(() => {
-    // const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
+    const { canvas, ctx } = new Tool().getCanvas(516, 456, 'canvas');
     // ctx.fillStyle = '#e3e3e3';
     // ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // let img = GAME_ASSETS_IMAGE.getBirthAnima();
+    let img = GAME_ASSETS_IMAGE.getEnemyTankStrong();
+
     // console.log(img);
-    // // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
-    // // img = img[3][0][3];
-    // // console.log(img);
-    // // ctx.drawImage(img[1][0][0], 150, 150);
+    // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
+    // img = img[3][0];
+    // console.log(img);
+    // ctx.drawImage(img[1][0][0], 150, 150);
     // for (let i = 0; i < img.length; i++) {
     //   ctx.drawImage(img[i], 50 + 32 * (i - 0), 160);
     // }
