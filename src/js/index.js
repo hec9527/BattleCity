@@ -660,11 +660,18 @@ let SHOW_FPS = true;
       this.imgList = this.getImageList();
       this.img = this.changeImg();
       this.speed = this.getSpeed();
+      this.tickChangeDir = 0;
     }
 
     die() {
       super.die();
       this.onDie();
+    }
+
+    changeDir() {
+      if (this.tickChangeDir > 0) return;
+      super.changeDir();
+      this.tickChangeDir = 20;
     }
 
     changeImg() {
@@ -700,6 +707,7 @@ let SHOW_FPS = true;
     update(entityLis) {
       Math.random() < 0.0005 && this.changeDir();
       this.tickShoot > 0 && --this.tickShoot;
+      this.tickChangeDir > 0 && --this.tickChangeDir;
       this.shoot();
       this.move(entityLis);
     }
