@@ -71,10 +71,20 @@ let SHOW_FPS = true;
     return x < 0 || x > 416 - w || y < 0 || y > 416 - h;
   }
 
-  /** 获取矩形的 中心位置 */
-  function getRectCenter(rect, dir) {
-    const [x, y, w, h] = rect;
-    return [x + w / 2, y + h / 2];
+  /** 实体碰撞检测， 不限实体的宽高 */
+  function isCollisionEntity(rect1, rect2) {
+    const [x1, y1, w1, h1] = rect1;
+    const [x2, y2, w2, h2] = rect2;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    return -w2 < dx && dx < w1 && -h2 < dy && dy < h1;
+  }
+
+  /** 获取两个实体的位置距离 */
+  function getDistance(rect1, rect2) {
+    const [x1, y1] = rect1;
+    const [x2, y2] = rect2;
+    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
   }
 
   /** 移动
@@ -479,8 +489,27 @@ let SHOW_FPS = true;
       return (this.img = this.imgList[this.level][this.dir][this.status]);
     }
 
+    changeDir(dir) {
+      let [x, y, w, h] = this.rect;
+
+      this.dir = this instanceof TankAlly ? dir : (Math.random() * 4) | 0;
+
+      // 上下
+      if (this.dir % 2) {
+        y = Math.round(y / 16) * 16;
+      } else {
+        x = Math.round(x / 16) * 16;
+      }
+
+      this.rect = [x, y, w, h];
+
+      this instanceof TankAlly && console.log(x, y);
+
+      this.changeImg();
+    }
+
     move(entityLis) {
-      const rect = move(this.rect, this.dir, this.speed);
+      let rect = move(this.rect, this.dir, this.speed);
 
       ++this.tickStatus;
       if (this.tickStatus > 5) {
@@ -492,6 +521,9 @@ let SHOW_FPS = true;
       // 边界
       if (!isCollisionBorder(rect)) {
         entityLis.forEach((entity) => {
+          if (entity === this) return;
+
+          /** 不参与碰撞检测的情况 */
           if (entity.collision === 0) {
             // 我方坦克 获得 奖励
             if (this.camp === 1 && entity instanceof Reward) {
@@ -500,7 +532,12 @@ let SHOW_FPS = true;
           } else {
             // 坦克-坦克 碰撞检测
             if (entity instanceof Tank) {
-              //
+              if (isCollisionEntity(this.rect, entity.rect)) {
+                let distanceCurrent = getDistance(this.rect, entity.rect);
+                let distanceAfterMove = getDistance(rect, entity.rect);
+                distanceAfterMove < distanceCurrent && (rect = [...this.rect]);
+                this instanceof TankEnemy && this.changeDir();
+              }
               // 坦克-砖块 碰撞检测
             } else if (entity instanceof Brick) {
               //
@@ -524,7 +561,7 @@ let SHOW_FPS = true;
         };
         const rect = [...dirs[this.dir], 8, 8];
         this.bullet.add(new Bullet({ dir: this.dir, camp: this.camp, rect, word: this.word, tank: this }));
-        this.tickShoot = 20;
+        this.tickShoot = this.camp === 1 ? 20 : 40;
         this instanceof TankAlly && GAME_ASSETS_SOUND.play('attack');
       }
     }
@@ -554,7 +591,6 @@ let SHOW_FPS = true;
 
     // 新的关卡继承上一关卡的坦克数据
     inherit(tank) {
-      console.log('inherit:', tank);
       for (let key in tank) {
         this[key] = tank[key];
       }
@@ -568,17 +604,6 @@ let SHOW_FPS = true;
 
     removeProtecter() {
       this.isProtected = false;
-    }
-
-    changeDir(dir) {
-      this.dir = dir;
-      // 上下
-      if (this.dir % 2) {
-        this.rect[1] = (this.rect[1] / 16) * 16;
-      } else {
-        this.rect[0] = (this.rect[0] / 16) * 16;
-      }
-      this.changeImg();
     }
 
     update(lis) {
@@ -635,23 +660,7 @@ let SHOW_FPS = true;
       this.speed = this.getSpeed();
     }
 
-    changeDir() {
-      let [x, y, w, h] = this.rect;
-
-      this.dir = (Math.random() * 4) | 0;
-
-      if (this.dir % 2 === 0) {
-        y = ((y / 8) | 0) * 8;
-      } else {
-        x = ((x / 8) | 0) * 8;
-      }
-
-      this.rect = [x, y, w, h];
-      this.changeImg();
-    }
-
     die() {
-      console.log(this);
       super.die();
       this.onDie();
     }
@@ -722,11 +731,8 @@ let SHOW_FPS = true;
             return this.die();
           }
         } else if (entity instanceof Tank && this.camp !== entity.camp) {
-          const varx1 = this.rect[0] - entity.rect[0];
-          const vary1 = this.rect[1] - entity.rect[1];
-          const varx2 = entity.rect[0] - this.rect[0];
-          const vary2 = entity.rect[1] - this.rect[1];
-          if ((0 < varx1 && varx1 < 32 && 0 < vary1 && vary1 < 32) || (0 < varx2 && varx2 < 8 && 0 < vary2 && vary2 < 8)) {
+          /** 子弹与坦克的碰撞 */
+          if (isCollisionEntity(this.rect, entity.rect)) {
             if (!entity.isProtected) {
               if (entity instanceof TankEnemy) {
                 if (entity.reward > 0) {
@@ -739,8 +745,9 @@ let SHOW_FPS = true;
               } else {
                 if (entity.life > 1) {
                   --entity.life;
+                } else {
+                  entity.die();
                 }
-                entity.die();
               }
             }
             return this.die(!entity.isProtected);
@@ -848,7 +855,7 @@ let SHOW_FPS = true;
         ++this.imgIndex > 1 && (this.imgIndex = 0);
         this.img = this.imgList[this.imgIndex];
       }
-      if (this.tick > 400) {
+      if (this.tick < 0) {
         this.die();
       }
     }
@@ -950,6 +957,9 @@ let SHOW_FPS = true;
       this.ctx.fillStyle = '#000';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.anima();
+
+      // fix 第一次加载的时候字体文件未加载完成造成的字体异常的问题
+      setTimeout(() => (this.bgImage = this.getBackground()), 10);
     }
 
     getBackground() {
@@ -1285,7 +1295,7 @@ let SHOW_FPS = true;
       // GAME_CURRENT_WINDOW = new WinBattle();
       fixMap(true);
       // Printer.copyright();
-    }, 10);
+    }, 30);
   })();
 
   setTimeout(() => {
