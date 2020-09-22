@@ -1,8 +1,11 @@
 // 上下左右居中
 @mixin center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  /** 上下两种方式都可以 */
+  display: grid;
+  place-items: center;
 }
 
 * {
