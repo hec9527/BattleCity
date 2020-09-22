@@ -8,6 +8,12 @@
   place-items: center;
 }
 
+/** font-face定义的字体只要在字体被使用的时候才会加载 */
+@font-face {
+  font-family: 'prestart';
+  src: url('../assets/font/prestart2p.ttf');
+}
+
 * {
   padding: 0;
   margin: 0;

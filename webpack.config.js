@@ -11,7 +11,7 @@ module.exports = {
 
   output: {
     path: resolve('dist'),
-    filename: 'js/[id].[hash:8].js',
+    filename: 'js/[name].[hash:4].js',
     publicPath: '/',
   },
 
@@ -37,7 +37,7 @@ module.exports = {
         test: /\.(png|jpg|mp3|ttf)$/,
         use: {
           loader: 'url-loader',
-          options: { limit: 10240 }, // 超过10k使用外链，否则使用base64编码
+          options: { limit: 10240, name: '[name].[ext]' }, // 超过10k使用外链，否则使用base64编码
         },
       },
     ],
