@@ -532,7 +532,7 @@ let SHOW_FPS = true;
           } else {
             // 坦克-坦克 碰撞检测
             if (entity instanceof Tank) {
-              if (isCollisionEntity(this.rect, entity.rect)) {
+              if (isCollisionEntity(rect, entity.rect)) {
                 let distanceCurrent = getDistance(this.rect, entity.rect);
                 let distanceAfterMove = getDistance(rect, entity.rect);
                 if (distanceAfterMove < distanceCurrent) {
