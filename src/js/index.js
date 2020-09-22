@@ -535,8 +535,10 @@ let SHOW_FPS = true;
               if (isCollisionEntity(this.rect, entity.rect)) {
                 let distanceCurrent = getDistance(this.rect, entity.rect);
                 let distanceAfterMove = getDistance(rect, entity.rect);
-                distanceAfterMove < distanceCurrent && (rect = [...this.rect]);
-                this instanceof TankEnemy && this.changeDir();
+                if (distanceAfterMove < distanceCurrent) {
+                  rect = [...this.rect];
+                  this instanceof TankEnemy && this.changeDir();
+                }
               }
               // 坦克-砖块 碰撞检测
             } else if (entity instanceof Brick) {
