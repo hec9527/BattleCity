@@ -518,6 +518,7 @@ let SHOW_FPS = true;
       Printer.info(`玩家${this.isDeputy ? '二' : '一'}：获取道具-${reward[type]}`);
       switch (type) {
         case 0: {
+          // TODO 添加 Wall 围墙类
           break;
         }
         case 1: {
@@ -544,6 +545,7 @@ let SHOW_FPS = true;
           break;
         }
         case 5: {
+          // TODO 定时器
           break;
         }
         default: {
@@ -988,6 +990,49 @@ let SHOW_FPS = true;
       super(props);
     }
   }
+
+  /** 我方boss围墙 */
+  class Wall extends Entity {
+    constructor(props) {
+      super(props);
+      this.tick = 0;
+      this.buildWall(true);
+      // TODO 完成 Brick 之后再来完成围墙
+    }
+
+    buildWall(iron = false) {
+      const map = this.word.map;
+      if (iron) {
+        map[11][5] = 20;
+        map[11][6] = 9;
+        map[11][7] = 19;
+        map[12][5] = 8;
+        map[12][7] = 10;
+      } else {
+        map[11][5] = 18;
+        map[11][6] = 4;
+        map[11][7] = 17;
+        map[12][5] = 3;
+        map[12][7] = 5;
+      }
+    }
+
+    update() {
+      if (++this.tick > 1000) {
+        this.die();
+      }
+      if (this.tick >= 700) {
+        if ((this.tick - 700) % 40 === 0) {
+          this.buildWall();
+        } else if ((this.tick - 700) % 40 === 20) {
+          this.buildWall(true);
+        }
+      }
+    }
+
+    draw() {}
+  }
+
   /** 游戏窗体类 */
   class Win {
     constructor() {
@@ -1248,9 +1293,10 @@ let SHOW_FPS = true;
       super();
       this.isBegin = false;
       this.coverHeight = 228;
-      this.map = GAME_ARGS_CONFIG.MAPEDIT
-        ? GAME_CONFIG_CUSTOME_MAP
-        : GAME_LONG_MAPDATA[GAME_ARGS_CONFIG.RANK] && (GAME_ARGS_CONFIG.MAPEDIT = false);
+      this.map =
+        GAME_ARGS_CONFIG.MAPEDIT || true
+          ? GAME_CONFIG_CUSTOME_MAP
+          : GAME_LONG_MAPDATA[GAME_ARGS_CONFIG.RANK] && (GAME_ARGS_CONFIG.MAPEDIT = false);
       // 延迟定时器
       this.enemyBirthTick = null; // 敌人出生延迟   200
       this.allyTankBirthTick = null; // 我方坦克出生延迟 100
@@ -1270,6 +1316,7 @@ let SHOW_FPS = true;
         this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[1].tank || undefined, true);
       }
       this.anima();
+      new Wall({ word: this });
     }
 
     // 几乎不变的内容
