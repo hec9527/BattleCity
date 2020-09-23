@@ -189,6 +189,8 @@ let SHOW_FPS = true;
     let isPasued = false;
 
     window.addEventListener('keydown', (e) => {
+      if (e.preventDefault) e.preventDefault();
+      else e.returnValue = false;
       if ((isPasued && e.key === GAME_CONFIG_KEYS.p1.start) || !isPasued) {
         pressed.add(e.key);
       }
@@ -277,7 +279,7 @@ let SHOW_FPS = true;
         return Printer.error(`未注册的音频文件: ${fName}`);
       }
       const player = new Audio();
-      player.oncanplay = () => player.play() && console.log('play');
+      player.oncanplay = () => player.play();
       player.src = path(fName);
     };
   }
@@ -463,6 +465,10 @@ let SHOW_FPS = true;
     die() {
       this.word.delEntity(this);
     }
+
+    update() {
+      throw new Error('Every instance inherited from entity show have their own update method');
+    }
   }
 
   /**
@@ -477,7 +483,7 @@ let SHOW_FPS = true;
       this.speed = props.speed || 1; // 移动速度
       this.bullet = new Set();
       this.bulletNum = 1; // 默认坦克子弹数量为1
-      this.level = props.level || 1; // 坦克等级
+      this.level = props.level || 0; // 坦克等级
       this.life = 1; // 生命
       this.status = 0; // 状态
       this.tickStatus = 0; // 状态计时
@@ -503,9 +509,40 @@ let SHOW_FPS = true;
 
       this.rect = [x, y, w, h];
 
-      this instanceof TankAlly && console.log(x, y);
-
       this.changeImg();
+    }
+
+    getReward(type) {
+      const reward = ['铁锹', '五角星', '坦克', '安全帽', '炸弹', '定时器'];
+      Printer.info(`玩家${this.isDeputy ? '二' : '一'}：获取道具-${reward[type]}`);
+      switch (type) {
+        case 0: {
+          break;
+        }
+        case 1: {
+          this.upgrade && this.upgrade();
+          break;
+        }
+        case 2: {
+          GAME_ASSETS_SOUND.play('life');
+          GAME_ARGS_CONFIG.PLAYERS[this.isDeputy ? 1 : 0].life++;
+          this.word.getBackground && this.word.getBackground();
+          break;
+        }
+        case 3: {
+          this.addProtecter && this.addProtecter();
+          break;
+        }
+        case 4: {
+          break;
+        }
+        case 5: {
+          break;
+        }
+        default: {
+          Printer.error(`未知奖励类型：${type}`);
+        }
+      }
     }
 
     move(entityLis) {
@@ -523,27 +560,25 @@ let SHOW_FPS = true;
         entityLis.forEach((entity) => {
           if (entity === this) return;
 
-          /** 不参与碰撞检测的情况 */
-          if (entity.collision === 0) {
-            // 我方坦克 获得 奖励
-            if (this.camp === 1 && entity instanceof Reward) {
-              // TODO 处理  坦克-奖励  碰撞
+          // 我方坦克 获得 奖励
+          if (entity instanceof Reward && this.camp === 1) {
+            if (isCollisionEntity(rect, entity.rect)) {
+              this.getReward(entity.type);
+              entity.die();
             }
-          } else {
             // 坦克-坦克 碰撞检测
-            if (entity instanceof Tank) {
-              if (isCollisionEntity(rect, entity.rect)) {
-                let distanceCurrent = getDistance(this.rect, entity.rect);
-                let distanceAfterMove = getDistance(rect, entity.rect);
-                if (distanceAfterMove < distanceCurrent) {
-                  rect = [...this.rect];
-                  this instanceof TankEnemy && this.changeDir();
-                }
+          } else if (entity instanceof Tank) {
+            if (isCollisionEntity(rect, entity.rect)) {
+              let distanceCurrent = getDistance(this.rect, entity.rect);
+              let distanceAfterMove = getDistance(rect, entity.rect);
+              if (distanceAfterMove < distanceCurrent) {
+                rect = [...this.rect];
+                this instanceof TankEnemy && this.changeDir();
               }
-              // 坦克-砖块 碰撞检测
-            } else if (entity instanceof Brick) {
-              //
             }
+            // 坦克-砖块 碰撞检测
+          } else if (entity instanceof Brick) {
+            //
           }
         });
         this.rect = [...rect];
@@ -563,7 +598,7 @@ let SHOW_FPS = true;
         };
         const rect = [...dirs[this.dir], 8, 8];
         this.bullet.add(new Bullet({ dir: this.dir, camp: this.camp, rect, word: this.word, tank: this }));
-        this.tickShoot = this.camp === 1 ? 20 : 40;
+        this.tickShoot = this.camp === 1 ? 15 : 30;
         this instanceof TankAlly && GAME_ASSETS_SOUND.play('attack');
       }
     }
@@ -591,6 +626,16 @@ let SHOW_FPS = true;
       this.removeProtecter = this.removeProtecter.bind(this);
     }
 
+    upgrade() {
+      if (this.level < 3) {
+        this.bulletNum = ++this.level;
+        this.changeImg();
+      } else {
+        ++this.life > 2 && (this.life = 2);
+      }
+      console.log('tank upgrade:', this);
+    }
+
     // 新的关卡继承上一关卡的坦克数据
     inherit(tank) {
       for (let key in tank) {
@@ -600,12 +645,25 @@ let SHOW_FPS = true;
 
     /** 添加保护罩 */
     addProtecter() {
+      if (this.isProtected) this.removeProtecter();
       new Protecter({ word: this.word, tank: this, onTimeOver: () => this.removeProtecter() });
       this.isProtected = true;
     }
 
     removeProtecter() {
       this.isProtected = false;
+    }
+
+    die() {
+      if (this.isProtected) return;
+      if (this.life > 1) {
+        --this.life;
+        this.level = 0;
+        this.bulletNum = 1;
+        this.changeImg();
+      } else {
+        super.die();
+      }
     }
 
     update(lis) {
@@ -664,8 +722,15 @@ let SHOW_FPS = true;
     }
 
     die() {
-      super.die();
-      this.onDie();
+      if (this.reward > 0) {
+        --this.reward;
+        new Reward({ word: this.word });
+      } else if (this.life > 1) {
+        --this.life;
+      } else {
+        super.die();
+        this.onDie();
+      }
     }
 
     changeDir() {
@@ -728,42 +793,27 @@ let SHOW_FPS = true;
     update(EntityList) {
       const rect = move(this.rect, this.dir, this.speed);
 
-      if (isCollisionBorder(rect)) {
-        return this.die(true);
-      }
+      /** 子弹边界检测 */
+      if (isCollisionBorder(rect)) return this.die(true);
+
       /** 子弹的碰撞检测 */
       EntityList.forEach((entity) => {
         if (entity === this) return;
+
         /** 子弹与子弹 */
         if (entity instanceof Bullet) {
-          if (Math.abs(this.rect[0] - entity.rect[0]) < 8 && Math.abs(this.rect[1] - entity.rect[1]) < 8) {
+          if (isCollisionEntity(rect, entity.rect)) {
             entity.die();
-            return this.die();
+            this.die();
           }
         } else if (entity instanceof Tank && this.camp !== entity.camp) {
           /** 子弹与坦克的碰撞 */
-          if (isCollisionEntity(this.rect, entity.rect)) {
-            if (!entity.isProtected) {
-              if (entity instanceof TankEnemy) {
-                if (entity.reward > 0) {
-                  --entity.reward;
-                } else if (entity.life > 1) {
-                  --entity.life;
-                } else {
-                  entity.die();
-                }
-              } else {
-                if (entity.life > 1) {
-                  --entity.life;
-                } else {
-                  entity.die();
-                }
-              }
-            }
-            return this.die(!entity.isProtected);
+          if (isCollisionEntity(rect, entity.rect)) {
+            entity.die();
+            this.die(!entity.isProtected);
           }
         } else if (entity instanceof Brick) {
-          // TODO 子弹与砖块的碰撞
+          /** 子弹与砖块的碰撞 */
         }
       });
       this.rect = [...rect];
@@ -793,7 +843,6 @@ let SHOW_FPS = true;
       super(props);
       this.rect = props.rect;
       this.imgList = GAME_ASSETS_IMAGE.getBirthAnima();
-      console.log(this.imgList);
       this.imgIndex = 0;
       this.img = this.imgList[this.imgIndex];
       this.ticks = 0;
@@ -876,10 +925,48 @@ let SHOW_FPS = true;
     }
   }
 
-  /** 奖励类 */
+  /** 奖励类
+   * 铁锹、五角星、坦克、安全帽、炸弹、闹钟  5
+   */
   class Reward extends Entity {
     constructor(props) {
       super(props);
+      this.rect = [...this.getRandomPos(), 32, 32];
+      this.type = 2 || (Math.random() * 6) | 0;
+      this.img = GAME_ASSETS_IMAGE.getBonus()[this.type];
+      this.tick = 0;
+      this.check();
+    }
+
+    check() {
+      if (this.word.game_reward instanceof Reward) {
+        this.word.delEntity(this.word.game_reward);
+      }
+      this.word.game_reward = this;
+    }
+
+    /** 奖励生成的位置应该避开己方boss */
+    getRandomPos() {
+      const x = ((Math.random() * 24) | 0) + 1;
+      const y = ((Math.random() * 24) | 0) + 1;
+      if (22 < y && y < 25 && 10 < x && x < 15) {
+        return this.getRandomPos();
+      }
+      return [x * 16, y * 16];
+    }
+
+    update() {
+      // 10s
+      if (++this.tick > 600) {
+        super.die();
+        this.word.game_reward = null;
+      }
+    }
+
+    draw() {
+      if (this.tick % 20 > 10) {
+        super.draw();
+      }
     }
   }
 
@@ -928,9 +1015,13 @@ let SHOW_FPS = true;
       return set;
     }
     /** 更新窗体 */
-    update() {}
+    update() {
+      throw new Error('Window instance show have their own update method');
+    }
     /** 绘制演员 */
-    draw() {}
+    draw() {
+      throw new Error('Window instance show have their own draw method');
+    }
     /** 循环渲染 */
     anima() {
       this.update();
@@ -969,7 +1060,7 @@ let SHOW_FPS = true;
       this.anima();
 
       // fix 第一次加载的时候字体文件未加载完成造成的字体异常的问题
-      setTimeout(() => (this.bgImage = this.getBackground()), 10);
+      setTimeout(() => (this.bgImage = this.getBackground()), 500);
     }
 
     getBackground() {
@@ -1192,13 +1283,12 @@ let SHOW_FPS = true;
       ctx.fillText('1P', 465, 270);
       ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[0].life, 485, 290);
       ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[1], 468, 275);
-      // TODO fix
-      if (GAME_ARGS_CONFIG.PLAYERNUM === 2 || true) {
+      if (GAME_ARGS_CONFIG.PLAYERNUM === 2) {
         ctx.fillText('2P', 465, 330);
-        ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[0].life, 485, 350);
+        ctx.fillText(GAME_ARGS_CONFIG.PLAYERS[1].life, 485, 350);
         ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[1], 468, 335);
       }
-      return canvas;
+      return (this.background = canvas);
     }
 
     generateEnemyTank() {
@@ -1305,7 +1395,7 @@ let SHOW_FPS = true;
       // GAME_CURRENT_WINDOW = new WinBattle();
       fixMap(true);
       // Printer.copyright();
-    }, 30);
+    }, 100);
   })();
 
   setTimeout(() => {
