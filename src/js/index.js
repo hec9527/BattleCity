@@ -1316,7 +1316,6 @@ let SHOW_FPS = true;
         this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[1].tank || undefined, true);
       }
       this.anima();
-      new Wall({ word: this });
     }
 
     // 几乎不变的内容
@@ -1452,14 +1451,12 @@ let SHOW_FPS = true;
 
   (function main() {
     if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
-    setTimeout(() => {
-      GAME_CURRENT_WINDOW = new WinStart();
-      // GAME_CURRENT_WINDOW = new WinMapEdit();
-      // GAME_CURRENT_WINDOW = new WinRankPick();
-      // GAME_CURRENT_WINDOW = new WinBattle();
-      fixMap(true);
-      // Printer.copyright();
-    }, 100);
+    GAME_CURRENT_WINDOW = new WinStart();
+    // GAME_CURRENT_WINDOW = new WinMapEdit();
+    // GAME_CURRENT_WINDOW = new WinRankPick();
+    // GAME_CURRENT_WINDOW = new WinBattle();
+    fixMap(true);
+    // Printer.copyright();
   })();
 
   setTimeout(() => {
