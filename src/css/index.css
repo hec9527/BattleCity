@@ -22,13 +22,13 @@ body {
 }
 
 /* TODO 删除这个属性 */
-body::after {
+/* body::after {
   content: '';
   position: absolute;
   width: 1000000px;
   height: 100vh;
   background: #fffe;
-}
+} */
 
 #continer {
   overflow: hidden;

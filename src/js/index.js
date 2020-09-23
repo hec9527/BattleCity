@@ -275,6 +275,7 @@ let SHOW_FPS = true;
     };
     /** 每次播放生成新的播放对象，对于可以同时存在多个的音效有用 */
     this.play = function (fName) {
+      Printer.debug('播放音乐:', fName);
       if (!list.includes(fName)) {
         return Printer.error(`未注册的音频文件: ${fName}`);
       }
@@ -534,6 +535,12 @@ let SHOW_FPS = true;
           break;
         }
         case 4: {
+          GAME_ASSETS_SOUND.play('bomb');
+          this.word.getAllEntity().forEach((entity) => {
+            if (entity instanceof TankEnemy) {
+              entity.die(true);
+            }
+          });
           break;
         }
         case 5: {
@@ -606,7 +613,7 @@ let SHOW_FPS = true;
     die() {
       super.die();
       new Explode({ word: this.word, pos: [this.rect[0] + 16, this.rect[1] + 16] });
-      GAME_ASSETS_SOUND.play('bomb');
+      // GAME_ASSETS_SOUND.play('bomb');
     }
   }
 
@@ -721,7 +728,12 @@ let SHOW_FPS = true;
       this.tickChangeDir = 0;
     }
 
-    die() {
+    die(explode = false) {
+      if (explode) {
+        super.die();
+        this.onDie();
+        return;
+      }
       if (this.reward > 0) {
         --this.reward;
         new Reward({ word: this.word });
@@ -932,7 +944,7 @@ let SHOW_FPS = true;
     constructor(props) {
       super(props);
       this.rect = [...this.getRandomPos(), 32, 32];
-      this.type = 2 || (Math.random() * 6) | 0;
+      this.type = 4 || (Math.random() * 6) | 0;
       this.img = GAME_ASSETS_IMAGE.getBonus()[this.type];
       this.tick = 0;
       this.check();
@@ -990,6 +1002,11 @@ let SHOW_FPS = true;
         pre: new Set(),
         sub: new Set(),
       };
+
+      document.fonts.ready.then(() => {
+        this.getBackground && (this.background = this.getBackground());
+        Printer.info('字体加载完成');
+      });
     }
     /** 添加实体演员 */
     addEntity(entity) {
