@@ -189,8 +189,8 @@ let SHOW_FPS = true;
     let isPasued = false;
 
     window.addEventListener('keydown', (e) => {
-      if (e.preventDefault) e.preventDefault();
-      else e.returnValue = false;
+      // if (e.preventDefault) e.preventDefault();
+      // else e.returnValue = false;
       if ((isPasued && e.key === GAME_CONFIG_KEYS.p1.start) || !isPasued) {
         pressed.add(e.key);
       }
