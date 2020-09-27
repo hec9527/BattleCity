@@ -2,12 +2,12 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
-const resolve = (dir) => path.resolve(__dirname, './Typescript/', dir);
+const resolve = (dir) => path.resolve(__dirname, './src/', dir);
 
 module.exports = {
   mode: 'development',
 
-  entry: resolve('src/index.ts'),
+  entry: resolve('index.ts'),
 
   output: {
     path: resolve('dist'),
@@ -65,7 +65,7 @@ module.exports = {
     new HTMLWebpackPlugin({
       title: 'Battle City',
       filename: 'index.html',
-      template: './Typescript/index.html',
+      template: resolve('index.html'),
     }),
   ],
 };

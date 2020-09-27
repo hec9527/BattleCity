@@ -16,11 +16,11 @@ export function $(select: string) {
 
 /** 从页面获取canvas或者直接生成canvas */
 export function getCanvas(width: number, height: number, selecter: string) {
-  const el = (selecter ? document.getElementById(selecter) : document.createElement('canvas')) as HTMLCanvasElement;
-  const ctx = el.getContext('2d');
-  el.width = width;
-  el.height = height;
-  return { el, ctx };
+  const canvas = (selecter ? document.getElementById(selecter) : document.createElement('canvas')) as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  canvas.width = width;
+  canvas.height = height;
+  return { canvas, ctx };
 }
 
 /** 获取当前请求的路径 */
