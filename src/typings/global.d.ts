@@ -18,12 +18,14 @@ declare interface EntityElement {
   camp: number;
 
   die(): void;
-  update(): void;
+  update(list: EntityElement[]): void;
   draw(): void;
 }
 
 declare interface EntityMoveAbleElement extends EntityElement {
-  move(): void;
+  getNextRect(): EntityRect;
+  changeDir(dir: number): void;
+  move(entityList: EntityElement[]): void;
   isCollisionBorder(nextTickRect: EntityRect): void;
   isCollisionEntity(nextTickRect: EntityRect, rect: EntityRect): void;
 }
@@ -32,18 +34,17 @@ declare interface EntityMoveAbleOption {
   world: GameWorld;
   rect: EntityRect;
   img: CanvasImageSource;
+  dir?: number;
   camp?: number;
   speed?: number;
 }
 
-declare interface TankElement {
+declare interface TankElement extends EntityMoveAbleElement {
+  shoot(): void;
   changeImg(): void;
-  changeDir(dir: number): void;
 }
 
 declare interface TankOption extends EntityMoveAbleOption {
-  dir?: number;
-
   life?: number;
   level?: number;
   status?: number;
@@ -55,5 +56,39 @@ declare interface TankAllyElement extends TankElement {
 }
 
 declare interface TankAllyOption extends TankOption {
+  //
+}
+
+declare interface BulletElement extends EntityMoveAbleElement {
+  //
+}
+
+declare interface BulletOption extends EntityMoveAbleOption {
+  tank: TankElement;
+  dir: number;
+  camp: number;
+}
+
+declare interface TankEnemyElement extends TankElement {
+  //
+}
+
+declare interface TankEnemyOption extends TankOption {
+  //
+}
+
+declare interface RewardElement extends EntityElement {
+  //
+}
+
+declare interface RewardOption {
+  world: GameWorld;
+}
+
+declare interface BrickElement extends EntityElement {
+  //
+}
+
+declare interface BrickOption {
   //
 }

@@ -2,6 +2,8 @@
  * 键盘类
  */
 
+import KEYS from '../config/keys';
+
 class Keyboard {
   /** 键盘已经按下的按键 */
   private pressedKeys = new Set<String>();
@@ -16,6 +18,11 @@ class Keyboard {
   constructor() {
     document.addEventListener('keydown', (e) => {
       this.pressedKeys.add(e.key);
+      if ([KEYS.P2.Left, KEYS.P2.Up, KEYS.P2.Right, KEYS.P2.Down].includes(e.key as any)) {
+        e.preventDefault();
+        e.cancelBubble = true;
+        return false;
+      }
     });
     document.addEventListener('keyup', (e) => {
       this.pressedKeys.delete(e.key);

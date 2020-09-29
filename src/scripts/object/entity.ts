@@ -5,7 +5,7 @@
 
 import { getCanvas } from '../util/index';
 
-class Entity implements EntityElement {
+abstract class Entity implements EntityElement {
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
 
@@ -15,12 +15,12 @@ class Entity implements EntityElement {
     this.ctx = ctx;
   }
 
+  abstract changeImg(): void;
+
+  abstract update(list: EntityElement[]): void;
+
   die() {
     this.word.delEntity(this);
-  }
-
-  update() {
-    throw new Error('Every instance inherited from entity show have their own update method');
   }
 
   draw() {

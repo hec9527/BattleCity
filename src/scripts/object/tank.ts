@@ -2,9 +2,10 @@
  * 坦克类
  */
 
+import TankEnemy from './tankEnemy';
 import EntityMoveAble from './entityMoveAble';
 
-class Tank extends EntityMoveAble implements TankElement {
+abstract class Tank extends EntityMoveAble implements TankElement {
   protected dir: number;
   protected life: number;
   protected level: number;
@@ -20,29 +21,29 @@ class Tank extends EntityMoveAble implements TankElement {
     this.isProtected = false;
   }
 
-  changeImg() {
-    throw new Error('Tank instance should have thier own changeImg method');
+  move(entityList: EntityElement[]) {
+    const rect = this.getNextRect();
+
+    /** 未碰撞到边界 */
+    if (!this.isCollisionBorder(rect)) {
+      entityList.forEach((entity) => {
+        if (entity === this) return;
+
+        // if()
+
+        this.rect = [...rect];
+      });
+    } else if (this instanceof TankEnemy) {
+      this.changeDir();
+    }
   }
 
-  /**
-   * 实体移动方向
-   * @param dir
-   */
-  changeDir(dir: number) {
-    let [x, y, w, h] = this.rect;
+  shoot() {
+    //
+  }
 
-    this.dir = dir;
-
-    // 上下
-    if (this.dir % 2) {
-      y = Math.round(y / 16) * 16;
-    } else {
-      x = Math.round(x / 16) * 16;
-    }
-
-    this.rect = [x, y, w, h];
-
-    this.changeImg();
+  update() {
+    //
   }
 
   // TODO 完成奖励获取

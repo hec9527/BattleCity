@@ -15,7 +15,7 @@ export function $(select: string) {
 }
 
 /** 从页面获取canvas或者直接生成canvas */
-export function getCanvas(width: number, height: number, selecter: string) {
+export function getCanvas(width: number, height: number, selecter?: string) {
   const canvas = (selecter ? document.getElementById(selecter) : document.createElement('canvas')) as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   canvas.width = width;

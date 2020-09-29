@@ -4,17 +4,58 @@
 
 import Entity from './entity';
 
-class EntityMoveAble extends Entity implements EntityMoveAbleElement {
+interface Dirs {
+  [x: number]: Function;
+}
+
+abstract class EntityMoveAble extends Entity implements EntityMoveAbleElement {
+  protected dir: number;
   protected speed: number;
 
   constructor(option: EntityMoveAbleOption) {
     const { world, rect, img, camp } = option;
     super(world, rect, img, camp);
     this.speed = option.speed || 0;
+    this.dir = option.dir || 0;
   }
 
-  move() {
-    throw new Error('MoveAble entity should have thier own move method');
+  abstract move(list: EntityElement[]): void;
+
+  /**
+   * 获取实体移动之后的rect
+   */
+  getNextRect() {
+    let [x, y, w, h] = this.rect;
+
+    const dirs: Dirs = {
+      0: () => (y -= this.speed),
+      1: () => (x += this.speed),
+      2: () => (y += this.speed),
+      3: () => (x -= this.speed),
+    };
+    dirs[this.dir]();
+    return [x, y, w, h] as EntityRect;
+  }
+
+  /**
+   * 实体移动方向
+   * @param dir
+   */
+  changeDir(dir: number) {
+    let [x, y, w, h] = this.rect;
+
+    this.dir = dir;
+
+    // 上下
+    if (this.dir % 2) {
+      y = Math.round(y / 16) * 16;
+    } else {
+      x = Math.round(x / 16) * 16;
+    }
+
+    this.rect = [x, y, w, h];
+
+    this.changeImg();
   }
 
   /**
