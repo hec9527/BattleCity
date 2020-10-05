@@ -32,7 +32,7 @@ class Images {
   private _sprite: CacheSprite = {};
 
   private composePath(file: string): string {
-    return `/src/assets/img/${file}.png`;
+    return `@src/assets/img/${file}.png`;
   }
 
   constructor(callback?: () => void) {
@@ -57,8 +57,6 @@ class Images {
         })
     );
   }
-
-  //
 }
 
 export default Images;

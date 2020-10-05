@@ -28,7 +28,7 @@ module.exports = {
         use: 'ts-loader',
       },
       {
-        test: /\.scss$/,
+        test: /\.s[a|c]ss$/i,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
@@ -63,7 +63,7 @@ module.exports = {
     new HTMLWebpackPlugin({
       title: 'Battle City',
       filename: 'index.html',
-      template: resolve('index.html'),
+      template: resolve('index.html', 'public'),
     }),
   ],
 };

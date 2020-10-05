@@ -4,24 +4,24 @@
 
 import { getLocationPath as pwd } from './index';
 
-export class Print {
-  static debug(msg: string): void {
+export const Print = {
+  debug(msg: string): void {
     console.debug(`%cdebug: ${msg}`, 'color:#58C9B9');
-  }
+  },
 
-  static info(msg: string): void {
+  info(msg: string): void {
     console.info(`%cinfo: ${msg}`, 'color:#30A9DE');
-  }
+  },
 
-  static warn(msg: string): void {
+  warn(msg: string): void {
     console.warn(`%cwarn: ${msg}`, 'color:#f9c00c');
-  }
+  },
 
-  static error(msg: string): void {
+  error(msg: string): void {
     console.error(`%cerror: ${msg}`, 'color:#E53A40');
-  }
+  },
 
-  static copyright(): void {
+  copyright(): void {
     console.clear();
     console.log(
       '%c ',
@@ -39,7 +39,7 @@ export class Print {
       '%c广告位招租',
       'color:#abf;font-size:26px; padding:35px calc(50% - 65px); text-align:center;background: #abf3;'
     );
-  }
-}
+  },
+};
 
 export default Print;

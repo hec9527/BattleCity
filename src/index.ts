@@ -1,6 +1,6 @@
 import Print from './util/print';
 import Source from './loader/index';
-import './assets/scss/';
+import './assets/scss/index';
 
 // TODO Copyright 无法打印
 // Print.copyright();
@@ -9,6 +9,6 @@ import './assets/scss/';
 // Print.warn('warn');
 // Print.error('error');
 
-new Source(() => {
-  console.log('资源加载完毕');
-});
+// new Source(() => {
+//   console.log('资源加载完毕');
+// });

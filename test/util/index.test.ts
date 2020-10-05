@@ -11,7 +11,7 @@ import util, {
   getLocationPath,
   isOppositeDirection,
   Ticker,
-} from '../../src/util/index';
+} from '@src/util/index';
 
 describe('Util test', () => {
   describe('getCanvas function test', () => {

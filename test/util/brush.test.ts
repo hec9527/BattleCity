@@ -1,5 +1,5 @@
-import { brush } from '../../src/util/brush';
-import { getType } from '../../src/util/index';
+import { brush } from '@src/util/brush';
+import { getType } from '@src/util/index';
 
 describe('brush test', () => {
   test('brush should have property bg, main, misc', () => {
@@ -18,7 +18,11 @@ describe('brush test', () => {
   });
 
   test("brush's should have correct zIndex ", () => {
-    expect(brush.bg.canvas.style.zIndex).toBeLessThan(Number(brush.main.canvas.style.zIndex));
-    expect(brush.main.canvas.style.zIndex).toBeLessThan(Number(brush.misc.canvas.style.zIndex));
+    expect(Number(brush.bg.canvas.style.zIndex)).toBeLessThan(
+      Number(brush.main.canvas.style.zIndex)
+    );
+    expect(Number(brush.main.canvas.style.zIndex)).toBeLessThan(
+      Number(brush.misc.canvas.style.zIndex)
+    );
   });
 });
