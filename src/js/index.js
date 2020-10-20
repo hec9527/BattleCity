@@ -1395,6 +1395,7 @@ let SHOW_FPS = true;
     constructor() {
       super();
       this.isGameOver = false;
+      this.isGamePaused = false;
       this.coverHeight = 228;
       this.map = this.getMapDate();
       // 延迟定时器
@@ -1577,6 +1578,19 @@ let SHOW_FPS = true;
         this.ctx.fillStyle = '#e3e3e3';
         this.ctx.fillRect(0, 0, 516, this.coverHeight);
         this.ctx.fillRect(0, 456 - this.coverHeight, 516, this.coverHeight);
+      }
+    }
+
+    anima() {
+      console.log(1);
+      if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start)) {
+        this.isGamePaused = !this.isGamePaused;
+        GAME_ASSETS_SOUND.play('pause');
+      }
+      if (!this.isGamePaused) {
+        super.anima();
+      } else {
+        window.requestAnimationFrame(() => this.anima());
       }
     }
   }
