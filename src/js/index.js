@@ -858,7 +858,7 @@ let SHOW_FPS = true;
         } else if (entity instanceof Brick) {
           // TODO 子弹与铁块的碰撞存在bug
           /** 子弹与砖块的碰撞 */
-          if (isCollisionEntity(rect, entity.rectPos)) {
+          if (entity.collision && isCollisionEntity(rect, entity.rectPos)) {
             entity.die(this.level, () => this.die(true));
           }
         }
