@@ -17,7 +17,7 @@ let SHOW_FPS = true;
   const GAME_ASSETS_IMAGE = new Images();
   const GAME_ASSETS_SOUND = new Sound();
   const GAME_LONG_KEYBORAD = new KeyBorad();
-  const GAME_LONG_MAPDATA = []; // 地图数据
+  const GAME_LONG_MAPDATA = [...maps]; // 地图数据
   const GAME_CONFIG_CUSTOME_MAP = [];
   const GAME_CONFIG_KEYS = {
     p1: {
@@ -38,6 +38,7 @@ let SHOW_FPS = true;
       b: 'l', // double
     },
   };
+
   const GAME_ARGS_CONFIG = {
     RANK: 1, // 当前关卡
     MAPEDIT: false, // 自定义地图
@@ -172,12 +173,18 @@ let SHOW_FPS = true;
         '%c ',
         `background: url(${new Tool().getPwd()}img/UI.png);padding:0px 184px; line-height:136px;margin: 15px calc(50% - 184px);`
       );
-      console.log(`%c@author: hec9527\n@time:   2020-1-24\n@note: \n\n\thi，你好`, 'color:red;font-size:16px;');
+      console.log(
+        `%c@author: hec9527\n@time:   2020-1-24\n@note: \n\n\thi，你好`,
+        'color:red;font-size:16px;'
+      );
       console.log(
         `%c这是一个彩蛋，但是我还没想好写啥`,
         'color:#30A9DE;font-size:32px;padding:35px calc(50% - 256px);background:#30A9DE33;'
       );
-      console.log('%c广告位招租', 'color:#abf;font-size:26px; padding:35px calc(50% - 65px); text-align:center;background: #abf3');
+      console.log(
+        '%c广告位招租',
+        'color:#abf;font-size:26px; padding:35px calc(50% - 65px); text-align:center;background: #abf3'
+      );
     };
   }
 
@@ -208,6 +215,11 @@ let SHOW_FPS = true;
         return true;
       }
       return false;
+    };
+
+    /** 检测是否按下某个按键 */
+    this.isPressedAny = function (...keys) {
+      return keys.some((key) => pressed.has(key));
     };
 
     /** 是否已经按下某个按键， 可以快速连续响应 */
@@ -247,7 +259,18 @@ let SHOW_FPS = true;
   function Sound() {
     let isLoad = false;
     const path = (fName) => `./audio/${fName}.mp3`;
-    const list = ['attack', 'attackOver', 'bomb', 'eat', 'life', 'misc', 'move', 'over', 'pause', 'start'];
+    const list = [
+      'attack',
+      'attackOver',
+      'bomb',
+      'eat',
+      'life',
+      'misc',
+      'move',
+      'over',
+      'pause',
+      'start',
+    ];
     const loadSound = () => {
       return list.map((key) => {
         return new Promise((resolve, reject) => {
@@ -292,7 +315,17 @@ let SHOW_FPS = true;
     const sprite = {};
     const path = (fName) => `./img/${fName}.png`;
     // 修改图片顺序可能会导致精灵图获取出现问题
-    const list = ['bonus', 'brick', 'enemyTank', 'explode', 'getScore', 'getScoreDouble', 'myTank', 'tool', 'UI'];
+    const list = [
+      'bonus',
+      'brick',
+      'enemyTank',
+      'explode',
+      'getScore',
+      'getScoreDouble',
+      'myTank',
+      'tool',
+      'UI',
+    ];
     const loadImg = () => {
       return list.map((key, index) => {
         return new Promise((resolve, reject) => {
@@ -405,7 +438,6 @@ let SHOW_FPS = true;
       let lis = [];
       for (let i = 4; i < 8; i++) {
         const _lis = getTankSprite(`playerTwo${i}`, 6, i, i + 1);
-        console.log(_lis);
         lis = lis.concat(_lis);
       }
       return (sprite.playTwo = lis);
@@ -537,7 +569,7 @@ let SHOW_FPS = true;
         }
         case 4: {
           GAME_ASSETS_SOUND.play('bomb');
-          this.word.getAllEntity().forEach((entity) => {
+          this.word.entity.forEach((entity) => {
             if (entity instanceof TankEnemy) {
               entity.die(true);
             }
@@ -587,7 +619,10 @@ let SHOW_FPS = true;
             }
             // 坦克-砖块 碰撞检测
           } else if (entity instanceof Brick) {
-            //
+            if (entity.collision === 1 && isCollisionEntity(rect, entity.rectPos)) {
+              rect = [...this.rect];
+              this instanceof TankEnemy && this.changeDir();
+            }
           }
         });
         this.rect = [...rect];
@@ -606,7 +641,9 @@ let SHOW_FPS = true;
           3: [x, y + 12],
         };
         const rect = [...dirs[this.dir], 8, 8];
-        this.bullet.add(new Bullet({ dir: this.dir, camp: this.camp, rect, word: this.word, tank: this }));
+        this.bullet.add(
+          new Bullet({ dir: this.dir, camp: this.camp, rect, word: this.word, tank: this })
+        );
         this.tickShoot = this.camp === 1 ? 15 : 30;
         this instanceof TankAlly && GAME_ASSETS_SOUND.play('attack');
       }
@@ -622,12 +659,16 @@ let SHOW_FPS = true;
   /** 我方坦克类 */
   class TankAlly extends Tank {
     constructor(tank, props) {
+      if (tank) {
+        tank.rect = props.react;
+        tank.dir = props.dir;
+        return tank;
+      }
       super(props);
-      this.inherit(tank); // 部分数据继承上一关卡
       this.rect = props.rect;
       this.camp = 1;
       this.isDeputy = props.isDeputy;
-      this.imgList = props.isDeputy ? GAME_ASSETS_IMAGE.getPlayerTwoTank() : GAME_ASSETS_IMAGE.getPlayerOneTank();
+      this.imgList = GAME_ASSETS_IMAGE[props.isDeputy ? 'getPlayerTwoTank' : 'getPlayerOneTank']();
       this.img = this.changeImg();
       this.isProtected = false;
       this.addProtecter();
@@ -643,13 +684,6 @@ let SHOW_FPS = true;
         ++this.life > 2 && (this.life = 2);
       }
       console.log('tank upgrade:', this);
-    }
-
-    // 新的关卡继承上一关卡的坦克数据
-    inherit(tank) {
-      for (let key in tank) {
-        this[key] = tank[key];
-      }
     }
 
     /** 添加保护罩 */
@@ -671,40 +705,28 @@ let SHOW_FPS = true;
         this.bulletNum = 1;
         this.changeImg();
       } else {
+        this.word.allyTank[this.isDeputy ? 1 : 0] = undefined;
+        GAME_ARGS_CONFIG.PLAYERS[this.isDeputy ? 1 : 0].tank = undefined;
         super.die();
       }
     }
 
     update(lis) {
+      if (this.word.isGameOver) return;
       this.tickShoot > 0 && --this.tickShoot;
-      const PL = this.isDeputy ? GAME_CONFIG_KEYS.p2 : GAME_CONFIG_KEYS.p1;
-      if (GAME_LONG_KEYBORAD.isPressedKey(PL.up)) {
-        if (this.dir !== 0) {
-          this.changeDir(0);
-        } else {
-          this.move(lis);
-        }
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.right)) {
-        if (this.dir !== 1) {
-          this.changeDir(1);
-        } else {
-          this.move(lis);
-        }
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.down)) {
-        if (this.dir !== 2) {
-          this.changeDir(2);
-        } else {
-          this.move(lis);
-        }
-      } else if (GAME_LONG_KEYBORAD.isPressedKey(PL.left)) {
-        if (this.dir !== 3) {
-          this.changeDir(3);
-        } else {
-          this.move(lis);
-        }
-      }
+      const KEYS = GAME_CONFIG_KEYS[this.isDeputy ? 'p2' : 'p1'];
 
-      if (GAME_LONG_KEYBORAD.isTapKey(PL.a) || GAME_LONG_KEYBORAD.isPressedKey(PL.b)) {
+      ['up', 'right', 'down', 'left'].forEach((dir, index) => {
+        if (GAME_LONG_KEYBORAD.isPressedKey(KEYS[dir])) {
+          if (this.dir !== index) {
+            this.changeDir(index);
+          } else {
+            this.move(lis);
+          }
+        }
+      });
+
+      if (GAME_LONG_KEYBORAD.isPressedAny(KEYS.a, KEYS.b)) {
         this.shoot();
       }
     }
@@ -802,6 +824,7 @@ let SHOW_FPS = true;
       this.tank = props.tank;
       this.speed = props.speed || 4;
       this.img = GAME_ASSETS_IMAGE.getBullet()[this.dir];
+      this.level = props.level || 1;
     }
 
     update(EntityList) {
@@ -827,7 +850,11 @@ let SHOW_FPS = true;
             this.die(!entity.isProtected);
           }
         } else if (entity instanceof Brick) {
+          // TODO 子弹与铁块的碰撞存在bug
           /** 子弹与砖块的碰撞 */
+          if (isCollisionEntity(rect, entity.rectPos)) {
+            entity.die(this.level, () => this.die(true));
+          }
         }
       });
       this.rect = [...rect];
@@ -924,11 +951,13 @@ let SHOW_FPS = true;
 
     update() {
       this.rect = this.tank.rect;
+
       if (++this.tick % 5 === 0) {
         ++this.imgIndex > 1 && (this.imgIndex = 0);
         this.img = this.imgList[this.imgIndex];
       }
-      if (this.tick < 0) {
+      // TODO fix 300
+      if (this.tick >= 100 && false) {
         this.die();
       }
     }
@@ -946,7 +975,7 @@ let SHOW_FPS = true;
     constructor(props) {
       super(props);
       this.rect = [...this.getRandomPos(), 32, 32];
-      this.type = 4 || (Math.random() * 6) | 0;
+      this.type = (Math.random() * 6) | 0;
       this.img = GAME_ASSETS_IMAGE.getBonus()[this.type];
       this.tick = 0;
       this.check();
@@ -988,7 +1017,83 @@ let SHOW_FPS = true;
   class Brick extends Entity {
     constructor(props) {
       super(props);
+      this.index = props.index;
+      this.row = props.row;
+      this.col = props.col;
+      this.rect = [32 * props.col, 32 * props.row, 32, 32];
+      this.rectPos = [...this.rect];
+      this.img = GAME_ASSETS_IMAGE.getBrick()[props.index];
+
+      this.init();
     }
+
+    init() {
+      switch (this.index) {
+        // 不参与碰撞检测的部分
+        case 11: {
+          this.collision = 0;
+          this.ctx.globalCompositeOperation = 'source-over';
+        }
+        // 砖块/铁块 -- 缺少下部分
+        case 2:
+        case 7: {
+          this.rectPos[3] -= 16;
+          break;
+        }
+        // 砖块/铁块 -- 缺少左部分
+        case 3:
+        case 8: {
+          this.rectPos[0] += 16;
+          break;
+        }
+        // 砖块/铁块 -- 缺少上部分
+        case 4:
+        case 9: {
+          this.rectPos[1] += 16;
+          break;
+        }
+        // 砖块/铁块 -- 缺少右部分
+        case 5:
+        case 10: {
+          this.rectPos[2] -= 16;
+          break;
+        }
+        // 砖块/铁块 -- 围墙右上角
+        case 17:
+        case 19: {
+          const [x, y] = this.rectPos;
+          this.rectPos = [x, y + 16, 16, 16];
+          break;
+        }
+        // 砖块/铁块 -- 围墙左上角
+        case 18:
+        case 20: {
+          const [x, y] = this.rectPos;
+          this.rectPos = [x + 16, y + 16, 16, 16];
+          break;
+        }
+      }
+    }
+
+    // TODO 砖块缺角
+    die(level, callback = () => {}) {
+      if ([1, 2, 3, 4, 5, 17, 18].includes(this.index)) {
+        super.die();
+        callback();
+      } else if (level >= 2 && [6, 7, 8, 9, 10, 19, 20].includes(this.index)) {
+        super.die();
+        callback();
+      } else if (level >= 3 && this.index === 11) {
+        super.die();
+      } else if (this.index === 15) {
+        this.index++;
+        this.img = GAME_ASSETS_IMAGE.getBrick()[this.index];
+        this.word.isGameOver = true;
+        GAME_ASSETS_SOUND.play('misc');
+      }
+    }
+
+    update() {}
   }
 
   /** 我方boss围墙 */
@@ -1043,10 +1148,7 @@ let SHOW_FPS = true;
       this.tick = 0;
       this.FPS = 0;
       this.isOver = false;
-      this.entity = {
-        pre: new Set(),
-        sub: new Set(),
-      };
+      this.entity = new Set();
 
       document.fonts.ready.then(() => {
         this.getBackground && (this.background = this.getBackground());
@@ -1055,26 +1157,11 @@ let SHOW_FPS = true;
     }
     /** 添加实体演员 */
     addEntity(entity) {
-      if (entity.priority > 0) {
-        this.entity.pre.add(entity);
-      } else {
-        this.entity.sub.add(entity);
-      }
+      this.entity.add(entity);
     }
     /** 删除实体演员 */
     delEntity(entity) {
-      if (entity.priority > 0) {
-        this.entity.pre.delete(entity);
-      } else {
-        this.entity.sub.delete(entity);
-      }
-    }
-    /** 获取所有entity */
-    getAllEntity() {
-      const set = new Set();
-      this.entity.pre.forEach((entity) => set.add(entity));
-      this.entity.sub.forEach((entity) => set.add(entity));
-      return set;
+      this.entity.delete(entity);
     }
     /** 更新窗体 */
     update() {
@@ -1237,12 +1324,20 @@ let SHOW_FPS = true;
       // draw brick
       for (let col = 0; col <= 12; col++) {
         for (let row = 0; row <= 12; row++) {
-          this.ctx.drawImage(GAME_ASSETS_IMAGE.getBrick()[this.map[row][col]], col * 32 + 35, row * 32 + 20);
+          this.ctx.drawImage(
+            GAME_ASSETS_IMAGE.getBrick()[this.map[row][col]],
+            col * 32 + 35,
+            row * 32 + 20
+          );
         }
       }
       // draw flag
       this.flagTick.isTick() &&
-        this.ctx.drawImage(GAME_ASSETS_IMAGE.getPlayerOneTank()[0][0][0], this.flagPos.x * 32 + 35, this.flagPos.y * 32 + 20);
+        this.ctx.drawImage(
+          GAME_ASSETS_IMAGE.getPlayerOneTank()[0][0][0],
+          this.flagPos.x * 32 + 35,
+          this.flagPos.y * 32 + 20
+        );
     }
   }
 
@@ -1291,12 +1386,9 @@ let SHOW_FPS = true;
   class WinBattle extends Win {
     constructor() {
       super();
-      this.isBegin = false;
+      this.isGameOver = false;
       this.coverHeight = 228;
-      this.map =
-        GAME_ARGS_CONFIG.MAPEDIT || true
-          ? GAME_CONFIG_CUSTOME_MAP
-          : GAME_LONG_MAPDATA[GAME_ARGS_CONFIG.RANK] && (GAME_ARGS_CONFIG.MAPEDIT = false);
+      this.map = this.getMapDate();
       // 延迟定时器
       this.enemyBirthTick = null; // 敌人出生延迟   200
       this.allyTankBirthTick = null; // 我方坦克出生延迟 100
@@ -1306,16 +1398,32 @@ let SHOW_FPS = true;
       this.enemyTnakAlive = 0;
       this.game_reward = null; // 当前场景的奖励
       this.birthIndex = 0;
+      this.allyTank = [];
+      this.player = GAME_ARGS_CONFIG.PLAYERS;
+      this.isDouble = GAME_ARGS_CONFIG.PLAYERNUM === 2;
       // 相关绘制
       this.background = this.getBackground();
-      // start
-      if (GAME_ARGS_CONFIG.PLAYERS[0].life > 0 || GAME_ARGS_CONFIG.PLAYERS[0].tank) {
-        this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[0].tank || undefined);
-      }
-      if (GAME_ARGS_CONFIG.PLAYERNUM >= 2 && (GAME_ARGS_CONFIG.PLAYERS[1].life > 0 || GAME_ARGS_CONFIG.PLAYERS[1].tank)) {
-        this.generateAllyTank(GAME_ARGS_CONFIG.PLAYERS[1].tank || undefined, true);
-      }
+      this.initMap();
       this.anima();
+    }
+
+    getMapDate() {
+      if (GAME_ARGS_CONFIG.MAPEDIT) {
+        GAME_ARGS_CONFIG.MAPEDIT = false;
+        return GAME_CONFIG_CUSTOME_MAP;
+      } else {
+        return GAME_LONG_MAPDATA[GAME_ARGS_CONFIG.RANK];
+      }
+    }
+
+    initMap() {
+      console.log(this.map);
+      for (let row = 0; row < 13; row++) {
+        for (let col = 0; col < 13; col++) {
+          const index = this.map[row][col];
+          index !== 0 && new Brick({ word: this, row, col, index });
+        }
+      }
     }
 
     // 几乎不变的内容
@@ -1329,8 +1437,8 @@ let SHOW_FPS = true;
       ctx.font = '18px prstart, Songti';
       ctx.fillText(GAME_ARGS_CONFIG.RANK, 485, 420);
       // 敌方坦克标识
-      let x = 0;
-      let y = 0;
+      let x = 0,
+        y = 0;
       for (let i = 1; i <= this.enemyTnakRemain; ) {
         if (i++ % 2 === 0) {
           x++;
@@ -1372,76 +1480,92 @@ let SHOW_FPS = true;
       });
     }
 
-    generateAllyTank(inheritTank = { bulletNum: 2 }, isDeputy = false) {
+    generateAllyTank(inheritTank, isDeputy = false) {
       const rect = [isDeputy ? 256 : 128, 384, 32, 32];
       new BirthAnima({
         rect,
         word: this,
         onfinish: () => {
-          const tank = new TankAlly(inheritTank, { ...TANK_ALLY_OPTION, rect, isDeputy, word: this });
+          const tank = new TankAlly(inheritTank, {
+            ...TANK_ALLY_OPTION,
+            rect,
+            isDeputy,
+            word: this,
+          });
           console.log('我方坦克：', tank);
-          // TODO 添加生成我方坦克的逻辑  借life
-          GAME_ARGS_CONFIG.PLAYERS[isDeputy ? 1 : 0].life--;
         },
       });
       this.background = this.getBackground();
     }
 
-    update() {
-      // 拉幕效果
-      if (this.coverHeight > 0) {
-        this.coverHeight -= 10;
+    showGenerateAllyTank(isDeputy = false) {
+      const tank = this.allyTank[isDeputy ? 1 : 0];
+      const player = this.player[isDeputy ? 1 : 0];
+      const playerOther = this.isDouble && this.player[isDeputy ? 0 : 1];
+      const keys = GAME_CONFIG_KEYS[isDeputy ? 'p2' : 'p1'];
+      if (!tank) {
+        if (player.life > 0) {
+          player.life--;
+        } else if (
+          player.life <= 0 &&
+          playerOther.life > 0 &&
+          GAME_LONG_KEYBORAD.isPressedAny(keys.a, keys.b)
+        ) {
+          playerOther.life--;
+        } else {
+          return;
+        }
+        this.allyTank[isDeputy ? 1 : 0] = {};
+        this.generateAllyTank(player.tank || undefined, isDeputy);
       }
+    }
 
+    showGenerateEnemyTank() {
+      if (
+        this.enemyTnakRemain > 0 &&
+        this.enemyTnakAlive < 5 &&
+        (!this.enemyBirthTick || !this.enemyBirthTick.isCount())
+      ) {
+        Printer.info('生成敌方坦克');
+        this.generateEnemyTank();
+        this.enemyBirthTick = new CountDown(100);
+      }
+    }
+
+    checkGameOver() {
+      //
+    }
+
+    checkPassRound() {
+      //
+    }
+
+    update() {
       // 更新计时器
       this.enemyBirthTick && this.enemyBirthTick.update();
       this.allyTankBirthTick && this.allyTankBirthTick.update();
       this.rankPassTick && this.rankPassTick.update();
 
-      // 通关条件 -- 敌方坦克为0，场上敌方坦克为0
-      if (this.enemyTnakRemain <= 0 && this.enemyTnakAlive <= 0) {
-        // console.log('pass rank');
-      }
-      // 游戏结束
-      if (
-        (!GAME_ARGS_CONFIG.PLAYERS[0].tank && !GAME_ARGS_CONFIG.PLAYERS[0].life) ||
-        (GAME_ARGS_CONFIG.PLAYERNUM === 2 && !GAME_ARGS_CONFIG.PLAYERS[1].life && !GAME_ARGS_CONFIG.PLAYERS[1].tank)
-      ) {
-        console.log('game over', GAME_ARGS_CONFIG);
-      }
-
-      // 判断是否 需要生成敌方坦克
-      if (this.enemyTnakRemain > 0 && this.enemyTnakAlive < 5 && (!this.enemyBirthTick || !this.enemyBirthTick.isCount())) {
-        Printer.info('生成敌方坦克');
-        this.generateEnemyTank();
-        this.enemyBirthTick = new CountDown(100);
-      }
-
-      // 判断是否 需要生成我方坦克
-      if (!GAME_ARGS_CONFIG.PLAYERS[0].tank && GAME_ARGS_CONFIG.PLAYERS[0].life > 0) {
-        // 生成我方坦克1
-      }
-      if (GAME_ARGS_CONFIG.PLAYERNUM === 2 && !GAME_ARGS_CONFIG.PLAYERS[1].tank && GAME_ARGS_CONFIG.PLAYERS[1].life > 0) {
-        // 生成我方坦克2
-      }
+      this.checkPassRound();
+      this.checkGameOver();
+      this.showGenerateEnemyTank();
+      this.showGenerateAllyTank();
+      this.isDouble && this.showGenerateAllyTank(true);
 
       // 更新演员
-      const entityList = this.getAllEntity();
-      entityList.forEach((entity) => entity.update(entityList));
+      this.entity.forEach((entity) => entity.update(this.entity));
     }
 
     draw() {
       this.ctx.clearRect(35, 20, 416, 416);
       this.ctx.drawImage(this.background, 0, 0);
 
-      // pre绘制
-      this.entity.pre.forEach((item) => item.draw());
-
-      // comon绘制
-      this.entity.sub.forEach((item) => item.draw());
+      // 绘制演员
+      this.entity.forEach((item) => item.draw());
 
       // cover 绘制拉幕
       if (this.coverHeight > 0) {
+        this.coverHeight -= 10;
         this.ctx.fillStyle = '#e3e3e3';
         this.ctx.fillRect(0, 0, 516, this.coverHeight);
         this.ctx.fillRect(0, 456 - this.coverHeight, 516, this.coverHeight);
@@ -1450,7 +1574,8 @@ let SHOW_FPS = true;
   }
 
   (function main() {
-    if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad()) return setTimeout(() => main(), 10);
+    if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad())
+      return setTimeout(() => main(), 10);
     GAME_CURRENT_WINDOW = new WinStart();
     // GAME_CURRENT_WINDOW = new WinMapEdit();
     // GAME_CURRENT_WINDOW = new WinRankPick();
