@@ -671,6 +671,7 @@ let SHOW_FPS = true;
       this.imgList = GAME_ASSETS_IMAGE[props.isDeputy ? 'getPlayerTwoTank' : 'getPlayerOneTank']();
       this.img = this.changeImg();
       this.isProtected = false;
+      this.protecter = null;
       this.addProtecter();
 
       this.removeProtecter = this.removeProtecter.bind(this);
@@ -689,12 +690,17 @@ let SHOW_FPS = true;
     /** 添加保护罩 */
     addProtecter() {
       if (this.isProtected) this.removeProtecter();
-      new Protecter({ word: this.word, tank: this, onTimeOver: () => this.removeProtecter() });
+      this.protecter = new Protecter({
+        word: this.word,
+        tank: this,
+        onTimeOver: () => this.removeProtecter(),
+      });
       this.isProtected = true;
     }
 
     removeProtecter() {
       this.isProtected = false;
+      this.word.delEntity(this.protecter);
     }
 
     die() {
@@ -1088,8 +1094,10 @@ let SHOW_FPS = true;
       } else if (this.index === 15) {
         this.index++;
         this.img = GAME_ASSETS_IMAGE.getBrick()[this.index];
-        this.word.isGameOver = true;
+        // this.word.isGameOver = true;
         GAME_ASSETS_SOUND.play('misc');
+      } else {
+        callback();
       }
     }
 
