@@ -50,18 +50,22 @@ let SHOW_FPS = true;
     speed: 2,
     isDeputy: false,
   };
-  let GAME_CURRENT_WINDOW = null;
 
   for (let i = 0; i < 13; i++) GAME_CONFIG_CUSTOME_MAP.push(new Array(13).fill(0));
 
   /** 自定义地图可能会导致Boss和围墙 被修改，需要修复它们 */
   function fixMap(fixFence = false) {
+    GAME_CONFIG_CUSTOME_MAP[0][0] = 0;
+    GAME_CONFIG_CUSTOME_MAP[0][6] = 0;
+    GAME_CONFIG_CUSTOME_MAP[0][12] = 0;
+    // GAME_CONFIG_CUSTOME_MAP[11][5] = 18;
+    // GAME_CONFIG_CUSTOME_MAP[11][6] = 4;
+    // GAME_CONFIG_CUSTOME_MAP[11][7] = 17;
+    GAME_CONFIG_CUSTOME_MAP[12][4] = 0;
+    // GAME_CONFIG_CUSTOME_MAP[12][5] = 3;
     GAME_CONFIG_CUSTOME_MAP[12][6] = 15; // Boss 标志
-    GAME_CONFIG_CUSTOME_MAP[11][5] = 18;
-    GAME_CONFIG_CUSTOME_MAP[11][6] = 4;
-    GAME_CONFIG_CUSTOME_MAP[11][7] = 17;
-    GAME_CONFIG_CUSTOME_MAP[12][5] = 3;
-    GAME_CONFIG_CUSTOME_MAP[12][7] = 5;
+    // GAME_CONFIG_CUSTOME_MAP[12][7] = 5;
+    GAME_CONFIG_CUSTOME_MAP[12][8] = 0;
     console.log('fixmap --> ', GAME_CONFIG_CUSTOME_MAP);
   }
 
@@ -1029,8 +1033,17 @@ let SHOW_FPS = true;
       this.rect = [32 * props.col, 32 * props.row, 32, 32];
       this.rectPos = [...this.rect];
       this.img = GAME_ASSETS_IMAGE.getBrick()[props.index];
+      this.isWallBrick = this.checkIsWallBrick();
 
       this.init();
+    }
+
+    checkIsWallBrick() {
+      return (
+        [11, 12].includes(this.row) &&
+        [5, 6, 7].includes(this.col) &&
+        !(this.col === 12 && this.row === 6)
+      );
     }
 
     init() {
@@ -1082,22 +1095,38 @@ let SHOW_FPS = true;
     }
 
     // TODO 砖块缺角
+    reduce(level) {
+      super.die();
+    }
+
     die(level, callback = () => {}) {
-      if ([1, 2, 3, 4, 5, 17, 18].includes(this.index)) {
-        super.die();
-        callback();
-      } else if (level >= 2 && [6, 7, 8, 9, 10, 19, 20].includes(this.index)) {
-        super.die();
-        callback();
-      } else if (level >= 3 && this.index === 11) {
-        super.die();
-      } else if (this.index === 15) {
+      // 三级子弹可以消除草丛
+      if (level >= 3) {
+        if (this.index === 11) {
+          super.die();
+        }
+      }
+      // 2级的子弹可以打碎铁块
+      if (level >= 2) {
+        if ([6, 7, 8, 9, 10, 19, 20].includes(this.index)) {
+          this.reduce(level);
+          callback();
+        }
+      }
+      // 1级的子弹可以打碎砖块
+      if (level >= 1) {
+        if ([1, 2, 3, 4, 5, 17, 18].includes(this.index)) {
+          this.reduce(level);
+          callback();
+        }
+      }
+      // 我方boss受到攻击
+      if (this.index === 15) {
         this.index++;
         this.img = GAME_ASSETS_IMAGE.getBrick()[this.index];
         // this.word.isGameOver = true;
         GAME_ASSETS_SOUND.play('misc');
-      } else {
-        callback();
+        Printer.error('游戏结束');
       }
     }
 
@@ -1237,10 +1266,10 @@ let SHOW_FPS = true;
     taggleWindow() {
       console.log('start');
       if (this.cPosIndex === 2) {
-        GAME_CURRENT_WINDOW = new WinMapEdit();
+        new WinMapEdit();
         console.log('地图编辑器');
       } else {
-        GAME_CURRENT_WINDOW = new WinRankPick();
+        new WinRankPick();
         console.log('关卡选择');
         if (this.cPosIndex === 1) {
           GAME_ARGS_CONFIG.PLAYERNUM = 2;
@@ -1287,7 +1316,7 @@ let SHOW_FPS = true;
       fixMap();
       this.isOver = true;
       GAME_ARGS_CONFIG.MAPEDIT = true;
-      setTimeout(() => (GAME_CURRENT_WINDOW = new WinStart()), 0);
+      setTimeout(() => new WinStart(), 0);
     }
 
     update() {
@@ -1370,7 +1399,7 @@ let SHOW_FPS = true;
         this.listenKey = false;
         setTimeout(() => (this.isOver = true), 50);
         GAME_ASSETS_SOUND.play('start');
-        GAME_CURRENT_WINDOW = new WinBattle();
+        new WinBattle();
       }
     }
 
@@ -1582,7 +1611,6 @@ let SHOW_FPS = true;
     }
 
     anima() {
-      console.log(1);
       if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start)) {
         this.isGamePaused = !this.isGamePaused;
         GAME_ASSETS_SOUND.play('pause');
@@ -1598,10 +1626,10 @@ let SHOW_FPS = true;
   (function main() {
     if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad())
       return setTimeout(() => main(), 10);
-    GAME_CURRENT_WINDOW = new WinStart();
-    // GAME_CURRENT_WINDOW = new WinMapEdit();
-    // GAME_CURRENT_WINDOW = new WinRankPick();
-    // GAME_CURRENT_WINDOW = new WinBattle();
+    new WinStart();
+    // new WinMapEdit();
+    // new WinRankPick();
+    // new WinBattle();
     fixMap(true);
     // Printer.copyright();
   })();
