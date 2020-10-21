@@ -169,3 +169,6 @@ const maps = [
     [0, 0, 0, 5, 0, 3, 15, 5, 0, 0, 5, 0, 0],
   ],
 ];
+
+const GAME_LONG_MAPDATA = [...maps]; // 地图数据
+const GAME_CONFIG_CUSTOME_MAP = [];
