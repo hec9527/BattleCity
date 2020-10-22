@@ -29,7 +29,7 @@ class WinBattle extends Win {
   getMapDate() {
     if (GAME_ARGS_CONFIG.MAPEDIT) {
       GAME_ARGS_CONFIG.MAPEDIT = false;
-      return GAME_CONFIG_CUSTOME_MAP;
+      return GAME_LONG_MAPDATA[0];
     } else {
       return GAME_LONG_MAPDATA[GAME_ARGS_CONFIG.RANK];
     }
@@ -82,7 +82,7 @@ class WinBattle extends Win {
     // 敌方坦克标识
     let [x, y] = [0, 0];
     for (let i = 1; i <= this.enemyTnakRemain; ) {
-      i++ % 2 === 0 ? x++ : x--, y++;
+      i++ % 2 === 0 ? x++ : (x--, y++);
       ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[0], 480 + x * 16, 25 + y * 16);
     }
     // 我方坦克标识

@@ -4,7 +4,7 @@
 class WinMapEdit extends Win {
   constructor() {
     super();
-    this.map = GAME_CONFIG_CUSTOME_MAP;
+    this.map = GAME_LONG_MAPDATA[0];
     this.flagPos = { x: 0, y: 0 };
     this.flagTick = new Tickers(15);
     this.anima();

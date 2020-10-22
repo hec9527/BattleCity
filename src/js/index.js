@@ -12,13 +12,11 @@
 let SHOW_FPS = true;
 
 window.addEventListener('load', () => {
-  for (let i = 0; i < 13; i++) GAME_CONFIG_CUSTOME_MAP.push(new Array(13).fill(0));
-
   (function main() {
     if (!GAME_ASSETS_IMAGE.isLoad() || !GAME_ASSETS_SOUND.isLoad())
       return setTimeout(() => main(), 10);
     new WinStart();
-    fixMap(true);
+    // fixMap(true);
     // Printer.copyright();
   })();
 

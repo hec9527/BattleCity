@@ -100,16 +100,17 @@ function getCanvas(w, h, c) {
  * 需要修复它们
  */
 function fixMap(fixFence = false) {
-  GAME_CONFIG_CUSTOME_MAP[0][0] = 0;
-  GAME_CONFIG_CUSTOME_MAP[0][6] = 0;
-  GAME_CONFIG_CUSTOME_MAP[0][12] = 0;
-  // GAME_CONFIG_CUSTOME_MAP[11][5] = 18;
-  // GAME_CONFIG_CUSTOME_MAP[11][6] = 4;
-  // GAME_CONFIG_CUSTOME_MAP[11][7] = 17;
-  GAME_CONFIG_CUSTOME_MAP[12][4] = 0;
-  // GAME_CONFIG_CUSTOME_MAP[12][5] = 3;
-  GAME_CONFIG_CUSTOME_MAP[12][6] = 15; // Boss 标志
-  // GAME_CONFIG_CUSTOME_MAP[12][7] = 5;
-  GAME_CONFIG_CUSTOME_MAP[12][8] = 0;
-  console.log('fixmap --> ', GAME_CONFIG_CUSTOME_MAP);
+  const MAP = GAME_LONG_MAPDATA[0];
+  MAP[0][0] = 0;
+  MAP[0][6] = 0;
+  MAP[0][12] = 0;
+  // MAP[11][5] = 18;
+  // MAP[11][6] = 4;
+  // MAP[11][7] = 17;
+  MAP[12][4] = 0;
+  // MAP[12][5] = 3;
+  MAP[12][6] = 15; // Boss 标志
+  // MAP[12][7] = 5;
+  MAP[12][8] = 0;
+  console.log('fixmap --> ', MAP);
 }
