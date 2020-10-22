@@ -32,13 +32,13 @@ class WinStart extends Win {
   }
 
   taggleWindow() {
-    console.log('start');
+    Printer.info('start');
     if (this.cPosIndex === 2) {
       new WinMapEdit();
-      console.log('地图编辑器');
+      Printer.info('地图编辑器');
     } else {
       new WinRankPick();
-      console.log('关卡选择');
+      Printer.info('关卡选择');
       if (this.cPosIndex === 1) {
         GAME_ARGS_CONFIG.PLAYERNUM = 2;
         GAME_ARGS_CONFIG.PLAYERS.push({ life: 3, tank: null });

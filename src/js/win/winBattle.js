@@ -36,11 +36,35 @@ class WinBattle extends Win {
   }
 
   initMap() {
+    const fillBrick = [1, 6, 11, 12, 13, 14, 15, 16];
+    const part0 = [2, 5, 7, 10]; // 包含 0 部分 左上
+    const part1 = [2, 3, 7, 8]; // 包含 1 部分  右上
+    const part2 = [4, 5, 9, 10, 17, 19]; // 包含 2 部分  左下
+    const part3 = [3, 4, 8, 9, 18, 20]; // 包含 3 部分  右下
+
     console.log(this.map);
     for (let row = 0; row < 13; row++) {
       for (let col = 0; col < 13; col++) {
         const index = this.map[row][col];
-        index !== 0 && new Brick({ word: this, row, col, index });
+        const common = { word: this, row, col, index };
+        if (fillBrick.includes(index)) {
+          new Brick({ word: this, row, col, index });
+        } else {
+          const x = col * 32,
+            y = row * 32;
+          if (part0.includes(index)) {
+            new BrickFragment({ ...common, pos: [x, y] });
+          }
+          if (part1.includes(index)) {
+            new BrickFragment({ ...common, pos: [x + 16, y] });
+          }
+          if (part2.includes(index)) {
+            new BrickFragment({ ...common, pos: [x, y + 16] });
+          }
+          if (part3.includes(index)) {
+            new BrickFragment({ ...common, pos: [x + 16, y + 16] });
+          }
+        }
       }
     }
   }
@@ -56,15 +80,9 @@ class WinBattle extends Win {
     ctx.font = '18px prstart, Songti';
     ctx.fillText(GAME_ARGS_CONFIG.RANK, 485, 420);
     // 敌方坦克标识
-    let x = 0,
-      y = 0;
+    let [x, y] = [0, 0];
     for (let i = 1; i <= this.enemyTnakRemain; ) {
-      if (i++ % 2 === 0) {
-        x++;
-      } else {
-        x--;
-        y++;
-      }
+      i++ % 2 === 0 ? x++ : x--, y++;
       ctx.drawImage(GAME_ASSETS_IMAGE.getTankFlag()[0], 480 + x * 16, 25 + y * 16);
     }
     // 我方坦克标识

@@ -36,10 +36,9 @@ class Bullet extends Entity {
           this.die(!entity.isProtected);
         }
       } else if (entity instanceof Brick) {
-        // TODO 子弹与铁块的碰撞存在bug
-        /** 子弹与砖块的碰撞 */
-        if (entity.collision && isCollisionEntity(rect, entity.rectPos)) {
-          entity.die(this.level, () => this.die(true));
+        /** 子弹与砖块的碰撞, 砖块碎片也属于砖块，处理逻辑一样 */
+        if (isCollisionEntity(rect, entity.rect)) {
+          entity.die(this, () => this && this.die(true));
         }
       }
     });

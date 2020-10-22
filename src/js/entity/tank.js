@@ -29,9 +29,9 @@ class Tank extends Entity {
 
     // 上下
     if (this.dir % 2) {
-      y = Math.round(y / 16) * 16;
+      y = Math.round(y / 8) * 8;
     } else {
-      x = Math.round(x / 16) * 16;
+      x = Math.round(x / 8) * 8;
     }
 
     this.rect = [x, y, w, h];
@@ -113,7 +113,7 @@ class Tank extends Entity {
           }
           // 坦克-砖块 碰撞检测
         } else if (entity instanceof Brick) {
-          if (entity.collision === 1 && isCollisionEntity(rect, entity.rectPos)) {
+          if (entity.collision === 1 && isCollisionEntity(rect, entity.rect)) {
             rect = [...this.rect];
             this instanceof TankEnemy && this.changeDir();
           }

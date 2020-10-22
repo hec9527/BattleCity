@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
       return setTimeout(() => main(), 10);
     new WinStart();
     fixMap(true);
-    Printer.copyright();
+    // Printer.copyright();
   })();
 
   setTimeout(() => {
@@ -28,6 +28,24 @@ window.addEventListener('load', () => {
     // ctx.fillRect(0, 0, canvas.width, canvas.height);
     let img = GAME_ASSETS_IMAGE.getEnemyTankStrong();
 
+    // const word = {
+    //   entity: new Set(),
+    //   addEntity: function (e) {
+    //     this.entity.add(e);
+    //   },
+    //   delEntity: function (e) {
+    //     this.entity.delete(e);
+    //   },
+    //   anima() {
+    //     this.entity.forEach((e) => e.update() || e.draw());
+    //     requestAnimationFrame(() => this.anima());
+    //     console.log(this);
+    //   },
+    // };
+
+    // new BrickFragment({ word, col: 1, row: 1, index: 3, pos: [40, 50] });
+
+    // word.anima();
     // console.log(img);
     // [类型][普通/带奖励][方向][形态]   类型=3 奖励0-3
     // img = img[3][0];

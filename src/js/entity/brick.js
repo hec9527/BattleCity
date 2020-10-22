@@ -1,5 +1,15 @@
 /**
  * 砖块类
+ * 完整的32*32的砖块
+ * 普通砖块受到攻击，变成砖块碎片 BrickFragment
+ * 完整的砖块索引 1，6，11，12，13，14，15，16
+ *
+ * 变成碎片之后，按土砖块举例
+ * |  16*16  |  16*16  |
+ * --------------------
+ * |  16*16  |  16*16  |
+ *
+ * 每个fragment 都有自己的rect，单独处理碰撞检测
  */
 class Brick extends Entity {
   constructor(props) {
@@ -8,11 +18,12 @@ class Brick extends Entity {
     this.row = props.row;
     this.col = props.col;
     this.rect = [32 * props.col, 32 * props.row, 32, 32];
-    this.rectPos = [...this.rect];
     this.img = GAME_ASSETS_IMAGE.getBrick()[props.index];
     this.isWallBrick = this.checkIsWallBrick();
 
-    this.init();
+    if (this.index === 11) {
+      this.collision = 0;
+    }
   }
 
   checkIsWallBrick() {
@@ -23,87 +34,53 @@ class Brick extends Entity {
     );
   }
 
-  init() {
-    switch (this.index) {
-      // 不参与碰撞检测的部分
-      case 11: {
-        this.collision = 0;
-        this.ctx.globalCompositeOperation = 'source-over';
-      }
-      // 砖块/铁块 -- 缺少下部分
-      case 2:
-      case 7: {
-        this.rectPos[3] -= 16;
-        break;
-      }
-      // 砖块/铁块 -- 缺少左部分
-      case 3:
-      case 8: {
-        this.rectPos[0] += 16;
-        break;
-      }
-      // 砖块/铁块 -- 缺少上部分
-      case 4:
-      case 9: {
-        this.rectPos[1] += 16;
-        break;
-      }
-      // 砖块/铁块 -- 缺少右部分
-      case 5:
-      case 10: {
-        this.rectPos[2] -= 16;
-        break;
-      }
-      // 砖块/铁块 -- 围墙右上角
-      case 17:
-      case 19: {
-        const [x, y] = this.rectPos;
-        this.rectPos = [x, y + 16, 16, 16];
-        break;
-      }
-      // 砖块/铁块 -- 围墙左上角
-      case 18:
-      case 20: {
-        const [x, y] = this.rectPos;
-        this.rectPos = [x + 16, y + 16, 16, 16];
-        break;
-      }
-    }
-  }
-
-  // TODO 砖块缺角
-  reduce(level) {
+  broken() {
+    const common = { word: this.word, index: this.index, row: this.row, col: this.col };
+    const [x, y] = this.rect;
+    const POS = [
+      [x, y],
+      [x + 16, y],
+      [x, y + 16],
+      [x + 16, y + 16],
+    ];
+    POS.forEach((pos) => new BrickFragment({ ...common, pos }));
     super.die();
   }
 
-  die(level, callback = () => {}) {
-    // 三级子弹可以消除草丛
-    if (level >= 3) {
-      if (this.index === 11) {
-        super.die();
+  /**
+   * 调用callback之后，子弹死亡，
+   * 子弹在同时碰撞两个砖块时, 如果撞击第一个砖块时就死亡，
+   * 则第二个砖块无法受到伤害，处理方法，延迟死亡
+   */
+  die({ level }, callback = () => {}) {
+    switch (this.index) {
+      // 6级子弹可以消除草丛
+      case 11: {
+        level >= 6 && super.die();
+        break;
       }
-    }
-    // 2级的子弹可以打碎铁块
-    if (level >= 2) {
-      if ([6, 7, 8, 9, 10, 19, 20].includes(this.index)) {
-        this.reduce(level);
+      // 4级的子弹可以打碎铁块
+      case 6: {
+        level >= 4 && this.broken();
         callback();
+        break;
       }
-    }
-    // 1级的子弹可以打碎砖块
-    if (level >= 1) {
-      if ([1, 2, 3, 4, 5, 17, 18].includes(this.index)) {
-        this.reduce(level);
+      // 1级的子弹可以打碎砖块
+      case 1: {
+        this.broken();
         callback();
+        break;
       }
-    }
-    // 我方boss受到攻击
-    if (this.index === 15) {
-      this.index++;
-      this.img = GAME_ASSETS_IMAGE.getBrick()[this.index];
-      // this.word.isGameOver = true;
-      GAME_ASSETS_SOUND.play('misc');
-      Printer.error('游戏结束');
+      // 我方boss受到攻击
+      case 15: {
+        this.index++;
+        this.img = GAME_ASSETS_IMAGE.getBrick()[this.index];
+        // TODO GAME over
+        // this.word.isGameOver = true;
+        GAME_ASSETS_SOUND.play('misc');
+        Printer.error('游戏结束');
+        break;
+      }
     }
   }
 

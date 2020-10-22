@@ -28,7 +28,6 @@ class TankAlly extends Tank {
     } else {
       ++this.life > 2 && (this.life = 2);
     }
-    console.log('tank upgrade:', this);
   }
 
   /** 添加保护罩 */
