@@ -1,17 +1,8 @@
 {
-  "name": "battlecity",
+  "name": "battle-city",
   "version": "0.0.1",
   "description": "Battle City base on H5, play and  enjoy it",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "jest --coverage --config ./jest.config.js",
-    "dev": "webpack-dev-server --progress",
-    "reinstall": "rm -rf node_modules && npm i",
-    "tsc": "cd Typescript && tsc -w"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/hec9527/BattleCity.git"
@@ -19,7 +10,9 @@
   "keywords": [
     "Javascript",
     "h5",
-    "canvas"
+    "canvas",
+    "坦克大战",
+    "battlecity"
   ],
   "author": {
     "name": "hec9527",
@@ -29,20 +22,5 @@
   "bugs": {
     "url": "https://github.com/hec9527/BattleCity/issues"
   },
-  "homepage": "https://github.com/hec9527/BattleCity#readme",
-  "devDependencies": {
-    "css-loader": "^4.3.0",
-    "file-loader": "^6.1.0",
-    "html-webpack-plugin": "^4.4.1",
-    "jest": "^26.1.0",
-    "sass": "^1.26.10",
-    "sass-loader": "^10.0.2",
-    "style-loader": "^1.2.1",
-    "ts-loader": "^8.0.3",
-    "typescript": "^3.9.7",
-    "url-loader": "^4.1.0",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
-  }
+  "homepage": "https://github.com/hec9527/BattleCity#readme"
 }

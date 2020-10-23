@@ -1,29 +1,20 @@
 /**
- * 我方boss围墙
+ * # 我方boss围墙
+ * ```
+ * 基础围墙由地图初始化的时候构建，
+ *
+ * 此处围墙旨在玩家获得铁锹之后增强围墙
+ * ```
  */
-class Wall extends Entity {
+class Wall {
   constructor(props) {
     super(props);
     this.tick = 0;
     this.buildWall(true);
-    // TODO 完成 Brick 之后再来完成围墙
   }
 
   buildWall(iron = false) {
-    const map = this.word.map;
-    if (iron) {
-      map[11][5] = 20;
-      map[11][6] = 9;
-      map[11][7] = 19;
-      map[12][5] = 8;
-      map[12][7] = 10;
-    } else {
-      map[11][5] = 18;
-      map[11][6] = 4;
-      map[11][7] = 17;
-      map[12][5] = 3;
-      map[12][7] = 5;
-    }
+    //
   }
 
   update() {

@@ -5,6 +5,7 @@ class WinBattle extends Win {
   constructor() {
     super();
     this.isGameOver = false;
+    this.isGameBegin = false;
     this.isGamePaused = false;
     this.coverHeight = 228;
     this.map = this.getMapDate();
@@ -206,11 +207,12 @@ class WinBattle extends Win {
       this.ctx.fillStyle = '#e3e3e3';
       this.ctx.fillRect(0, 0, 516, this.coverHeight);
       this.ctx.fillRect(0, 456 - this.coverHeight, 516, this.coverHeight);
+      this.coverHeight <= 0 && (this.isGameBegin = true);
     }
   }
 
   anima() {
-    if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start)) {
+    if (GAME_LONG_KEYBORAD.isTapKey(GAME_CONFIG_KEYS.p1.start) && this.isGameBegin) {
       this.isGamePaused = !this.isGamePaused;
       GAME_ASSETS_SOUND.play('pause');
     }
