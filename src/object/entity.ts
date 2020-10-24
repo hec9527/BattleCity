@@ -5,14 +5,15 @@
 
 import { getCanvas } from '../util/index';
 import {
-  GAME_BATTLEFIELD_PADDING_LEFT as LEFT,
-  GAME_BATTLEFIELD_PADDING_TOP as TOP,
+  GAME_BATTLEFIELD_PADDING_LEFT as offsetX,
+  GAME_BATTLEFIELD_PADDING_TOP as offsetY,
 } from '../config/const';
 
 abstract class Entity {
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
-  public isCollision: boolean = true;
+  /** 是否参与碰撞检测 */
+  public isCollision = true;
 
   constructor(
     protected world: GameWorld,
@@ -30,12 +31,12 @@ abstract class Entity {
 
   abstract update(list: Entity[]): void;
 
-  public die() {
+  public die(): void {
     this.world.delEntity(this);
   }
 
-  protected draw() {
-    this.ctx.drawImage(this.img, this.rect[0] + LEFT, this.rect[1] + TOP);
+  protected draw(): void {
+    this.ctx.drawImage(this.img, this.rect[0] + offsetX, this.rect[1] + offsetY);
   }
 }
 
