@@ -10,11 +10,11 @@ abstract class Entity {
   protected ctx: CanvasRenderingContext2D;
   public isCollision: boolean = true;
 
-  constructor(protected word: GameWorld, public rect: EntityRect, protected img: CanvasImageSource, public camp: Camp = 'neutral') {
+  constructor(protected world: GameWorld, public rect: EntityRect, protected img: CanvasImageSource, public camp: Camp = 'neutral') {
     const { canvas, ctx } = getCanvas(516, 456, 'canvas');
     this.canvas = canvas;
     this.ctx = ctx;
-    this.word.addEntity(this);
+    this.world.addEntity(this);
   }
 
   protected abstract changeImg(): void;
@@ -22,7 +22,7 @@ abstract class Entity {
   abstract update(list: Entity[]): void;
 
   public die() {
-    this.word.delEntity(this);
+    this.world.delEntity(this);
   }
 
   protected draw() {
