@@ -8,22 +8,24 @@ import { getCanvas } from '../util/index';
 abstract class Entity {
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
+  public isCollision: boolean = true;
 
-  constructor(protected word: GameWorld, public rect: EntityRect, protected img: CanvasImageSource, public camp: number = 0) {
+  constructor(protected word: GameWorld, public rect: EntityRect, protected img: CanvasImageSource, public camp: Camp = 'neutral') {
     const { canvas, ctx } = getCanvas(516, 456, 'canvas');
     this.canvas = canvas;
     this.ctx = ctx;
+    this.word.addEntity(this);
   }
 
-  abstract changeImg(): void;
+  protected abstract changeImg(): void;
 
   abstract update(list: Entity[]): void;
 
-  die() {
+  public die() {
     this.word.delEntity(this);
   }
 
-  draw() {
+  protected draw() {
     this.ctx.drawImage(this.img, this.rect[0] + 35, this.rect[1] + 20);
   }
 }
