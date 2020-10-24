@@ -4,30 +4,23 @@
 
 import Entity from './entity';
 
-interface Dirs {
-  [x: number]: Function;
-}
-
-abstract class EntityMoveAble extends Entity implements EntityMoveAbleElement {
-  protected dir: number;
+abstract class EntityMoveAble extends Entity {
+  protected dir: Direction;
   protected speed: number;
 
-  constructor(option: EntityMoveAbleOption) {
+  constructor(option: MoveAbleEntityOption) {
     const { world, rect, img, camp } = option;
     super(world, rect, img, camp);
-    this.speed = option.speed || 0;
     this.dir = option.dir || 0;
+    this.speed = option.speed || 0;
   }
 
-  abstract move(list: EntityElement[]): void;
+  protected abstract move(list: Entity[]): void;
 
-  /**
-   * 获取实体移动之后的rect
-   */
-  getNextRect() {
+  /** 获取实体移动之后的rect */
+  protected getNextRect() {
     let [x, y, w, h] = this.rect;
-
-    const dirs: Dirs = {
+    const dirs = {
       0: () => (y -= this.speed),
       1: () => (x += this.speed),
       2: () => (y += this.speed),
@@ -38,29 +31,8 @@ abstract class EntityMoveAble extends Entity implements EntityMoveAbleElement {
   }
 
   /**
-   * 实体移动方向
-   * @param dir
-   */
-  changeDir(dir: number) {
-    let [x, y, w, h] = this.rect;
-
-    this.dir = dir;
-
-    // 上下
-    if (this.dir % 2) {
-      y = Math.round(y / 16) * 16;
-    } else {
-      x = Math.round(x / 16) * 16;
-    }
-
-    this.rect = [x, y, w, h];
-
-    this.changeImg();
-  }
-
-  /**
    * 检测下一帧是否碰撞边界
-   * @param nextTickRect
+   * @param {EntityRect} nextTickRect
    * @return boolean
    */
   isCollisionBorder(nextTickRect: EntityRect) {
@@ -69,7 +41,10 @@ abstract class EntityMoveAble extends Entity implements EntityMoveAbleElement {
   }
 
   /**
-   * 检测下一帧是否碰撞其它坦克
+   * 检测下一帧是否会碰撞到其它实体
+   * @param {EntityRect} nextTickRect
+   * @param {EntityRect} rect
+   * @return boolean
    */
   isCollisionEntity(nextTickRect: EntityRect, rect: EntityRect) {
     const [x1, y1, w1, h1] = nextTickRect;
