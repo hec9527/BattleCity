@@ -7,14 +7,23 @@
  * ```
  */
 class Wall {
-  constructor(props) {
-    super(props);
+  static instance = null;
+
+  constructor(word) {
+    if (Wall.instance) Wall.instance.die;
+    Wall.instance = this;
+
     this.tick = 0;
-    this.buildWall(true);
+    this.wallList = [];
+    this.word = word;
+    this.word.addEntity(this);
+    this.init();
   }
 
-  buildWall(iron = false) {
-    //
+  init() {
+    const list = [
+      //
+    ];
   }
 
   update() {
@@ -28,6 +37,10 @@ class Wall {
         this.buildWall(true);
       }
     }
+  }
+
+  die() {
+    this.word.delEntity(this);
   }
 
   draw() {}
