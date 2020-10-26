@@ -26,18 +26,18 @@ class Keyboard {
     });
     document.addEventListener('keyup', (e) => {
       this.pressedKeys.delete(e.key);
-      this.pressedKeys.delete(e.key);
+      this.blockedKeys.delete(e.key);
     });
   }
 
-  /** 按键检测：单次响应  必须抬起按键下次才能检测到 */
+  /** 按键检测: 单次响应  必须抬起按键下次才能检测到 */
   isSingleKey(key: string): boolean {
     return !this.blockedKeys.has(key) && this.pressedKeys.has(key);
   }
 
-  /** 按键检测：多次响应  间隔一定时间之后可以继续响应该按键 */
+  /** 按键检测: 多次响应  间隔一定时间之后可以继续响应该按键 */
   isPulseKey(key: string): boolean {
-    if (!this.blockedKeys.has(key) && this.pressedKeys.has(key)) {
+    if (this.isSingleKey(key)) {
       setTimeout(() => this.blockedKeys.delete(key), this.keyPulseTime);
       return true;
     }

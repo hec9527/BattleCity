@@ -4,7 +4,7 @@
 
 import Entity from './entity';
 
-class Brick extends Entity implements BrickElement {
+class Brick extends Entity {
   changeImg() {
     //
   }

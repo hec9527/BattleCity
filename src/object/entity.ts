@@ -5,7 +5,7 @@
 
 import { getCanvas } from '../util/index';
 
-abstract class Entity implements EntityElement {
+abstract class Entity {
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
 
@@ -17,7 +17,7 @@ abstract class Entity implements EntityElement {
 
   abstract changeImg(): void;
 
-  abstract update(list: EntityElement[]): void;
+  abstract update(list: Entity[]): void;
 
   die() {
     this.word.delEntity(this);

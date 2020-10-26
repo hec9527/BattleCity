@@ -5,20 +5,20 @@
 import { getLocationPath as pwd } from './index';
 
 export default class Print {
-  static debug(msg: string) {
-    console.debug(`%cdebug: ${msg}`, 'color:#58C9B9');
+  static debug(msg: string, ...args: any) {
+    console.debug(`%cdebug: ${msg}`, 'color:#58C9B9', args);
   }
 
-  static info(msg: string) {
-    console.info(`%cinfo: ${msg}`, 'color:#30A9DE');
+  static info(msg: string, ...args: any) {
+    console.info(`%cinfo: ${msg}`, 'color:#30A9DE', args);
   }
 
-  static warn(msg: string) {
-    console.warn(`%cwarn: ${msg}`, 'color:#f9c00c');
+  static warn(msg: string, ...args: any) {
+    console.warn(`%cwarn: ${msg}`, 'color:#f9c00c', args);
   }
 
-  static error(msg: string) {
-    console.error(`%cerror: ${msg}`, 'color:#E53A40');
+  static error(msg: string, ...args: any) {
+    console.error(`%cerror: ${msg}`, 'color:#E53A40', args);
   }
 
   static copyright() {

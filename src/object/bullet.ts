@@ -3,11 +3,12 @@
  */
 
 import EntityMoveAble from './entityMoveAble';
+import Tank from './tank';
 
-class Bullet extends EntityMoveAble implements BulletElement {
-  protected tank: TankElement;
+class Bullet extends EntityMoveAble {
+  protected tank: Tank;
 
-  constructor(options: BulletOption) {
+  constructor(options: any) {
     super(options);
     this.tank = options.tank;
   }
