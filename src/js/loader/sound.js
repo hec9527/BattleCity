@@ -10,6 +10,7 @@ function Sound() {
     'attack',
     'attackOver',
     'bomb',
+    'explode',
     'eat',
     'life',
     'misc',

@@ -38,7 +38,8 @@ class Bullet extends Entity {
       } else if (entity instanceof Brick) {
         /** 子弹与砖块的碰撞, 砖块碎片也属于砖块，处理逻辑一样 */
         if (isCollisionEntity(rect, entity.rect)) {
-          entity.die(this, () => this && this.die(true));
+          entity.die(this);
+          this.die(true);
         }
       }
     });

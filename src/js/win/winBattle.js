@@ -191,7 +191,7 @@ class WinBattle extends Win {
     this.isDouble && this.showGenerateAllyTank(true);
 
     // 更新演员
-    this.entity.forEach((entity) => entity.update(this.entity));
+    this.entity.forEach((entity) => entity.update([...this.entity]));
   }
 
   draw() {

@@ -48,11 +48,10 @@ class Brick extends Entity {
   }
 
   /**
-   * 调用callback之后，子弹死亡，
-   * 子弹在同时碰撞两个砖块时, 如果撞击第一个砖块时就死亡，
-   * 则第二个砖块无法受到伤害，处理方法，延迟死亡
+   * 子弹击中砖块， 砖块破碎、死亡
+   * @param {Bullet} param0
    */
-  die({ level }, callback = () => {}) {
+  die({ level }) {
     switch (this.index) {
       // 6级子弹可以消除草丛
       case 11: {
@@ -62,13 +61,11 @@ class Brick extends Entity {
       // 4级的子弹可以打碎铁块
       case 6: {
         level >= 4 && this.broken();
-        callback();
         break;
       }
       // 1级的子弹可以打碎砖块
       case 1: {
         this.broken();
-        callback();
         break;
       }
       // 我方boss受到攻击
