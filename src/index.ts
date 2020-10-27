@@ -1,5 +1,5 @@
-import './scss/index.scss';
 import Print from './util/print';
+import './assets/scss/';
 
 // TODO Copyright 无法打印
 // Print.copyright();

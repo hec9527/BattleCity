@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
-const resolve = (dir) => path.resolve(__dirname, './src/', dir);
+const resolve = dir => path.resolve(__dirname, './src/', dir);
 
 module.exports = {
   mode: 'development',
@@ -17,7 +18,7 @@ module.exports = {
 
   resolve: {
     // 如果写 则必须包含'.js' 否则会找不到部分库文件
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js', '.scss'],
     alias: {
       '@/*': resolve('src/*'),
     },

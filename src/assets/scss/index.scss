@@ -11,7 +11,7 @@
 /** font-face定义的字体只要在字体被使用的时候才会加载 */
 @font-face {
   font-family: 'prestart';
-  src: url('../assets/font/prestart2p.ttf');
+  src: url('../font/prestart2p.ttf');
 }
 
 * {
@@ -28,7 +28,7 @@ body {
 }
 
 body {
-  background: url('../assets/img/bilibili.jpg');
+  background: url('../img/bilibili.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -87,7 +87,7 @@ body {
           margin: 85px 0 30px 0;
           text-align: center;
           color: transparent;
-          background: url('../assets/img/text.png');
+          background: url('../img/text.png');
         }
 
         .operate-group {
