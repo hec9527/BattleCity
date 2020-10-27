@@ -29,9 +29,9 @@ class Tank extends Entity {
 
     // 上下
     if (this.dir % 2) {
-      y = Math.round(y / 8) * 8;
+      y = Math.round(y / 16) * 16;
     } else {
-      x = Math.round(x / 8) * 8;
+      x = Math.round(x / 16) * 16;
     }
 
     this.rect = [x, y, w, h];
