@@ -7,29 +7,29 @@ import EntityMoveAble from './moveable-entity';
 import Tank from './tank';
 
 class Bullet extends EntityMoveAble {
-  protected tank: Tank;
-  public level: number;
+  private tank: Tank;
   protected img: CanvasImageSource;
+  public readonly level: number;
 
   constructor(options: BulletOption) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let img: any;
+    // TODO fix
+    const img: CanvasImageSource = document.createElement('canvas');
     super({ ...options, img });
     this.tank = options.tank;
     this.level = options.level;
     this.img = this.changeImg();
   }
 
-  changeImg(): CanvasImageSource {
+  protected changeImg(): CanvasImageSource {
     const { canvas } = getCanvas(416, 416);
     return canvas;
   }
 
-  update(): void {
+  public update(): void {
     //
   }
 
-  move(): void {
+  public move(): void {
     //
   }
 }

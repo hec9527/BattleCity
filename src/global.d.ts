@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// declare type canvasSourceImg = HTMLCanvasElement | CanvasImageSource;
-
-/** 接口只描述类的公共部分 */
-
-/** 实例阵营 */
+/** 实体阵营 */
 declare type Camp = 'ally' | 'enemy' | 'neutral';
 
 /**
@@ -32,7 +28,7 @@ declare type ICtx = {
 };
 
 declare interface AnyFunction {
-  (arg?: any, ...args: any[]): any;
+  (...args: any[]): any;
 }
 
 declare interface CanvasCompose {

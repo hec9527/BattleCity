@@ -9,24 +9,21 @@ class Source {
   /** 资源是否已经加载完成 */
   private _isLoaded = false;
 
-  constructor(callback?: Function) {
-    new Promise((resolve) => {
-      let loaded = 0;
-      const onload = () => {
-        if (++loaded >= 2) {
-          callback && callback();
-          resolve();
-          this._isLoaded = true;
-        }
-      };
+  constructor(callback: () => void) {
+    let loaded = 0;
+    const onload = () => {
+      if (++loaded >= 2) {
+        this._isLoaded = true;
+        callback();
+      }
+    };
 
-      new Images(onload);
-      new Sounds(onload);
-    });
+    new Images(onload);
+    new Sounds(onload);
   }
 
   /** 是否已经加载完成 */
-  isLoaded() {
+  public isLoaded(): boolean {
     return this._isLoaded;
   }
 }

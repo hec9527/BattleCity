@@ -5,57 +5,61 @@
 
 import Printer from '../util/print';
 
-type files = 'attack' | 'attackOver' | 'bomb' | 'count' | 'eat' | 'life' | 'misc' | 'move' | 'over' | 'pause' | 'start';
+/** 音乐文件列表 */
+const list = [
+  'attack',
+  'attackOver',
+  'bomb',
+  'count',
+  'eat',
+  'life',
+  'misc',
+  'move',
+  'over',
+  'pause',
+  'start',
+] as const;
+
+type Files = typeof list[number];
+
+type Player = { [K in Files]?: HTMLAudioElement };
 
 class Sound {
   /** 背景音乐播放器 */
-  private playerBg: HTMLAudioElement = new Audio();
-
-  /** 音乐文件列表 */
-  private list: string[] = ['attack', 'attackOver', 'bomb', 'count', 'eat', 'life', 'misc', 'move', 'over', 'pause', 'start'];
+  private player: Player = {};
 
   private composePath(file: string): string {
-    return `../../assets/audio/${file}.mp3`;
+    return `@/assets/audio/${file}.mp3`;
   }
 
-  constructor(callback?: Function) {
-    const loadAudio = () =>
-      this.list.map(
-        (key: string) =>
-          new Promise((resolve, reject) => {
-            const audio = new Audio();
-            audio.oncanplay = () => resolve(audio);
-            audio.onerror = () => reject(audio);
-            audio.src = this.composePath(key);
-          })
-      );
-
-    Promise.all(loadAudio()).then(
-      (res) => {
-        Printer.info('音频加载完成');
-        callback && callback(res);
+  constructor(callback?: () => void) {
+    Promise.all(this.loadAudio()).then(
+      () => {
+        Printer.info('资源加载完成');
+        callback && callback();
       },
-      (rej) => Printer.error(`资源加载失败: ${rej}`)
+      rej => Printer.error(`资源加载失败: ${rej}`)
     );
   }
 
-  /**
-   * 播放音效
-   * @param file
-   */
-  play(file: files): void {
-    const audio = new Audio();
-    audio.oncanplay = () => audio.play();
-    audio.src = this.composePath(file);
+  private loadAudio() {
+    return list.map(
+      key =>
+        new Promise((resolve, reject) => {
+          const audio = new Audio();
+          audio.oncanplay = () => resolve(audio);
+          audio.onerror = () => reject(audio);
+          audio.src = this.composePath(key);
+          this.player[key] = audio;
+        })
+    );
   }
 
-  /**
-   * 播放背景音乐
-   * @param file
-   */
-  playBackgroundAudio(file: files): void {
-    this.playerBg.oncanplay = () => this.playerBg.play();
-    this.playerBg.src = this.composePath(file);
+  play(file: Files, /** 是否强制重新播放 */ rePlay = false): void | never {
+    if (!(file in list)) throw new Error(`未注册的音频文件: ${file}`);
+    const audio = this.player[file] as HTMLAudioElement;
+    if (!audio.ended && !rePlay) return;
+    audio.play();
   }
 }
 

@@ -5,15 +5,11 @@
 
 import maps from './mapDatas';
 
-interface mapData extends Array<any> {
-  [index: number]: {
-    [index: number]: number;
-  };
-}
+type mapData = Array<Array<number>>;
 
 class Maps {
   private readonly maps: mapData[] = [[], [...maps]];
-  private isCustomRound: boolean = false;
+  private isCustomRound = false;
 
   /**
    * 获取关卡数据
@@ -29,7 +25,7 @@ class Maps {
    * 设置自定义地图
    * @param mapData mapData
    */
-  setCustomRound(mapData: mapData) {
+  setCustomRound(mapData: mapData): void {
     this.isCustomRound = true;
     this.maps[0] = mapData;
   }

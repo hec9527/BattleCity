@@ -5,23 +5,26 @@
 
 import Printer from '../util/print';
 
-type files = 'bonus' | 'brick' | 'enemyTank' | 'explode' | 'getScore' | 'getScoreDouble' | 'myTank' | 'tool' | 'UI';
+/** 文件列表 */
+const list = [
+  'bonus',
+  'brick',
+  'enemyTank',
+  'explode',
+  'getScore',
+  'getScoreDouble',
+  'myTank',
+  'tool',
+  'UI',
+] as const;
 
-type CacheImg = { [k in files]?: HTMLImageElement } & AnyHTMLImageElementMap;
+type Files = typeof list[number];
 
-interface AnyHTMLImageElementMap {
-  [x: string]: HTMLImageElement;
-}
+type CacheImg = { [K in Files]?: HTMLImageElement };
 
-interface CacheSprite {
-  //
-  //
-}
+type CacheSprite = { [x: string]: CanvasImageSource };
 
 class Images {
-  /** 文件列表 */
-  private list = ['bonus', 'brick', 'enemyTank', 'explode', 'getScore', 'getScoreDouble', 'myTank', 'tool', 'UI'];
-
   /** 缓存加载的图片 */
   private _imgs: CacheImg = {};
 
@@ -29,30 +32,33 @@ class Images {
   private _sprite: CacheSprite = {};
 
   private composePath(file: string): string {
-    return `../../assets/img/${file}.png`;
+    return `/src/assets/img/${file}.png`;
   }
 
-  constructor(callback?: Function) {
-    const loadImages = () =>
-      this.list.map(
-        (key: string) =>
-          new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onerror = () => reject(img);
-            img.onload = () => resolve(img);
-            img.src = this.composePath(key);
-            this._imgs[key] = img;
-          })
-      );
-
-    Promise.all(loadImages()).then(
+  constructor(callback?: () => void) {
+    Promise.all(this.loadImages()).then(
       () => {
         Printer.info('资源加载完成');
         callback && callback();
       },
-      (rej) => Printer.error(`资源加载失败: ${rej}`)
+      rej => Printer.error(`资源加载失败: ${rej}`)
     );
   }
+
+  private loadImages() {
+    return list.map(
+      key =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onerror = () => reject(img);
+          img.onload = () => resolve(img);
+          img.src = this.composePath(key);
+          this._imgs[key] = img;
+        })
+    );
+  }
+
+  //
 }
 
 export default Images;

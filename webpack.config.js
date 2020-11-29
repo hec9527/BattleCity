@@ -3,7 +3,7 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
-const resolve = dir => path.resolve(__dirname, './src/', dir);
+const resolve = (dir, sub = './src/') => path.resolve(__dirname, sub, dir);
 
 module.exports = {
   mode: 'development',
@@ -11,7 +11,7 @@ module.exports = {
   entry: resolve('index.ts'),
 
   output: {
-    path: resolve('dist'),
+    path: path.resolve(__dirname, './build'),
     filename: 'js/[name].[hash:4].js',
     publicPath: '/',
   },
@@ -19,9 +19,6 @@ module.exports = {
   resolve: {
     // 如果写 则必须包含'.js' 否则会找不到部分库文件
     extensions: ['.ts', '.js', '.scss'],
-    alias: {
-      '@/*': resolve('src/*'),
-    },
   },
 
   module: {
@@ -62,7 +59,7 @@ module.exports = {
 
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedChunksPlugin(),
+    new webpack.ProgressPlugin(),
     new HTMLWebpackPlugin({
       title: 'Battle City',
       filename: 'index.html',

@@ -1,17 +1,18 @@
-const regHTMLTag = /^<([a-z]+)>/;
+const regHTMLTag = /^<([a-z]+)>$/;
 
 /** DOM 选择器  mini jquery */
 export function $(select: string): HTMLElement | null | NodeList {
   if (/^#/.test(select)) {
     return document.getElementById(select.substring(1));
-  } else if (/^\./.test(select)) {
-    return document.querySelectorAll(select);
-  } else if (regHTMLTag.test(select)) {
-    const el = regHTMLTag.exec(select);
-    return (el && el[1] && document.createElement(el[1])) || null;
-  } else {
+  }
+  if (/^\./.test(select)) {
     return document.querySelectorAll(select);
   }
+  if (regHTMLTag.test(select)) {
+    const el = regHTMLTag.exec(select);
+    return document.createElement(el![1]);
+  }
+  return document.querySelectorAll(select);
 }
 
 /**
@@ -44,7 +45,7 @@ export function getLocationPath(): string {
  */
 export function Ticker(tick = 30): AnyFunction {
   let cTick = 0;
-  return (cb: AnyFunction): void => (cTick >= tick ? ((cTick = 0), cb()) : cTick++);
+  return (cb: AnyFunction): void => ++cTick >= tick && ((cTick = 0), cb());
 }
 
 /**
@@ -54,12 +55,7 @@ export function Ticker(tick = 30): AnyFunction {
  * @returns {boolean}
  */
 export function isOppositeDirection(direction: Direction, lastDirection: Direction): boolean {
-  return (
-    (direction === 0 && lastDirection === 2) ||
-    (direction === 1 && lastDirection === 3) ||
-    (direction === 2 && lastDirection === 0) ||
-    (direction === 3 && lastDirection === 1)
-  );
+  return Math.abs(direction - lastDirection) === 2;
 }
 
 /**
@@ -73,3 +69,5 @@ export function getDistance(rect1: EntityRect, rect2: EntityRect): number {
   const [x2, y2] = rect2;
   return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
+
+export default {};
