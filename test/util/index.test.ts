@@ -5,6 +5,7 @@
 
 import util, {
   $,
+  getType,
   getCanvas,
   getDistance,
   getLocationPath,
@@ -21,40 +22,21 @@ describe('Util test', () => {
     });
 
     test('getCanvas from DOM', () => {
-      const el = document.createElement('canvas');
-      el.setAttribute('id', 'canvas');
-      document.body.appendChild(el);
       const { canvas, ctx } = getCanvas(200, 100, 'canvas');
       expect(canvas).toBeDefined();
       expect(ctx).toBeDefined();
       expect(canvas.width).toBe(200);
       expect(canvas.height).toBe(100);
-      expect(canvas).toEqual(el);
     });
   });
 
   describe('my query fcuntion "$" test', () => {
-    const el = document.createElement('h1');
-    const el1 = document.createElement('span');
-    const el2 = document.createElement('div');
-    el.innerHTML = 'h1';
-    el1.innerHTML = 'span';
-    el2.innerHTML = 'div';
-    el.id = 'h1';
-    el1.className = 'span';
-    el2.className = 'div';
-    document.body.appendChild(el);
-    document.body.appendChild(el1);
-    document.body.appendChild(el2.cloneNode());
-    document.body.appendChild(el2.cloneNode());
-    document.body.appendChild(el2.cloneNode());
-
     test('$ by id should return HTMLElement', () => {
       expect($('#h1')).toBeDefined;
       expect(($('#h1') as HTMLElement).id).toBe('h1');
       expect($('.span')).toHaveLength(1);
       expect($('<div>')).toEqual(document.createElement('div'));
-      expect($('div')).toHaveLength(3);
+      expect(($('div') as NodeList).length).toBeGreaterThanOrEqual(3);
     });
   });
 
@@ -96,6 +78,18 @@ describe('Util test', () => {
       }
       expect(mockFn.mock.calls.length).toBe(4);
     });
+  });
+
+  test('getType function test', () => {
+    expect(getType(NaN)).toBe('NaN');
+    expect(getType([])).toBe('Array');
+    expect(getType(1)).toBe('Number');
+    expect(getType('')).toBe('String');
+    expect(getType({})).toBe('Object');
+    expect(getType(true)).toBe('Boolean');
+    expect(getType(() => {})).toBe('Function');
+    expect(getType(Symbol('s'))).toBe('Symbol');
+    expect(getType(undefined)).toBe('Undefined');
   });
 
   test('util tools should export default {}', () => {

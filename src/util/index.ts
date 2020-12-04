@@ -70,4 +70,15 @@ export function getDistance(rect1: EntityRect, rect2: EntityRect): number {
   return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
 
+/**
+ * 获取变量的实际类型
+ * @param obj any
+ */
+export function getType(obj: any) {
+  if (obj !== obj) {
+    return 'NaN';
+  }
+  return Object.prototype.toString.call(obj).slice(8, -1);
+}
+
 export default {};
