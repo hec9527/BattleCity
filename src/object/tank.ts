@@ -1,14 +1,13 @@
-/* eslint-disable prefer-const */
 /**
  * 坦克类
  */
 
-import EntityMoveAble from './moveable-entity';
+import EntityMoveAble from './entity-moveable';
 import Brick from './brick';
 import Bullet from './bullet';
 import Entity from './entity';
 import Reward from './reward';
-import EnemyTank from './enemy-tank';
+import EnemyTank from './tank-enemy';
 import { Ticker, getDistance } from '../util/index';
 import {
   GAME_PROTECTER_TICK as TICK_T,

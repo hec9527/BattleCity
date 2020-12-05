@@ -3,7 +3,7 @@
  */
 
 import { getCanvas } from 'src/util';
-import EntityMoveAble from './moveable-entity';
+import EntityMoveAble from './entity-moveable';
 import Tank from './tank';
 
 class Bullet extends EntityMoveAble {
