@@ -22,14 +22,9 @@ type Files = typeof files[number];
 
 type CacheImg = { [K in Files]: HTMLImageElement };
 
-type CacheSprite = { [x: string]: CanvasImageSource };
-
 class Images {
   /** 缓存加载的图片 */
-  public imgs: CacheImg = {} as CacheImg;
-
-  /** 缓存切分的精灵图 */
-  public sprite: CacheSprite = {};
+  public Cache: CacheImg = {} as CacheImg;
 
   constructor(callback?: () => void) {
     const context = require.context('../assets/img/', false, /\.png/, 'sync');
@@ -37,10 +32,10 @@ class Images {
       return files.map(key => {
         return new Promise((resolve, reject) => {
           const img = new Image();
-          img.onerror = () => reject(img);
+          img.onerror = () => reject(key);
           img.onload = () => resolve(img);
           img.src = context(`./${key}.png`).default;
-          this.imgs[key] = img;
+          this.Cache[key] = img;
         });
       });
     };

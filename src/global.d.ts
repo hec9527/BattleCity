@@ -22,6 +22,7 @@ declare type TankLifeCircle = 'birth' | 'survival' | 'death';
 
 declare type BulletLifeCircle = 'survival' | 'death';
 
+// 奖励类型
 declare type RewardType = 0 | 1 | 2 | 3;
 
 /** 笔刷类型, 不同的笔刷操作不同的图层 */
