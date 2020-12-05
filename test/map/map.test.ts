@@ -8,6 +8,13 @@ for (let i = 0; i < 13; i++) {
   mockMap[i] = new Array(13).fill(0);
 }
 
+const methods = ['debug', 'info', 'warn', 'error', 'log'] as const;
+beforeEach(() => {
+  methods.forEach(key => {
+    global.console[key] = jest.fn();
+  });
+});
+
 describe('Maps class test', () => {
   test('map should be instanceof Maps', () => {
     expect(map).toBeInstanceOf(Maps);
