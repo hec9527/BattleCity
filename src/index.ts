@@ -18,5 +18,3 @@ const source = new Source(() => {
     source.SOUNDS.play('start');
   };
 });
-
-// window.source = source;

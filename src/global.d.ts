@@ -3,6 +3,7 @@
 // 图片、音频等资源
 declare module '*.png';
 declare module '*.jpg';
+declare module '*.mp3';
 
 /** 实体阵营 */
 declare type Camp = 'ally' | 'enemy' | 'neutral';
