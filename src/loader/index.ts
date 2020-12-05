@@ -5,9 +5,23 @@
 import Images from './images';
 import Sounds from './sounds';
 
+// webpack API 资源加载测试
+// const files = require.context('../assets/img/', false, /\.png/, 'sync');
+
+// console.log(files.keys());
+
+// const models = files.keys().map(key => {
+//   return files(key).default;
+// });
+
+// document.body.style.background = `url(${models[8]})`;
+// document.body.style.backgroundRepeat = 'no-repeat';
+
 class Source {
   /** 资源是否已经加载完成 */
   private _isLoaded = false;
+  public IMAGES: Images;
+  public SOUNDS: Sounds;
 
   constructor(callback: () => void) {
     let loaded = 0;
@@ -18,8 +32,8 @@ class Source {
       }
     };
 
-    new Images(onload);
-    new Sounds(onload);
+    this.IMAGES = new Images(onload);
+    this.SOUNDS = new Sounds(onload);
   }
 
   /** 是否已经加载完成 */

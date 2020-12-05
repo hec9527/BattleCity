@@ -1,14 +1,22 @@
 import Print from './util/print';
 import Source from './loader/index';
 import './assets/scss/index';
+import game from './game';
 
-// TODO Copyright 无法打印
 // Print.copyright();
 // Print.debug('debug');
 // Print.info('info');
 // Print.warn('warn');
 // Print.error('error');
 
-// new Source(() => {
-//   console.log('资源加载完毕');
-// });
+const source = new Source(() => {
+  Print.info('游戏资源加载完毕');
+
+  document.body.onclick = function () {
+    console.log(1);
+
+    source.SOUNDS.play('start');
+  };
+});
+
+// window.source = source;

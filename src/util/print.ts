@@ -1,8 +1,7 @@
 /**
  * 日志打印类
  */
-
-import { getLocationPath as pwd } from './index';
+import UI from '../assets/img/UI.png';
 
 export const Print = {
   debug(msg: string): void {
@@ -25,7 +24,7 @@ export const Print = {
     console.clear();
     console.log(
       '%c ',
-      `background: url(${pwd()}img/UI.png);padding:0px 184px; line-height:136px; margin: 15px calc(50% - 184px);`
+      `background: url(${UI});padding:0px 184px; line-height:136px; margin: 15px calc(50% - 184px);`
     );
     console.log(
       '%c@author: hec9527\n@time:   2020-1-24\n@note: \n\n\thi，你好',

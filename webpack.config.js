@@ -35,7 +35,11 @@ module.exports = {
         test: /\.(png|jpg|mp3|ttf)$/,
         use: {
           loader: 'url-loader',
-          options: { limit: 10240, name: '[name].[ext]' }, // 超过10k使用外链，否则使用base64编码
+          options: {
+            limit: 10240, // 超过10k使用外链，否则使用base64编码
+            name: '[name].[ext]',
+            fallback: require.resolve('file-loader'),
+          },
         },
       },
     ],
@@ -64,6 +68,14 @@ module.exports = {
       title: 'Battle City',
       filename: 'index.html',
       template: resolve('index.html', 'public'),
+    }),
+
+    // 自定义source-map
+    new webpack.EvalSourceMapDevToolPlugin({
+      columns: false,
+      module: true,
+      exclude: [/node_modules/, /dist/, /build/],
+      include: /src/,
     }),
   ],
 };

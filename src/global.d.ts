@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// 图片、音频等资源
+declare module '*.png';
+declare module '*.jpg';
+
 /** 实体阵营 */
 declare type Camp = 'ally' | 'enemy' | 'neutral';
 
