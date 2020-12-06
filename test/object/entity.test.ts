@@ -18,6 +18,7 @@ class EntityInstance extends Entity {
       camp
     );
   }
+  changeSpirte() {}
   update() {}
 }
 

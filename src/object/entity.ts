@@ -23,6 +23,7 @@ abstract class Entity {
   }
 
   public abstract update(list: Entity[]): void;
+  protected abstract changeSpirte(): void;
 
   public die(): void {
     this.world.delEntity(this);

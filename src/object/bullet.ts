@@ -12,15 +12,13 @@ class Bullet extends EntityMoveAble {
   public readonly level: number;
 
   constructor(options: BulletOption) {
-    // TODO fix
-    const img: CanvasImageSource = document.createElement('canvas');
-    super({ ...options, img });
+    super({ ...options });
     this.tank = options.tank;
     this.level = options.level;
-    this.img = this.changeImg();
+    this.img = this.changeSpirte();
   }
 
-  protected changeImg(): CanvasImageSource {
+  protected changeSpirte(): CanvasImageSource {
     const { canvas } = getCanvas(416, 416);
     return canvas;
   }

@@ -52,7 +52,7 @@ abstract class Tank extends EntityMoveAble {
     }
     this.direction = direction;
     this.rect = [x, y, w, h];
-    this.changeImg();
+    // this.changeImg();
   }
 
   protected move(entityList: Entity[]): void {
@@ -62,7 +62,7 @@ abstract class Tank extends EntityMoveAble {
     this.moveStatusTick(() => (this.status = +!this.status));
 
     /** 碰撞到边界 */
-    if (this.isCollisionBorder(nextRect)) {
+    if (this.isCollisionBorderNextFrame()) {
       if (this instanceof EnemyTank) {
         this.changeDirection();
       }
@@ -73,7 +73,7 @@ abstract class Tank extends EntityMoveAble {
 
         // 坦克 <---> 奖励
         if (entity instanceof Reward) {
-          if (this.isCollisionEntity(nextRect, entity.rect)) {
+          if (this.isCollisionEntityNextFrame(entity.rect)) {
             this.getReward(entity.rewardType);
             entity.die();
           }
@@ -81,7 +81,7 @@ abstract class Tank extends EntityMoveAble {
 
         // 坦克 <---> 坦克
         else if (entity instanceof Tank) {
-          if (this.isCollisionEntity(nextRect, entity.rect)) {
+          if (this.isCollisionEntityNextFrame(entity.rect)) {
             const distanceCurren = getDistance(this.rect, entity.rect);
             const distanceNextTick = getDistance(nextRect, entity.rect);
             if (distanceNextTick < distanceCurren) {
@@ -93,7 +93,7 @@ abstract class Tank extends EntityMoveAble {
 
         // 坦克 <---> 砖块
         else if (entity instanceof Brick) {
-          if (this.isCollisionEntity(nextRect, entity.rect)) {
+          if (this.isCollisionEntityNextFrame(entity.rect)) {
             nextRect = this.rect;
             if (this instanceof EnemyTank) this.changeDirection();
           }
