@@ -1,20 +1,19 @@
-/* eslint-disable prefer-const */
-
 /**
  * 实体子类   ---  可以移动的部分
  */
 
 import Entity from './entity';
+import { GAME_BATTLEFIELD_HEIGHT } from '../config/const';
 
 abstract class EntityMoveAble extends Entity {
   protected direction: Direction;
   protected speed: number;
 
   constructor(option: MoveAbleEntityOption) {
-    const { world, rect, img, camp } = option;
-    super(world, rect, img, camp);
-    this.direction = option.direction || 0;
-    this.speed = option.speed || 0;
+    const { world, rect, camp, direction, speed } = option;
+    super(world, rect, camp);
+    this.direction = direction || 0;
+    this.speed = speed || 0;
   }
 
   protected abstract move(list: Entity[]): void;
@@ -29,27 +28,25 @@ abstract class EntityMoveAble extends Entity {
       3: () => (x -= this.speed),
     };
     directions[this.direction]();
-    return [x, y, w, h] as EntityRect;
+    return [x, y, w, h];
   }
 
   /**
    * 检测下一帧是否碰撞边界
-   * @param {EntityRect} nextTickRect
    * @return boolean
    */
-  public isCollisionBorder(nextTickRect: EntityRect): boolean {
-    const [x, y, w, h] = nextTickRect;
-    return x < 0 || x > 416 - w || y < 0 || y > 416 - h;
+  public isCollisionBorderNextFrame(): boolean {
+    const [x, y, w, h] = this.getNextRect();
+    return x < 0 || x > GAME_BATTLEFIELD_HEIGHT - w || y < 0 || y > GAME_BATTLEFIELD_HEIGHT - h;
   }
 
   /**
    * 检测下一帧是否会碰撞到其它实体
-   * @param {EntityRect} nextTickRect
    * @param {EntityRect} rect
    * @return boolean
    */
-  public isCollisionEntity(nextTickRect: EntityRect, rect: EntityRect): boolean {
-    const [x1, y1, w1, h1] = nextTickRect;
+  public isCollisionEntityNextFrame(rect: EntityRect): boolean {
+    const [x1, y1, w1, h1] = this.getNextRect();
     const [x2, y2, w2, h2] = rect;
     const dx = x2 - x1;
     const dy = y2 - y1;

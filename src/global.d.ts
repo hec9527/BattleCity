@@ -51,7 +51,6 @@ declare interface GameWorld {
 declare interface EntityOption {
   world: GameWorld;
   rect: EntityRect;
-  img: CanvasImageSource;
   camp?: Camp;
 }
 
