@@ -3,11 +3,7 @@
  * 所有演员类的父类
  */
 
-import { getCanvas } from '../util/index';
-
 abstract class Entity {
-  protected canvas: HTMLCanvasElement;
-  protected ctx: CanvasRenderingContext2D;
   /** 是否参与碰撞检测 */
   public readonly isCollision: boolean = true;
 
@@ -16,14 +12,11 @@ abstract class Entity {
     public rect: EntityRect,
     public readonly camp: Camp = 'neutral'
   ) {
-    const { canvas, ctx } = getCanvas(516, 456, 'canvas');
-    this.canvas = canvas;
-    this.ctx = ctx;
     this.world.addEntity(this);
   }
 
   public abstract update(list: Entity[]): void;
-  protected abstract changeSpirte(): void;
+  public abstract draw(): void;
 
   public die(): void {
     this.world.delEntity(this);

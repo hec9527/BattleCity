@@ -1,5 +1,5 @@
+import { getCanvas } from '@src/util';
 import { brush } from '@src/util/brush';
-import { getType } from '@src/util/index';
 
 describe('brush test', () => {
   test('brush should have property bg, main, misc', () => {
@@ -8,21 +8,14 @@ describe('brush test', () => {
     expect(brush.misc).toBeDefined();
   });
 
-  test("brush's canvas should have width 516, height 456", () => {
+  test('brush should have two methods clear and draw', () => {
+    const { canvas } = getCanvas(516, 456);
     (['bg', 'main', 'misc'] as const).forEach(type => {
-      expect(brush[type].canvas.width).toBe(516);
-      expect(brush[type].canvas.height).toBe(456);
-      // brushs should be CanvasRenderingContext2D
-      expect(getType(brush[type])).toBe('CanvasRenderingContext2D');
+      expect(brush[type].clear).toBeDefined();
+      expect(brush[type].clear(true)).toBeUndefined();
+      expect(brush[type].clear(0, 0, canvas.width, canvas.height)).toBeUndefined();
+      expect(brush[type].draw).toBeDefined();
+      expect(brush[type].draw(canvas, 0, 0, 32, 32, 0, 0, 32, 32)).toBeUndefined();
     });
-  });
-
-  test("brush's should have correct zIndex ", () => {
-    expect(Number(brush.bg.canvas.style.zIndex)).toBeLessThan(
-      Number(brush.main.canvas.style.zIndex)
-    );
-    expect(Number(brush.main.canvas.style.zIndex)).toBeLessThan(
-      Number(brush.misc.canvas.style.zIndex)
-    );
   });
 });

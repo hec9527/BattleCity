@@ -13,13 +13,11 @@ class Reward extends Entity {
     this.rewardType = options.rewardType;
   }
 
-  changeSpirte(): void {
-    //
-  }
-
   update(): void {
     //
   }
+
+  draw() {}
 }
 
 export default Reward;

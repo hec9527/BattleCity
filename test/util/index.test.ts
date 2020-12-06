@@ -8,6 +8,7 @@ import util, {
   getType,
   getCanvas,
   getDistance,
+  getBulletPos,
   getLocationPath,
   isOppositeDirection,
   Ticker,
@@ -70,14 +71,23 @@ describe('Util test', () => {
       expect(mockFn.mock.calls.length).toBe(12);
     });
 
-    test('ticker with default tick', () => {
-      const tick = Ticker();
-      const mockFn = jest.fn();
-      for (let i = 0; i < 120; i++) {
-        tick(mockFn);
+    test('ticker, callback should dispatch every perTick', () => {
+      const callBackPerTick = jest.fn();
+      const callBackAtPeriod = jest.fn();
+      const tick = Ticker(50, callBackPerTick, 5);
+      for (let i = 0; i < 100; i++) {
+        tick(callBackAtPeriod);
       }
-      expect(mockFn.mock.calls.length).toBe(4);
+      expect(callBackPerTick.mock.calls.length).toBe(20);
+      expect(callBackAtPeriod.mock.calls.length).toBe(2);
     });
+  });
+
+  describe('getBulletPos function test', () => {
+    expect(getBulletPos(0, 0, 0)).toEqual([12, 0, 8, 8]);
+    expect(getBulletPos(1, 0, 0)).toEqual([24, 12, 8, 8]);
+    expect(getBulletPos(2, 0, 0)).toEqual([12, 24, 8, 8]);
+    expect(getBulletPos(3, 0, 0)).toEqual([0, 12, 8, 8]);
   });
 
   test('getType function test', () => {

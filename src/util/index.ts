@@ -40,12 +40,21 @@ export function getLocationPath(): string {
 
 /**
  * 计时系统，指定帧数之后执行回调
- * @param {Number} tick
- * @returns {Function}
+ * @param tick 计时周期
+ * @param callBack 回调函数
+ * @param perTick  每过多少个周期执行回调
  */
-export function Ticker(tick = 30): AnyFunction {
+export function Ticker(tick: number): AnyFunction;
+export function Ticker(tick: number, callBack: () => void, perTick: number): AnyFunction;
+export function Ticker(tick: any, callback?: any, perTick?: any): AnyFunction {
   let cTick = 0;
-  return (cb: AnyFunction): void => ++cTick >= tick && ((cTick = 0), cb());
+  let cPTick = 0;
+  return perTick === undefined
+    ? (cb: AnyFunction): void => ++cTick >= tick && ((cTick = 0), cb())
+    : (cb: AnyFunction) => {
+        ++cPTick >= perTick && ((cPTick = 0), callback());
+        ++cTick >= tick && ((cTick = 0), cb());
+      };
 }
 
 /**
@@ -79,6 +88,19 @@ export function getType(obj: any) {
     return 'NaN';
   }
   return Object.prototype.toString.call(obj).slice(8, -1);
+}
+
+/**
+ * 获取坦克射击之后的子弹的位置
+ */
+export function getBulletPos(direction: Direction, x: number, y: number): EntityRect {
+  ({
+    0: () => (x += 12),
+    1: () => ((x += 24), (y += 12)),
+    2: () => ((x += 12), (y += 24)),
+    3: () => (y += 12),
+  }[direction]());
+  return [x, y, 8, 8];
 }
 
 export default {};

@@ -25,8 +25,8 @@ class MoveAbleInstance extends MoveAble {
   }
 
   move() {}
+  draw() {}
   update() {}
-  changeSpirte() {}
 }
 
 describe('Entity moveable test', () => {

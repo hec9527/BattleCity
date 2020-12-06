@@ -9,12 +9,12 @@ import game from './game';
 // Print.warn('warn');
 // Print.error('error');
 
-const source = new Source(() => {
+const source = Source.getSource(() => {
   Print.info('游戏资源加载完毕');
+  console.log(source.isLoaded());
 
-  document.body.onclick = function () {
-    console.log(1);
+  console.log(source.IMAGES.Cache.myTank);
 
-    source.SOUNDS.play('start');
-  };
+  document.body.innerHTML = '';
+  document.body.append(source.IMAGES.Cache.getScoreDouble);
 });

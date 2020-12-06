@@ -18,8 +18,8 @@ class EntityInstance extends Entity {
       camp
     );
   }
-  changeSpirte() {}
   update() {}
+  draw() {}
 }
 
 describe('Entity class test', () => {

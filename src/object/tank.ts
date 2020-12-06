@@ -2,13 +2,16 @@
  * 坦克类
  */
 
-import EntityMoveAble from './entity-moveable';
+import AllyTank from './tank-ally';
 import Brick from './brick';
 import Bullet from './bullet';
 import Entity from './entity';
-import Reward from './reward';
+import Ctx from '@src/util/brush';
 import EnemyTank from './tank-enemy';
-import { Ticker, getDistance } from '../util/index';
+import EntityMoveAble from './entity-moveable';
+import Reward from './reward';
+import Source from '@src/loader/index';
+import { Ticker, getDistance, getBulletPos } from '../util/index';
 import {
   GAME_PROTECTER_TICK as TICK_T,
   GAME_TANK_BIRTH_TICK as TICK_B,
@@ -16,19 +19,38 @@ import {
   GAME_TANK_MOVE_STATUS_TICK as TICK_M,
 } from '../config/const';
 
+const IMAGES = Source.getSource().IMAGES.Cache;
+
+const ChangeStatus: (s: 0 | 1) => 0 | 1 = s => +!s as 0 | 1;
+
 abstract class Tank extends EntityMoveAble {
+  // basic info
   protected life: number;
   protected level: number;
-  protected status = 0;
   protected isProtected = false;
-  protected lifeCircle: TankLifeCircle = 'birth';
-  protected Bullets: Set<Bullet> = new Set<Bullet>();
   protected BulletNum = 1;
+  protected Bullets: Set<Bullet> = new Set<Bullet>();
+  public lifeCircle: TankLifeCircle = 'birth';
+
+  // status
   protected isCanShoot = true;
+  protected wheelStatus: 0 | 1 = 0;
+  protected birthStatus: 0 | 1 = 0;
+  protected deathStatus: 0 | 1 = 0;
+  protected protecterStatus: 0 | 1 = 0;
+
+  // spirte
+  protected spirte!: CanvasImageSource;
+  protected birthSprite!: CanvasImageSource;
+  protected deathSprite!: CanvasImageSource;
+  protected protecterSprite!: CanvasImageSource;
+
+  // Tickers
   protected shootTicker = Ticker(TICK_S);
-  protected birthTicker = Ticker(TICK_B);
-  protected protectTicker = Ticker(TICK_T);
-  protected moveStatusTick = Ticker(TICK_M);
+  protected birthTicker = Ticker(TICK_B, ChangeStatus.bind({}, this.birthStatus), 5);
+  protected deathTicker = Ticker(TICK_B, ChangeStatus.bind({}, this.deathStatus), 5);
+  protected protecterTicker = Ticker(TICK_T, ChangeStatus.bind({}, this.protecterStatus), 5);
+  protected wheelStatusTicker = Ticker(TICK_M);
 
   constructor(option: TankOption) {
     super(option);
@@ -44,7 +66,6 @@ abstract class Tank extends EntityMoveAble {
    */
   protected changeDirection(direction: Direction): void {
     let [x, y, w, h] = this.rect;
-
     if (direction % 2) {
       y = Math.round(y / 16) * 16;
     } else {
@@ -52,14 +73,13 @@ abstract class Tank extends EntityMoveAble {
     }
     this.direction = direction;
     this.rect = [x, y, w, h];
-    // this.changeImg();
   }
 
   protected move(entityList: Entity[]): void {
     if (this.speed === 0) return;
     let nextRect = this.getNextRect();
 
-    this.moveStatusTick(() => (this.status = +!this.status));
+    this.wheelStatusTicker(ChangeStatus.bind({}, this.wheelStatus));
 
     /** 碰撞到边界 */
     if (this.isCollisionBorderNextFrame()) {
@@ -103,27 +123,28 @@ abstract class Tank extends EntityMoveAble {
     this.rect = nextRect;
   }
 
+  public distoryBullet(bullet: Bullet): void {
+    this.Bullets.delete(bullet);
+  }
+
   protected shoot(): void {
     /** isCanShoot用于控制连续射击间隔，Bullets.size用于控制发射子弹的数量  */
     if (!this.isCanShoot || this.Bullets.size >= this.BulletNum) return;
     const [x, y] = this.rect;
-    const directions = {
-      0: [x + 12, y],
-      1: [x + 24, y + 12],
-      2: [x + 12, y + 24],
-      3: [x, y + 12],
-    };
-    const rect = [...directions[this.direction], 8, 8] as EntityRect;
     this.Bullets.add(
-      new Bullet({ rect, tank: this, level: this.level, world: this.world, camp: this.camp })
+      new Bullet({
+        rect: getBulletPos(this.direction, x, y),
+        tank: this,
+        level: this.level,
+        world: this.world,
+        camp: this.camp,
+      })
     );
     this.isCanShoot = false;
-    this.shootTicker(() => (this.isCanShoot = true));
   }
 
   protected addProtector(): void {
     this.isProtected = true;
-    this.protectTicker = Ticker(TICK_T);
   }
 
   protected abstract getReward(rewardType: RewardType): void;
@@ -132,10 +153,48 @@ abstract class Tank extends EntityMoveAble {
 
   protected abstract addLife(): void;
 
+  /**
+   * - 正在执行出生动画或者受保护的个体暂时免疫死亡
+   * - 否则 life-- (仅限我方坦克)
+   */
+  public die() {
+    this.lifeCircle === 'death';
+  }
+
+  // 真正的死亡
+  private realDeath() {
+    if (this.isProtected || this.lifeCircle === 'birth') {
+      return false;
+    } else if (this.life > 1) {
+      this.life = 1;
+      this.level = this instanceof AllyTank ? 1 : this.level;
+      return false;
+    }
+    super.die();
+  }
+
   public update(): void {
-    this.isProtected && this.protectTicker(() => (this.isProtected = false));
+    // update ticker
+    // wheelStatusTicker 在移动的时候调用
     this.lifeCircle === 'birth' && this.birthTicker(() => this.lifeCircle === 'survival');
-    this.lifeCircle === 'death' && this.birthTicker(() => this.die());
+    this.lifeCircle === 'death' && this.deathTicker(() => this.realDeath());
+    !this.isCanShoot && this.shootTicker(() => (this.isCanShoot = true));
+    this.isProtected && this.protecterTicker(() => (this.isProtected = false));
+  }
+
+  public draw(): void {
+    // 绘制保护罩
+    if (this.isProtected) {
+      Ctx.misc.draw(this.protecterSprite, 0, 0, 32, 32, ...this.rect);
+    }
+    // 绘制坦克自身  出生动画 / 死亡动画 / 生存
+    if (this.lifeCircle === 'survival') {
+      Ctx.main.draw(this.spirte, 0, 0, 32, 32, ...this.rect);
+    } else if (this.lifeCircle === 'birth') {
+      Ctx.misc.draw(this.birthSprite, 0, 0, 32, 32, ...this.rect);
+    } else {
+      Ctx.misc.draw(this.deathSprite, 0, 0, 32, 32, ...this.rect);
+    }
   }
 }
 
