@@ -18,17 +18,19 @@ import Sounds from './sounds';
 // document.body.style.backgroundRepeat = 'no-repeat';
 
 class Source {
+  private static instance?: Source;
+
   /** 资源是否已经加载完成 */
   private _isLoaded = false;
   public IMAGES: Images;
   public SOUNDS: Sounds;
 
-  constructor(callback: () => void) {
+  private constructor(callback?: () => void) {
     let loaded = 0;
     const onload = () => {
       if (++loaded >= 2) {
         this._isLoaded = true;
-        callback();
+        callback && callback();
       }
     };
 
@@ -39,6 +41,13 @@ class Source {
   /** 是否已经加载完成 */
   public isLoaded(): boolean {
     return this._isLoaded;
+  }
+
+  public static getSource(callback?: AnyFunction) {
+    if (!Source.instance) {
+      Source.instance = new Source(callback);
+    }
+    return Source.instance;
   }
 }
 
