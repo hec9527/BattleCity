@@ -8,7 +8,7 @@ gameBox.setAttribute('id', 'gameBox');
 document.body.appendChild(gameBox);
 
 const canvas = document.createElement('canvas');
-canvas.setAttribute('id', 'canvas');
+canvas.setAttribute('id', 'game');
 document.body.appendChild(canvas);
 
 const el = document.createElement('h1');

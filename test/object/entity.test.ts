@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Entity from '@/object/entity';
 
 /**
@@ -11,12 +13,8 @@ import Entity from '@/object/entity';
  */
 
 class EntityInstance extends Entity {
-  constructor(camp?: Camp) {
-    super(
-      { addEntity: (e: any) => {}, delEntity: (e: any) => {} } as GameWorld,
-      [0, 0, 32, 32],
-      camp
-    );
+  constructor(camp?: ICamp) {
+    super({ addEntity: (e: any) => {}, delEntity: (e: any) => {} } as IGameWorld, [0, 0, 32, 32], camp);
   }
   update() {}
   draw() {}

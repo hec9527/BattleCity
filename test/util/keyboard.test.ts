@@ -1,5 +1,7 @@
-import keyboard, { Keyboard } from '@/util/keyboard';
-import Config from '@/config/keys';
+import { Keyboard } from '../../src/util/keyboard';
+import Config from '../../src/config/keys';
+
+const keyboard = Keyboard.getInstance();
 
 // maybe some other controler willbe add
 describe('keyboard control test', () => {
