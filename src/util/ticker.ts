@@ -1,25 +1,25 @@
 /**
  * 计时器列表
  */
-class TickerList {
+export class TickerList {
   private list: Set<Ticker> = new Set<Ticker>();
 
-  public addTick(tick: Ticker) {
+  public addTick(tick: Ticker): void {
     this.list.add(tick);
   }
 
-  public delTick(tick: Ticker) {
+  public delTick(tick: Ticker): void {
     this.list.delete(tick);
   }
 
-  public updateTick() {
+  public updateAllTick(): void {
     this.list.forEach(tick => {
       tick.update();
       !tick.isAlive() && this.delTick(tick);
     });
   }
 
-  public clearTick() {
+  public clearTick(): void {
     this.list.clear();
   }
 }
@@ -27,7 +27,7 @@ class TickerList {
 /**
  * 计时器
  */
-class Ticker {
+export class Ticker {
   private _isAlive = true;
   private tick = 0;
 
@@ -40,7 +40,7 @@ class Ticker {
     private cycle: boolean = false
   ) {}
 
-  public update() {
+  public update(): void {
     if (++this.tick >= this.tickout) {
       this.callback();
       if (this.cycle) {
@@ -51,9 +51,7 @@ class Ticker {
     }
   }
 
-  public isAlive() {
+  public isAlive(): boolean {
     return this._isAlive;
   }
 }
-
-export { Ticker, TickerList };

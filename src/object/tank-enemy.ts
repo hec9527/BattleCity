@@ -11,7 +11,7 @@ import { getDistance, isOppositeDirection, randomInt } from '../util/index';
 import { GAME_TANK_CHANGEDIR_TICK } from '../config/const';
 
 interface IEnemyTankOption {
-  world: GameWorld;
+  world: IGameWorld;
 }
 
 /** 地方坦克的出生点 */
@@ -19,7 +19,7 @@ const BIRTH_POS = [
   [0, 0, 32, 32],
   [192, 0, 32, 32],
   [384, 0, 32, 32],
-] as EntityRect[];
+] as IEntityRect[];
 
 class EnemeyTank extends Tank {
   private static birthIndex: 0 | 1 | 2 = 1;
@@ -39,7 +39,7 @@ class EnemeyTank extends Tank {
   changeDirection(): void {
     if (!this.isCanChangeDir) return;
     this.isCanChangeDir = false;
-    const direction: Direction = randomInt(0, 4) as Direction;
+    const direction: IDirection = randomInt(0, 4) as IDirection;
     if (isOppositeDirection(this.direction, direction) || this.direction === direction) {
       this.changeDirection();
     } else {

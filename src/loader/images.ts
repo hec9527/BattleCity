@@ -3,51 +3,39 @@
  * @author  hec9527
  */
 
-import Printer from '../util/print';
+import Printer from '@/util/print';
 
-/** 文件列表 */
-const files = [
-  'bonus',
-  'brick',
-  'enemyTank',
-  'explode',
-  'getScore',
-  'getScoreDouble',
-  'myTank',
-  'tool',
-  'UI',
-] as const;
+/** 文件列表  */
+const files = ['bonus', 'brick', 'enemyTank', 'explode', 'getScore', 'getScoreDouble', 'myTank', 'tool', 'UI'] as const;
 
 type Files = typeof files[number];
 
-type CacheImg = { [K in Files]: HTMLImageElement };
+export type CacheImg = { [K in Files]: HTMLImageElement };
 
-class Images {
-  /** 缓存加载的图片 */
-  public Cache: CacheImg = {} as CacheImg;
+export function loadImages(): Promise<CacheImg> {
+  const context = require.context('../assets/img/', false, /\.png/, 'sync');
+  const cache = {} as CacheImg;
 
-  constructor(callback?: () => void) {
-    const context = require.context('../assets/img/', false, /\.png/, 'sync');
-    const loadImages = () => {
-      return files.map(key => {
-        return new Promise((resolve, reject) => {
+  return new Promise<CacheImg>((resolve, reject) => {
+    Promise.all([
+      ...files.map(key => {
+        return new Promise<void>((res, rej) => {
+          const url = context(`./${key}.png`).default;
           const img = new Image();
-          img.onerror = () => reject(key);
-          img.onload = () => resolve(img);
-          img.src = context(`./${key}.png`).default;
-          this.Cache[key] = img;
+          img.onload = () => res();
+          img.onerror = () => {
+            Printer.error('图片加载失败：' + url);
+            rej();
+          };
+          img.src = url;
+          cache[key] = img;
         });
-      });
-    };
-
-    Promise.all(loadImages()).then(
-      () => {
-        Printer.info('图片资源加载完成');
-        callback && callback();
-      },
-      rej => Printer.error(`图片资源加载失败: ${rej}`)
-    );
-  }
+      }),
+    ]).then(() => {
+      Printer.info('图片资源加载完成');
+      resolve(cache);
+    }, reject);
+  });
 }
 
-export default Images;
+export default loadImages;

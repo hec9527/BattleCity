@@ -2,55 +2,48 @@
  * 窗体类
  */
 
-import Entity from '@/object/entity';
-import EnemeyTank from '@/object/tank-enemy';
-import { TickerList, Ticker } from '@/util/ticker';
-import Source from '@/loader/index';
+import { TickerList } from '@/util/ticker';
 import { getCanvas } from '@/util';
-import { GAME_CANVAS_WIDTH, GAME_CANVAS_HEIGHT } from '@/config/const';
+import Config from '@/config/const';
 
-class Win {
-  private entity: Set<Entity> = new Set<Entity>();
-  private tickerList: TickerList = new TickerList();
-  private canvas: HTMLCanvasElement;
-  private ctx: CanvasRenderingContext2D;
-  private source: Source;
+abstract class Win implements IGameWorld {
+  protected entity = new Set<IEntity>();
+  protected tickerList: TickerList = new TickerList();
+  public canvas: HTMLCanvasElement;
+  public ctx: CanvasRenderingContext2D;
 
-  constructor(source: Source) {
-    const { canvas, ctx } = getCanvas(GAME_CANVAS_WIDTH, GAME_CANVAS_HEIGHT, 'game');
+  constructor() {
+    const { canvas, ctx } = getCanvas(Config.canvas.width, Config.canvas.height, Config.canvas.canvasId);
     this.canvas = canvas;
     this.ctx = ctx;
-    this.source = source;
-    this.addEntity(new EnemeyTank({ world: this }));
-    this.anima();
+
+    // 异步执行，派生类可能还需要继续初始化属性
+    setTimeout(() => this.animation(), 0);
   }
 
-  public addEntity(entity: Entity) {
+  public addEntity(entity: IEntity): void {
     this.entity.add(entity);
   }
 
-  public delEntity(entity: Entity) {
+  public delEntity(entity: IEntity): void {
     this.entity.delete(entity);
   }
 
-  public anima() {
-    requestAnimationFrame(() => this.anima());
+  protected animation(): void {
+    requestAnimationFrame(() => this.animation());
+    this.tickerList.updateAllTick();
     this.update();
     this.draw();
   }
 
-  private update() {
-    this.entity.forEach(entity => entity.update(Array.from(this.entity)));
+  protected next(): void {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    this.animation = () => {};
   }
 
-  private draw() {
-    this.ctx.drawImage(this.source.IMAGES.Cache.myTank, 32, 32, 32, 32, 64, 64, 32, 32);
-  }
+  abstract update(): void;
 
-  /** 关闭当前win, 跳转到其它win */
-  private next(win: Win) {
-    // new Win();
-  }
+  abstract draw(): void;
 }
 
 export default Win;

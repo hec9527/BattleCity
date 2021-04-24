@@ -5,14 +5,14 @@
 import Tank from './tank';
 
 interface IAllyTankOption {
-  world: GameWorld;
+  world: IGameWorld;
   isDeputy: boolean;
 }
 
 const BIRTH_POS = [
   [128, 0, 32, 32],
   [192, 0, 32, 32],
-] as EntityRect[];
+] as IEntityRect[];
 
 class AllyTank extends Tank {
   constructor(options: IAllyTankOption) {
@@ -35,7 +35,9 @@ class AllyTank extends Tank {
     //
   }
 
-  public update(): void {}
+  public update(): void {
+    //
+  }
 }
 
 export default AllyTank;

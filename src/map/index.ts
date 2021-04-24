@@ -23,7 +23,7 @@ export class Maps {
    * @param fakeRound
    */
   private getRealRound(fakeRound: number): number | never {
-    let mod = fakeRound % 35;
+    const mod = fakeRound % 35;
     if (fakeRound < 0) {
       throw new Error('game round should greater or equal 0');
     }

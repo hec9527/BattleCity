@@ -6,10 +6,10 @@ import Entity from './entity';
 import { GAME_BATTLEFIELD_HEIGHT } from '../config/const';
 
 abstract class EntityMoveAble extends Entity {
-  protected direction: Direction;
+  protected direction: IDirection;
   protected speed: number;
 
-  constructor(option: MoveAbleEntityOption) {
+  constructor(option: any) {
     const { world, rect, camp, direction, speed } = option;
     super(world, rect, camp);
     this.direction = direction || 0;
@@ -19,7 +19,7 @@ abstract class EntityMoveAble extends Entity {
   protected abstract move(list: Entity[]): void;
 
   /** 获取实体移动之后的rect */
-  protected getNextRect(): EntityRect {
+  protected getNextRect(): IEntityRect {
     let [x, y, w, h] = this.rect;
     const directions = {
       0: () => (y -= this.speed),
@@ -45,7 +45,7 @@ abstract class EntityMoveAble extends Entity {
    * @param {EntityRect} rect
    * @return boolean
    */
-  public isCollisionEntityNextFrame(rect: EntityRect): boolean {
+  public isCollisionEntityNextFrame(rect: IEntityRect): boolean {
     const [x1, y1, w1, h1] = this.getNextRect();
     const [x2, y2, w2, h2] = rect;
     const dx = x2 - x1;

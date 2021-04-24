@@ -1,9 +1,8 @@
 /**
  * 日志打印类
  */
-import UI from '../assets/img/UI.png';
 
-export const Print = {
+export const Log = {
   debug(msg: string): void {
     console.debug(`%cdebug: ${msg}`, 'color:#58C9B9');
   },
@@ -24,12 +23,9 @@ export const Print = {
     console.clear();
     console.log(
       '%c ',
-      `background: url(${UI});padding:0px 184px; line-height:136px; margin: 15px calc(50% - 184px);`
+      'background: url("/static/img/UI.png");padding:0px 184px; line-height:136px; margin: 15px calc(50% - 184px);'
     );
-    console.log(
-      '%c@author: hec9527\n@time:   2020-1-24\n@note: \n\n\thi，你好',
-      'color:red; font-size:16px;'
-    );
+    console.log('%c@author: hec9527\n@time:   2020-1-24\n@note: \n\n\thi，你好', 'color:red; font-size:16px;');
     console.log(
       '%c这是一个彩蛋，但是我还没想好写啥',
       'color:#30A9DE;font-size:32px;padding:35px calc(50% - 256px);background:#30A9DE33;'
@@ -41,4 +37,4 @@ export const Print = {
   },
 };
 
-export default Print;
+export default Log;

@@ -9,16 +9,15 @@
   "scripts": {
     "test": "jest --coverage --config ./jest.config.js",
     "start": "npm run dev",
-    "dev": "webpack serve",
-    "reinstall": "rm -rf node_modules && npm i",
-    "tsc": "cd Typescript && tsc -w",
-    "build": "webpack"
+    "dev": "webpack -w",
+    "reinstall": "rm -rf node_modules && npm i"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/hec9527/BattleCity.git"
   },
   "keywords": [
+    "typescript",
     "Javascript",
     "h5",
     "canvas"
@@ -35,24 +34,24 @@
   "devDependencies": {
     "@types/jest": "^26.0.15",
     "@types/node": "^14.14.5",
-    "@types/webpack-env": "^1.16.0",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "canvas": "^2.6.1",
-    "css-loader": "^4.3.0",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "css-loader": "^5.2.4",
     "eslint": "^7.12.0",
     "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^4.4.1",
+    "html-webpack-plugin": "^5.3.1",
     "jest": "^26.1.0",
-    "node-sass": "^4.14.1",
-    "sass-loader": "^10.0.2",
-    "style-loader": "^1.2.1",
+    "style-loader": "^2.0.0",
     "ts-jest": "^26.4.4",
-    "ts-loader": "^8.0.3",
-    "typescript": "^3.9.7",
-    "url-loader": "^4.1.0",
-    "webpack": "^5.4.0",
-    "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.0"
+    "ts-loader": "^9.0.2",
+    "typescript": "^4.2.4",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.35.0",
+    "webpack-cli": "^4.6.0"
+  },
+  "dependencies": {
+    "@types/webpack-env": "^1.16.0"
   }
 }

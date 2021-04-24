@@ -3,7 +3,7 @@
  * @author  hec9527
  */
 
-import Printer from '../util/print';
+import Printer from '@/util/print';
 
 /** 音乐文件列表 */
 const files = [
@@ -22,39 +22,53 @@ const files = [
 
 type Files = typeof files[number];
 
-type CacheSound = { [K in Files]: HTMLAudioElement };
+export type CacheSound = { [K in Files]: HTMLAudioElement };
 
-class Sound {
-  /** 背景音乐播放器 */
-  private sounds: CacheSound = {} as CacheSound;
+export function loadAudio(): Promise<CacheSound> {
+  const context = require.context('../assets/audio/', false, /\.mp3/, 'sync');
+  const sounds: CacheSound = {} as CacheSound;
 
-  constructor(callback?: () => void) {
-    const context = require.context('../assets/audio/', false, /\.mp3/, 'sync');
-    const loadAudio = () => {
-      return files.map(key => {
-        return new Promise((resolve, reject) => {
+  return new Promise<CacheSound>((resolve, reject) => {
+    Promise.all([
+      ...files.map(key => {
+        return new Promise((res, rej) => {
           const audio = new Audio();
-          audio.oncanplay = () => resolve(key);
-          audio.onerror = () => reject(audio);
+          audio.oncanplay = res;
+          audio.onerror = rej;
           audio.src = context(`./${key}.mp3`).default;
-          this.sounds[key] = audio;
+          sounds[key] = audio;
         });
-      });
-    };
-
-    Promise.all(loadAudio()).then(
+      }),
+    ]).then(
       () => {
         Printer.info('音频资源加载完成');
-        callback && callback();
+        Sound.getInstance(sounds);
+        resolve(sounds);
       },
-      rej => Printer.error(`音频资源加载失败: ${rej}`)
+      rej => {
+        Printer.error(`音频资源加载失败: ${rej}`);
+        reject();
+      }
     );
+  });
+}
+
+export class Sound {
+  private static instance: Sound;
+
+  private constructor(private sounds: CacheSound) {}
+
+  public static getInstance(sounds?: CacheSound): Sound {
+    if (!Sound.instance && sounds) {
+      Sound.instance = new Sound(sounds);
+    }
+    return Sound.instance;
   }
 
   /**
    *  谨慎使用多声道，可能会造成性能问题
    */
-  public play(file: Files, /** 多声道播放 */ multichannel = true): void | never {
+  public play(file: Files, /** 多声道播放 */ multichannel = true): void {
     if (!files.includes(file)) throw new Error(`未注册的音频文件: ${file}`);
     if (!multichannel) {
       this.sounds[file].play();
@@ -65,5 +79,3 @@ class Sound {
     }
   }
 }
-
-export default Sound;

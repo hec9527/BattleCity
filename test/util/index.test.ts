@@ -3,16 +3,7 @@
  * 测试+DOM，window对象
  */
 
-import {
-  $,
-  getType,
-  getCanvas,
-  getDistance,
-  getBulletPos,
-  getLocationPath,
-  isOppositeDirection,
-  Ticker,
-} from '@/util/index';
+import { $, getType, getCanvas, getDistance, getBulletPos, getLocationPath, isOppositeDirection } from '@/util/index';
 
 describe('Util test', () => {
   describe('getCanvas function test', () => {

@@ -1,5 +1,3 @@
-const { off } = require('process');
-
 module.exports = {
   env: {
     browser: true,
@@ -14,10 +12,10 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {
-    indent: ['error', 2],
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
-    'no-non-null-assertion': off,
+    'no-explicit-any': 'off',
+    indent: 'off',
   },
 };

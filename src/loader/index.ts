@@ -1,47 +1,41 @@
+/* eslint-disable no-async-promise-executor */
 /**
  * 资源加载类
+ * 先在页面中加载资源防止后面使用的时候出现资源未加载的情况
  */
 
-import Print from '../util/print';
-import Images from './images';
-import Sounds from './sounds';
+import { loadImages, CacheImg } from './images';
+import { loadAudio, CacheSound } from './sounds';
 
-class Source {
-  private static instance?: Source;
+export type ResourceType = {
+  Image: CacheImg;
+  Audio: CacheSound;
+};
 
-  /** 资源是否已经加载完成 */
-  private _isLoaded = false;
-  public IMAGES: Images;
-  public SOUNDS: Sounds;
-
-  private constructor(callback?: (source: Source) => void) {
-    let loaded = 0;
-    const onload = () => {
-      if (++loaded >= 2) {
-        this._isLoaded = true;
-        callback && callback(this);
-      }
-    };
-
-    this.IMAGES = new Images(onload);
-    this.SOUNDS = new Sounds(onload);
-  }
-
-  /** 是否已经加载完成 */
-  public isLoaded(): boolean {
-    return this._isLoaded;
-  }
-
-  public static getSource(callback?: (source: Source) => void) {
-    if (!Source.instance) {
-      Source.instance = new Source(callback);
-    } else {
-      callback?.(Source.instance);
-    }
-    return Source.instance;
-  }
+export default function loadSource(): Promise<ResourceType> {
+  const resource: ResourceType = {
+    Image: {} as CacheImg,
+    Audio: {} as CacheSound,
+  };
+  return new Promise<ResourceType>((resolve, reject) => {
+    Promise.all([loadAudio(), loadImages()]).then(([audio, image]) => {
+      resource.Image = image;
+      resource.Audio = audio;
+      Resource.getResource(resource);
+      resolve(resource);
+    }, reject);
+  });
 }
 
-Source.getSource(() => Print.info('资源加载完毕'));
+export class Resource {
+  private static instance: Resource;
 
-export default Source;
+  private constructor(public Image: ResourceType['Image'], public Audio: ResourceType['Audio']) {}
+
+  public static getResource(resouce?: ResourceType): Resource {
+    if (!Resource.instance && resouce) {
+      Resource.instance = new Resource(resouce.Image, resouce.Audio);
+    }
+    return Resource.instance;
+  }
+}

@@ -7,17 +7,17 @@ import Tank from './tank';
 // import Tank from './tank';
 
 interface IBulletOption {
-  world: GameWorld;
-  rect: EntityRect;
+  world: IGameWorld;
+  rect: IEntityRect;
   tank: Tank;
-  camp: Camp;
+  camp: ICamp;
   level?: number;
-  direction?: Direction;
+  direction?: IDirection;
   speed?: number;
 }
 
 class Bullet extends EntityMoveAble {
-  private tank: any;
+  private tank: unknown;
   // protected img!: CanvasImageSource;
   public readonly level: number;
 
@@ -29,7 +29,7 @@ class Bullet extends EntityMoveAble {
     this.speed = options.speed || 1;
   }
 
-  public die() {
+  public die(): void {
     this.tank;
     super.die();
   }
@@ -42,7 +42,9 @@ class Bullet extends EntityMoveAble {
     //
   }
 
-  draw() {}
+  draw(): void {
+    //
+  }
 }
 
 export default Bullet;
