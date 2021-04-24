@@ -2,7 +2,7 @@
  *  游戏中的关卡地图数据
  */
 
-export const maps = [
+export const maps: IMapData[] = [
   // 第一关
   [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

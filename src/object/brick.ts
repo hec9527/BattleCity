@@ -5,9 +5,19 @@
 import Entity from './entity';
 
 class Brick extends Entity {
-  update() {}
+  public type: IEntityType;
+  constructor({ world, rect }: any) {
+    super(world, rect);
+    this.type = 'brick';
+  }
 
-  draw() {}
+  update(): void {
+    //
+  }
+
+  draw(): void {
+    //
+  }
 }
 
 export default Brick;

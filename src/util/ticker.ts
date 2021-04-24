@@ -2,13 +2,13 @@
  * 计时器列表
  */
 export class TickerList {
-  private list: Set<Ticker> = new Set<Ticker>();
+  private list: Set<ITicker> = new Set<ITicker>();
 
-  public addTick(tick: Ticker): void {
+  public addTick(tick: ITicker): void {
     this.list.add(tick);
   }
 
-  public delTick(tick: Ticker): void {
+  public delTick(tick: ITicker): void {
     this.list.delete(tick);
   }
 
@@ -27,7 +27,7 @@ export class TickerList {
 /**
  * 计时器
  */
-export class Ticker {
+export class Ticker implements ITicker {
   private _isAlive = true;
   private tick = 0;
 

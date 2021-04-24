@@ -6,16 +6,25 @@
 import Print from '@/util/print';
 import maps from './mapDatas';
 
-type mapData = Array<Array<number>>;
-
 export class Maps {
-  private readonly maps: mapData[] = [[], ...maps];
+  private static instance: Maps;
+  private readonly maps: IMapData[] = [([] as unknown) as IMapData, ...maps];
   private isCustomRound = false;
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
+
+  public static getInstance(): Maps {
+    if (!Maps.instance) {
+      Maps.instance = new Maps();
+    }
+    return Maps.instance;
+  }
 
   /**
    * 获取真实的回合数
    * - 回合数为0  --> 自定义地图
-   * - 回合数<35  --> 对应关卡
+   * - 回合数<=35  --> 对应关卡
    * - 回合数>35  --> 取模
    *   -  35 --> 35
    *   -  36 --> 1
@@ -37,15 +46,18 @@ export class Maps {
   }
 
   /**
-   * 获取关卡数据
-   *
+   * ### 获取关卡数据
    * 如果给出的 round 大于总关卡数，则取余数
    * @param round 关卡数
    */
-  public getMapData(round: number): mapData | false {
+  public getMapData(round: number): IMapData | false {
+    if (this.isCustomRound) {
+      this.isCustomRound = false;
+      return this.maps[0];
+    }
     try {
       const realRound = this.getRealRound(round);
-      return this.fixMapData(this.maps[realRound]);
+      return fixMapDataAll(this.maps[realRound]);
     } catch (error) {
       Print.error(error);
     }
@@ -56,7 +68,7 @@ export class Maps {
    * 设置自定义地图
    * @param mapData mapData
    */
-  public setCustomRound(mapData: mapData): void | never {
+  public setCustomMap(mapData: IMapData): void | never {
     if (mapData.length !== 13) {
       throw new Error('each custome map row should have length 13');
     }
@@ -68,21 +80,39 @@ export class Maps {
     this.isCustomRound = true;
     this.maps[0] = mapData;
   }
-
-  /**
-   * 修复地图数据
-   * @param mapData
-   */
-  private fixMapData(mapData: mapData): mapData {
-    const map = mapData.concat([]);
-    map[11][5] = 18;
-    map[11][6] = 4;
-    map[11][7] = 17;
-    map[12][5] = 3;
-    map[12][6] = 15; // Boss 标志
-    map[12][7] = 5;
-    return map;
-  }
 }
 
-export default new Maps();
+/** 修复所有地图 */
+export function fixMapDataAll(mapData: IMapData): IMapData {
+  fixMapDataBirthPlace(mapData);
+  fixMapDataBoss(mapData);
+  fixMapDataWall(mapData);
+
+  return mapData;
+}
+
+/** boss标志 */
+export function fixMapDataBoss(mapData: IMapData): IMapData {
+  mapData[12][6] = 15; // Boss 标志
+  return mapData;
+}
+
+/** boss围墙重置 */
+export function fixMapDataWall(mapData: IMapData, brick: 'iron' | 'brick' = 'brick'): IMapData {
+  mapData[11][5] = brick === 'brick' ? 18 : 20;
+  mapData[11][6] = brick === 'brick' ? 4 : 9;
+  mapData[11][7] = brick === 'brick' ? 17 : 19;
+  mapData[12][5] = brick === 'brick' ? 3 : 8;
+  mapData[12][7] = brick === 'brick' ? 5 : 10;
+  return mapData;
+}
+
+/** 出身地重置 */
+export function fixMapDataBirthPlace(mapData: IMapData): IMapData {
+  mapData[0][0] = 0;
+  mapData[0][6] = 0;
+  mapData[0][12] = 0;
+  mapData[12][4] = 0;
+  mapData[12][8] = 0;
+  return mapData;
+}

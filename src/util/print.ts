@@ -1,22 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 日志打印类
  */
 
 export const Log = {
-  debug(msg: string): void {
-    console.debug(`%cdebug: ${msg}`, 'color:#58C9B9');
+  debug(msg: string, ...otherParams: any[]): void {
+    console.debug(`%cdebug: ${msg}`, 'color:#58C9B9', ...otherParams);
   },
 
-  info(msg: string): void {
-    console.info(`%cinfo: ${msg}`, 'color:#30A9DE');
+  info(msg: string, ...otherParams: any[]): void {
+    console.info(`%cinfo: ${msg}`, 'color:#30A9DE', ...otherParams);
   },
 
-  warn(msg: string): void {
-    console.warn(`%cwarn: ${msg}`, 'color:#f9c00c');
+  warn(msg: string, ...otherParams: any[]): void {
+    console.warn(`%cwarn: ${msg}`, 'color:#f9c00c', ...otherParams);
   },
 
-  error(msg: string): void {
-    console.error(`%cerror: ${msg}`, 'color:#E53A40');
+  error(msg: string, ...otherParams: any[]): void {
+    console.error(`%cerror: ${msg}`, 'color:#E53A40', ...otherParams);
   },
 
   copyright(): void {

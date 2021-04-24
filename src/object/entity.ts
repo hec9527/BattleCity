@@ -6,6 +6,7 @@
 abstract class Entity implements IEntity {
   /** 是否参与碰撞检测 */
   public isCollision = true;
+  public type: IEntityType = 'entity';
   protected canvas: HTMLCanvasElement;
   protected ctx: CanvasRenderingContext2D;
 
@@ -18,7 +19,7 @@ abstract class Entity implements IEntity {
   public abstract update(list: readonly IEntity[]): void;
   public abstract draw(): void;
 
-  public die(): void {
+  public die(...args: any[]): void {
     this.world.delEntity(this);
   }
 }

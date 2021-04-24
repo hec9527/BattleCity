@@ -32,7 +32,7 @@ export function getCanvas(width: number, height: number, selecter?: string): ICa
 }
 
 /**
- *
+ * 判断两个方向是否相反
  * @param {IDirection} direction
  * @param {IDirection} lastDirection
  * @returns {boolean}
@@ -51,13 +51,14 @@ export function getDistance(rect1: IEntityRect, rect2: IEntityRect): number {
   const [x1, y1] = rect1;
   const [x2, y2] = rect2;
   return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+  // return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 }
 
 /**
  * 获取变量的实际类型
  * @param obj any
  */
-export function getType(obj: any): 'Number' | 'String' | 'Object' | 'NaN' | 'Symbol' | 'Boolean' {
+export function getType(obj: unknown): 'Number' | 'String' | 'Object' | 'NaN' | 'Symbol' | 'Boolean' {
   if (obj !== obj) {
     return 'NaN';
   }
@@ -77,9 +78,53 @@ export function getBulletPos(direction: IDirection, x: number, y: number): IEnti
   return [x, y, 8, 8];
 }
 
-/**
- * 获取指定范围类的随机数 [min, max)
- */
+/** 判断两个实体是否碰撞 */
+export function isEntityCollision(rect1: IEntityRect, rect2: IEntityRect): boolean {
+  const [x1, y1, w1, h1] = rect1;
+  const [x2, y2, w2, h2] = rect2;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const res = -w2 < dx && dx < w1 && -h2 < dy && dy < h1;
+  return res;
+}
+
+/** 获取指定范围类的随机数 [min, max] */
 export function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/** 将一个数分成多个数的和  ---->   类似于红包算法 */
+export function dispense(value: number, size = 20): Array<number> {
+  const lis: Array<number> = [];
+
+  for (let i = 0; i < size; i++) {
+    const r = size - i; // 剩余个数
+    if (r <= 1) {
+      lis.push(value);
+    } else {
+      const min = 1;
+      const max = (value / r) * 2;
+      const _value = randomInt(min, max - 1);
+      lis.push(_value);
+      value -= _value;
+    }
+  }
+  return lis;
+}
+
+/** 确定派生类类型 */
+export function isEnemyTank(entity: IEntity): entity is import('../object/tank-enemy').default {
+  return entity.type === 'enemyTank';
+}
+export function isAllyTank(entity: IEntity): entity is import('../object/tank-ally').default {
+  return entity.type === 'allyTank';
+}
+export function isBrick(entity: IEntity): entity is import('../object/brick').default {
+  return entity.type === 'brick';
+}
+export function isBullet(entity: IEntity): entity is import('../object/bullet').default {
+  return entity.type === 'bullet';
+}
+export function isReward(entity: IEntity): entity is import('../object/reward').default {
+  return entity.type === 'reward';
 }

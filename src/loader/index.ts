@@ -7,6 +7,7 @@
 import { loadImages, CacheImg } from './images';
 import { loadAudio, CacheSound } from './sounds';
 
+// TODO Audio 导出对象应该为一个包含play的对象，而不是直接导出资源
 export type ResourceType = {
   Image: CacheImg;
   Audio: CacheSound;

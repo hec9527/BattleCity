@@ -1,4 +1,3 @@
-import { getCanvas } from '@/util';
 import Config from '@/config/const';
 import Log from '@/util/print';
 import Win from './win';
@@ -6,7 +5,10 @@ import { Resource } from '@/loader';
 import Keyboard from '@/util/keyboard';
 import Keys from '@/config/keys';
 import { Ticker } from '@/util/ticker';
+import Game from '@/object/game';
+import { getWinStartBackground } from '@/util/off-screen-canvas';
 
+const G = Game.getInstance();
 const R = Resource.getResource();
 const K = Keyboard.getInstance();
 const textMarginleft = (Config.canvas.width / 2 - 60) | 0;
@@ -24,14 +26,14 @@ class WinStart extends Win {
     Log.info('开始界面，init...');
 
     // init cache background
-    this.background = this.getBackground();
+    this.background = getWinStartBackground();
 
     // fill
-    this.ctx.fillStyle = '#000';
+    this.ctx.fillStyle = Config.colors.black;
 
     // ticker
     this.tickerList.addTick(
-      new Ticker(Config.ticker.moveStatus, () => (this.flagStatus = this.flagStatus ? 0 : 1), true)
+      new Ticker(Config.ticker.moveStatusFast, () => (this.flagStatus = this.flagStatus ? 0 : 1), true)
     );
 
     document.addEventListener(
@@ -42,37 +44,7 @@ class WinStart extends Win {
       },
       { once: true }
     );
-  }
-
-  private getBackground(): HTMLCanvasElement {
-    const { canvas, ctx } = getCanvas(Config.canvas.width, Config.canvas.height);
-    ctx.fillStyle = '#000';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(R.Image.UI, 0, 0, 376, 136, 68, 80, 376, 136);
-
-    // 底部信息
-    ctx.font = '16px prestart';
-    ctx.fillStyle = '#b82619';
-    ctx.fillText('HEC9527', textMarginleft, 365);
-    ctx.fillStyle = '#f5f5f5';
-    ctx.fillText('© 1995 2021', textMarginleft - 20, 400);
-    ctx.fillText('ALL RIGHTS RESERVED', textMarginleft - 70, 435);
-    // 选项
-    ctx.fillText('1 PLAYER', textMarginleft, 260);
-    ctx.fillText('2 PLAYERS', textMarginleft, 295);
-    ctx.fillText('CONSTRUCTION', textMarginleft, 330);
-    // 顶部信息
-    ctx.font = '14px prestart';
-    ctx.fillText('1P-', 50, 40);
-    ctx.fillText('HI-', 200, 40);
-    ctx.fillText('2P-', 350, 40);
-    ctx.textAlign = 'right';
-    ctx.fillText('00', 175, 40);
-    ctx.fillText('20000', 325, 40);
-    ctx.fillText('00', 475, 40);
-    return canvas;
+    setTimeout(() => K.setBlockAll(false), 3800); // 自动滚动后立即解锁按键
   }
 
   update(): void {
@@ -111,18 +83,21 @@ class WinStart extends Win {
   next(): void {
     switch (this.flag) {
       case 0: {
+        G.mode = 'single';
         Log.info('To winSelect, one player');
         import('./win-select').then(win => new win.default());
         break;
       }
       case 1: {
+        G.mode = 'double';
         Log.info('To winSelect, two plater');
         import('./win-select').then(win => new win.default());
         break;
       }
       case 2: {
+        G.isCustomed = true;
         Log.info('To Constructor');
-        // import()
+        import('./win-construction').then(win => new win.default());
         break;
       }
       default:
