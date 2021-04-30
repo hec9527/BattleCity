@@ -26,8 +26,6 @@ declare type ITankLifeCircle = 'birth' | 'survival' | 'death';
 
 declare type IBulletLifeCircle = 'survival' | 'death';
 
-declare type IRewardLifeCircle = 'survival' | 'dying';
-
 declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet' | 'entity';
 
 declare type IMapData = TupleArray<TupleArray<number, 13>, 13>;
@@ -46,8 +44,9 @@ declare type IRewardStatus = IMoveStatus;
  * - 2 坦克
  * - 3 防护
  * - 4 炸弹
- * - 5 地雷 */
-declare type IRewardType = 0 | 1 | 2 | 3 | 4 | 5;
+ * - 5 地雷
+ * - 6 手枪 */
+declare type IRewardType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 declare type ICanvasCompose = {
   canvas: HTMLCanvasElement;

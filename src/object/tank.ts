@@ -191,8 +191,6 @@ abstract class Tank extends EntityMoveAble {
         else if (isAllyTank(entity) || isEnemyTank(entity)) {
           const distance = getDistance(this.rect, entity.rect);
           const distanceNextFrame = getDistance(nextRect, entity.rect);
-          console.log(`closer:${distanceNextFrame < distance}`, distanceNextFrame, distance);
-
           if (distanceNextFrame < distance) {
             if (isEnemyTank(this)) this.changeDirection();
             return (move = false);
