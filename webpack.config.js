@@ -34,6 +34,7 @@ const config = {
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
+        // type: 'asset/resource',
       },
       {
         test: /\.(png|jpg|mp3|ttf)$/,

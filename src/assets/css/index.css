@@ -23,7 +23,7 @@ body {
 }
 
 body {
-  /* background: url('../img/bilibili.jpg'); */
+  background: url('../img/bilibili.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -39,6 +39,7 @@ body {
   border-radius: 15px;
   overflow: hidden;
   display: flex;
+  backdrop-filter: blur(20px);
 }
 
 #container ::before {
@@ -47,7 +48,6 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(20px);
 }
 
 #gameBox {
