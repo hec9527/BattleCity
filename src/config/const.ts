@@ -4,6 +4,12 @@
  */
 
 export const Config = {
+  game: {
+    /** 最小关卡 */
+    minStage: 1,
+    /** 最大关卡 */
+    maxStage: 256,
+  },
   resource: {
     audios: ['attack', 'attackOver', 'bomb', 'count', 'eat', 'life', 'misc', 'move', 'over', 'pause', 'start'],
     images: ['bonus', 'brick', 'enemyTank', 'explode', 'getScore', 'getScoreDouble', 'myTank', 'tool', 'UI'],
@@ -21,10 +27,10 @@ export const Config = {
   },
   ticker: {
     /** 射击间隔时间 */
-    shoot: 20,
+    shoot: 15,
     /** 改变移动状态 */
-    moveStatus: 10,
-    moveStatusFast: 5,
+    moveStatus: 6,
+    moveStatusFast: 3,
     moveStatusSlow: 20,
     // moveStatus
     /** 出身动画时间 */
@@ -43,9 +49,11 @@ export const Config = {
     explode: 30,
     explodeStatus: 5,
     /** 子弹爆炸时间 */
-    explodeBullet: 10,
+    explodeBullet: 8,
     /** 子弹爆炸时间 */
     explodeStatusbullet: 3,
+    /** 定身时间 */
+    stopStatus: 100,
   },
   colors: {
     black: '#000',
@@ -59,15 +67,16 @@ export const Config = {
     },
     enemyTank: {
       // 实例参数
-      speed: 2,
-      speedSlow: 1.5,
-      speedFast: 2.7,
+      speed: 1.8,
+      speedSlow: 1.2,
+      speedFast: 2.5,
       // 类参数
       combatAblitiyBase: 30, // 战斗值，越高越容易生成高级坦克
       combatUnit: 5, // 作战单位， 同时在场个数
     },
     bullet: {
       speed: 3, // 子弹速度
+      speedFast: 4.5, // 升级后的子弹
     },
   },
 };

@@ -60,7 +60,6 @@ abstract class Win implements IGameWorld {
   }
 
   protected next(): void {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.animation = () => {};
   }
 

@@ -8,9 +8,11 @@ import Config from '@/config/const';
 import { Ticker } from '@/util/ticker';
 import { Resource } from '@/loader';
 import Reward from './reward';
+import Game from './game';
 
 type IBirthPosIndex = 0 | 1 | 2;
 
+const G = Game.getInstance();
 const R = Resource.getResource();
 const BIRTH_POS: IEntityRect[] = [
   [0, 0, 32, 32],
@@ -51,8 +53,8 @@ class EnemyTank extends Tank {
     this.type = 'enemyTank';
     this.life = randomInt(1, enemyType === 3 ? 5 : 1);
     this.tankType = enemyType;
-    this.world.addTicker(new Ticker(Config.ticker.brith, () => (EnemyTank.isBuildingEnemy = false)));
-    randomInt(0, 10) < 3 && this.addLife();
+    this.world.addTicker(new Ticker(Config.ticker.brith / 3, () => (EnemyTank.isBuildingEnemy = false)));
+    randomInt(0, 10) < 30 && this.addLife();
   }
 
   /** ### 初始化敌方坦克
@@ -66,7 +68,7 @@ class EnemyTank extends Tank {
   public static initEnemyTank(option: Omit<ITankEnemyOption, 'enemyType'>): EnemyTank | undefined {
     if (
       this.enemyAll.length > 0 &&
-      this.enemyAlive.size <= Config.entity.enemyTank.combatUnit &&
+      this.enemyAlive.size < Config.entity.enemyTank.combatUnit &&
       !this.isBuildingEnemy
     ) {
       const enemy = new EnemyTank({ ...option, enemyType: this.enemyAll.pop() as IEnemyType });
@@ -79,9 +81,24 @@ class EnemyTank extends Tank {
     return this.enemyAll.length;
   }
 
+  public static getEnemyAliveTank(): Set<EnemyTank> {
+    return this.enemyAlive;
+  }
+
   /** 消灭敌方所有坦克 */
-  public static killALlEnemy(): void {
-    Array.from(this.enemyAlive).forEach(entity => entity.die());
+  public static killAllEnemy(): void {
+    Array.from(this.enemyAlive).forEach(entity => entity.die(true));
+  }
+  public static killEnemy(enemyTank: EnemyTank): void {
+    this.enemyAlive.delete(enemyTank);
+  }
+
+  protected killAllOppositeCampTank(): void {
+    G.players.getPlayer().forEach(p => p?.getTank()?.die(true));
+  }
+
+  protected stopAllOppositeCampTank(): void {
+    G.players.getPlayer().forEach(p => p?.getTank()?.setStopStatus(true));
   }
 
   changeDirection(): void {
@@ -93,33 +110,29 @@ class EnemyTank extends Tank {
   }
 
   die(explode = false): void {
+    if (this.lifeCircle === 'death') return;
     if (this.lifeCircle === 'survival' && !this.isProtected) {
       if (explode) return super.die(true);
       if (this.reward >= 1) {
         Reward.getNewReward({ world: this.world });
         this.reward--;
       } else {
-        super.die();
+        super.die(explode, () => {
+          EnemyTank.killEnemy(this);
+        });
       }
     }
   }
 
   addLife(): void {
-    this.reward += randomInt(1, 3);
-  }
-
-  getReward(): void {
-    //
-  }
-
-  upGrade(): void {
-    //
+    this.reward += randomInt(3, 5);
+    // this.reward += randomInt(1, 3);
   }
 
   public update(entityList: readonly IEntity[]): void {
-    if (this.lifeCircle !== 'survival') return;
+    if (this.lifeCircle !== 'survival' || this.isStoped) return;
     this.move(entityList);
-    this.shoot();
+    randomInt(0, 100) < 5 && this.shoot();
     randomInt(0, 1000) < 5 && this.changeDirection();
   }
 
@@ -146,6 +159,7 @@ class EnemyTank extends Tank {
         h
       );
     }
+    super.draw();
   }
 }
 

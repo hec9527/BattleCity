@@ -25,11 +25,11 @@ class Bullet extends EntityMoveAble implements IBullet {
   // ticker
   private explodeTicker?: ITicker;
 
-  constructor({ world, rect, camp, level, direction, speed, beforeDie }: IBulletOption) {
-    super({ world, rect, camp, direction, speed });
+  constructor({ world, rect, camp, level, direction, beforeDie }: IBulletOption) {
+    super({ world, rect, camp, direction });
 
     this.level = level || 1;
-    this.speed = speed || Config.entity.bullet.speed;
+    this.speed = this.level > 1 ? Config.entity.bullet.speedFast : Config.entity.bullet.speed;
     this.dieCallback = beforeDie;
     this.type = 'bullet';
   }
@@ -75,6 +75,7 @@ class Bullet extends EntityMoveAble implements IBullet {
       if (this.isCollisionEntityNextFrame(entity.rect)) {
         // 子弹-子弹
         if (isBullet(entity)) {
+          if (!entity.isCollision) return true;
           entity.die(true);
           this.die(true);
         }
@@ -85,8 +86,9 @@ class Bullet extends EntityMoveAble implements IBullet {
         }
         // 子弹-坦克  不同阵营
         else if ((this.camp === 'enemy' && isAllyTank(entity)) || (this.camp === 'ally' && isEnemyTank(entity))) {
+          if (!entity.isCollision) return true;
           entity.die();
-          this.die(true);
+          this.die();
         }
       }
       return true;

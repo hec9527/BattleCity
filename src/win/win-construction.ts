@@ -89,7 +89,7 @@ class WinConstruction extends Win {
 
   update(): void {
     if (K.isSingleKey(keys.P1.Start)) {
-      // TODO 删除
+      // TODO fix
       Log.debug('map', this.map);
       Log.debug('map', JSON.stringify(this.map));
       M.setCustomMap(this.map);

@@ -26,7 +26,7 @@ class Reward extends Entity implements IReward {
   private constructor({ world }: IRewardOption) {
     const rect = getRewardRect();
     super(world, rect);
-    this.rewardType = randomInt(0, 5) as IRewardType;
+    this.rewardType = randomInt(0, 6) as IRewardType;
     this.type = 'reward';
     this.status = 0;
 

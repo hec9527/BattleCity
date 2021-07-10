@@ -21,9 +21,9 @@ class WinSelect extends Win {
       this.taggleWin += 10;
     } else {
       if (K.isPulseKey(keys.P1.Up)) {
-        this.stage = this.stage < 256 ? this.stage + 1 : 256;
+        this.stage = this.stage < Config.game.maxStage ? this.stage + 1 : Config.game.maxStage;
       } else if (K.isPulseKey(keys.P1.Down)) {
-        this.stage = this.stage > 1 ? this.stage - 1 : 1;
+        this.stage = this.stage > Config.game.minStage ? this.stage - 1 : Config.game.minStage;
       } else if (K.isPulseKey(keys.P1.Start)) {
         this.next();
       }

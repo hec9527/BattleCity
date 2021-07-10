@@ -1,5 +1,5 @@
 /**
- * 游戏参数
+ * 游戏对象，保存游戏运行时变化的数据
  *  单例模式
  */
 
@@ -7,14 +7,12 @@ export class Game {
   private static instance: Game;
   /** 当前关卡 */
   public stage: number;
-  /** 最小关卡 */
-  public minStage = 1;
-  /** 最大关卡 */
-  public maxStage = 256;
   /** 游戏模式，单人 / 双人 */
   public mode: IGameMode;
   /** 自定义地图 */
   public isCustomed: boolean;
+  /** 玩家 */
+  public players!: import('./player').default;
 
   private constructor() {
     this.stage = 1;

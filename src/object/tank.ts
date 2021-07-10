@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable prefer-const */
 /**
  * 坦克类
@@ -17,6 +16,7 @@ abstract class Tank extends EntityMoveAble {
   // basic info
   protected life: number;
   protected level: number;
+  protected isStoped = false; // 定身，无法移动和射击
   protected isProtected = false;
   protected bulletNum = 1;
   protected bullets: Set<IBullet> = new Set<IBullet>();
@@ -27,9 +27,11 @@ abstract class Tank extends EntityMoveAble {
   protected wheelStatus: IMoveStatus = 0;
   protected birthStatus: IBrithStatus = 0;
   protected explodeStatus: IExplodeStatus = 0;
+  protected explodeStatusStep: IExplodeStatusStep = 1;
   protected protecterStatus: IProtecterStatus = 0;
 
   // Ticker
+  private stopTicker?: Ticker;
   private moveTicker: Ticker; // 特殊的计时器，这个只能在实例中使用和更新，应为实例移动之后才能更新数据
   private birthTicker?: ITicker;
   private protectTicker?: ITicker;
@@ -100,9 +102,29 @@ abstract class Tank extends EntityMoveAble {
     this.world.addTicker(new Ticker(Config.ticker.shoot, () => (this.isCanShoot = true)));
   }
 
-  protected addProtector(tickerTime = Config.ticker.protecterStatus): void {
-    console.log(this);
+  protected getReward(rewardType: IRewardType): void {
+    // TODO 完成奖励类型的处理
+    const rewards = {
+      0: () => {}, // 🛠 铁锹
+      1: () => this.upGrade(1), // ⭐️  五角星  等级+1
+      2: () => this.addLife(), // 🚂 坦克
+      3: () => this.addProtector(), // 🛡 保护套
+      4: () => this.killAllOppositeCampTank(), // 💣  炸弹，敌人全部boom
+      5: () => this.stopAllOppositeCampTank(), // ⏰  地雷，敌人静止不动
+      6: () => this.upGrade(4), // 🔫 手枪 等级+4 life+1
+    };
+    const action = rewards[rewardType];
+    if (action) {
+      action();
+    } else {
+      throw new Error(`未知的奖励类型 ${rewardType}`);
+    }
+  }
 
+  protected abstract stopAllOppositeCampTank(): void;
+  protected abstract killAllOppositeCampTank(): void;
+
+  protected addProtector(tickerTime = Config.ticker.protecter): void {
     if (this.protectTicker) {
       this.world.delTicker(this.protectTicker);
     }
@@ -122,39 +144,68 @@ abstract class Tank extends EntityMoveAble {
     this.isProtected = true;
   }
 
-  protected abstract getReward(rewardType: IRewardType): void;
-
-  protected abstract upGrade(): void;
-
   protected abstract addLife(): void;
 
-  /**- 正在执行出生动画或者受保护的个体暂时免疫死亡
-   * - 否则 life--   */
-  public die(explode = false): void {
-    if (this.lifeCircle === 'survival' && !this.isProtected) {
-      if (this.life <= 1 || explode) {
-        this.lifeCircle = 'death';
-        this.isCollision = false;
-        this.explodeTicker = new Ticker(
-          Config.ticker.explodeStatus,
-          () => (this.explodeStatus = this.explodeStatus ? 0 : 1),
-          true
-        );
-        this.world.addTicker(
-          new Ticker(Config.ticker.explode, () => {
-            this.world.delTicker(this.explodeTicker!);
-            this.explodeTicker = undefined;
-            super.die();
-          })
-        );
-      } else {
-        this.life--;
-        this.level = this.level > 1 ? this.level - 1 : 1;
+  protected upGrade(level: number): void {
+    this.level += level;
+    if (this.level > 4) {
+      if (this.life <= 1) {
+        this.life++;
+      }
+      if (isAllyTank(this)) {
+        this.bulletNum = 2;
       }
     }
   }
 
-  move(entityList: readonly IEntity[]): void {
+  public setStopStatus(stop: boolean): void {
+    if (this.stopTicker) {
+      this.world.delTicker(this.stopTicker);
+    }
+    this.stopTicker = new Ticker(Config.ticker.stopStatus, () => {
+      this.world.delTicker(this.stopTicker!);
+      this.stopTicker = undefined;
+    });
+    this.world.addTicker(this.stopTicker);
+    this.isStoped = stop;
+  }
+
+  /**- 正在执行出生动画或者受保护的个体暂时免疫死亡
+   * - 否则 life--   */
+  public die(explode = false, callback?: () => void): void {
+    if (this.life <= 1 || explode) {
+      this.lifeCircle = 'death';
+      this.isCollision = false;
+      this.explodeTicker = new Ticker(
+        Config.ticker.explodeStatus,
+        () => {
+          this.explodeStatus += this.explodeStatusStep;
+          if (this.explodeStatus === 3 || this.explodeStatus === 0) {
+            this.explodeStatusStep = -this.explodeStatusStep as IExplodeStatusStep;
+          }
+        },
+        true
+      );
+      this.world.addTicker(this.explodeTicker);
+      this.world.addTicker(
+        new Ticker(Config.ticker.explode, () => {
+          this.world.delTicker(this.moveTicker);
+          this.world.delTicker(this.explodeTicker!);
+          this.explodeTicker = undefined;
+          super.die();
+          callback?.();
+        })
+      );
+    } else {
+      this.life--;
+      this.level = this.level > 1 ? this.level - 1 : 1;
+      if (isAllyTank(this) && this.level < 4) {
+        this.bulletNum = 1;
+      }
+    }
+  }
+
+  protected move(entityList: readonly IEntity[]): void {
     let move = true; // 这以帧是否移动
     const nextRect = this.getNextRect();
 
@@ -189,6 +240,7 @@ abstract class Tank extends EntityMoveAble {
         }
         // 坦克-坦克
         else if (isAllyTank(entity) || isEnemyTank(entity)) {
+          if (!entity.isCollision) return true;
           const distance = getDistance(this.rect, entity.rect);
           const distanceNextFrame = getDistance(nextRect, entity.rect);
           if (distanceNextFrame < distance) {
@@ -221,7 +273,7 @@ abstract class Tank extends EntityMoveAble {
     if (this.lifeCircle === 'birth') {
       this.ctx.drawImage(R.Image.bonus, 32 * this.birthStatus, 64, 32, 32, x, y, w, h);
     } else if (this.lifeCircle === 'death') {
-      this.ctx.drawImage(R.Image.explode, 32 * this.explodeStatus, 0, 32, 32, x - 16, y - 16, w, h);
+      this.ctx.drawImage(R.Image.explode, 64 * this.explodeStatus, 0, 64, 64, x - 16, y - 16, 64, 64);
     } else {
       // 绘制保护罩
       if (this.isProtected) {

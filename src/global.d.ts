@@ -28,8 +28,11 @@ declare type IBulletLifeCircle = 'survival' | 'death';
 
 declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet' | 'entity';
 
+declare type IBrickType = 'soil' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
+
 declare type IMapData = TupleArray<TupleArray<number, 13>, 13>;
 
+declare type IExplodeStatusStep = 1 | -1;
 declare type IExplodeStatus = IDirection;
 declare type IBrithStatus = IDirection;
 declare type IExplodeStatus = IMoveStatus;
@@ -106,7 +109,7 @@ declare interface ITankAllyOption {
   isDeputy?: boolean;
 }
 
-declare interface IBulletOption extends IEntityMoveAbleOption {
+declare interface IBulletOption extends Omit<IEntityMoveAbleOption, 'speed'> {
   direction: IDirection;
   level?: number;
   beforeDie: (bullet: IBullet) => void;
@@ -118,6 +121,12 @@ declare interface IReward extends IEntity {
 
 declare interface IRewardOption {
   world: IGameWorld;
+}
+
+declare interface IBrickOption {
+  world: IGameWorld;
+  index: number;
+  pos: { x: number; y: number };
 }
 
 /** window  */

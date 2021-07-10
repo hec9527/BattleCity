@@ -1,4 +1,5 @@
 import Config from '@/config/const';
+import { Resource } from '@/loader';
 import Game from '@/object/game';
 import Reward from '@/object/reward';
 import AllyTank from '@/object/tank-ally';
@@ -7,6 +8,7 @@ import { getBattleFiledBackground } from '@/util/off-screen-canvas';
 import Win from './win';
 
 const G = Game.getInstance();
+const R = Resource.getResource();
 
 class WinBattle extends Win {
   private taggleWin = Config.canvas.height / 2;
@@ -20,7 +22,21 @@ class WinBattle extends Win {
 
     this.addEntity(new AllyTank({ world: this }));
     this.addEntity(new AllyTank({ world: this, isDeputy: true }));
-    Reward.getNewReward({ world: this });
+    // Reward.getNewReward({ world: this });
+  }
+
+  private drawEnemyFlag() {
+    const num = EnemyTank.getEnemyRemainNum();
+    if (num <= 0) return;
+    console.log('enemy remain:', num);
+
+    const x = Config.battleField.paddingLeft + Config.battleField.width + 15;
+    const y = Config.battleField.paddingTop + 15;
+    for (let i = 0; i < num; i++) {
+      const _l = i % 2;
+      const _t = (i / 2) | 0;
+      this.ctx.drawImage(R.Image.tool, 0, 16, 16, 16, x + _l * 16, y + _t * 16, 16, 16);
+    }
   }
 
   update(): void {
@@ -37,6 +53,7 @@ class WinBattle extends Win {
   draw(): void {
     this.ctx.drawImage(this.backImage, 0, 0);
 
+    this.drawEnemyFlag();
     this.entityList.forEach(entity => entity.draw());
 
     if (this.taggleWin > 0) {

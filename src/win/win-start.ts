@@ -7,6 +7,7 @@ import Keys from '@/config/keys';
 import { Ticker } from '@/util/ticker';
 import Game from '@/object/game';
 import { getWinStartBackground } from '@/util/off-screen-canvas';
+import Players from '@/object/player';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
@@ -84,12 +85,14 @@ class WinStart extends Win {
     switch (this.flag) {
       case 0: {
         G.mode = 'single';
+        G.players = Players.getInstance(1);
         Log.info('To winSelect, one player');
         import('./win-select').then(win => new win.default());
         break;
       }
       case 1: {
         G.mode = 'double';
+        G.players = Players.getInstance(2);
         Log.info('To winSelect, two plater');
         import('./win-select').then(win => new win.default());
         break;
