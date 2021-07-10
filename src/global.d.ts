@@ -39,6 +39,15 @@ declare type IExplodeStatus = IMoveStatus;
 declare type IProtecterStatus = IMoveStatus;
 declare type IEnemyType = IDirection;
 declare type IRewardStatus = IMoveStatus;
+declare type ICtxType = 'fg' | 'bg' | 'main';
+
+declare type IWindowCanvas = {
+  [K in ICtxType]: HTMLCanvasElement;
+};
+
+declare type IWindowCtx = {
+  [K in ICtxType]: CanvasRenderingContext2D;
+};
 
 /**
  * 奖励类型
@@ -51,18 +60,15 @@ declare type IRewardStatus = IMoveStatus;
  * - 6 手枪 */
 declare type IRewardType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-declare type ICanvasCompose = {
-  canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
-};
+declare type ICanvasCompose = [HTMLCanvasElement, CanvasRenderingContext2D];
 
 declare interface IAnyFunction {
   (...args: any[]): any;
 }
 
 declare interface ITicker {
-  public update: () => void;
-  public isAlive: () => boolean;
+  update: () => void;
+  isAlive: () => boolean;
 }
 
 /** 实体 */
@@ -77,7 +83,7 @@ declare interface IEntity {
 }
 
 declare interface IBullet extends IEntity {
-  public readonly level: number;
+  readonly level: number;
   move: (...args: any[]) => void;
 }
 
@@ -130,7 +136,7 @@ declare interface IBrickOption {
 }
 
 /** window  */
-declare interface IGameWorld extends ICanvasCompose {
+declare interface IGameWorld {
   addEntity: (entity: IEntity) => void;
   delEntity: (entity: IEntity) => void;
   addTicker: (ticker: ITicker) => void;

@@ -14,8 +14,6 @@ const R = Resource.getResource();
 const K = Keyboard.getInstance();
 const textMarginleft = (Config.canvas.width / 2 - 60) | 0;
 
-K.setBlockAll(true);
-
 class WinStart extends Win {
   private transformY: number = Config.canvas.height;
   private flag = 0;
@@ -25,12 +23,10 @@ class WinStart extends Win {
   constructor() {
     super();
     Log.info('开始界面，init...');
+    K.setBlockAll(true);
 
     // init cache background
     this.background = getWinStartBackground();
-
-    // fill
-    this.ctx.fillStyle = Config.colors.black;
 
     // ticker
     this.tickerList.addTick(
@@ -41,6 +37,7 @@ class WinStart extends Win {
       'keydown',
       () => {
         this.transformY = 0;
+        this.ctx.bg.drawImage(this.background, 0, this.transformY);
         setTimeout(() => K.setBlockAll(false), 100);
       },
       { once: true }
@@ -64,10 +61,11 @@ class WinStart extends Win {
   }
 
   draw(): void {
-    this.ctx.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
-    this.ctx.drawImage(this.background, 0, this.transformY);
-    if (this.transformY <= 0) {
-      this.ctx.drawImage(
+    if (this.transformY > 0) {
+      this.ctx.bg.drawImage(this.background, 0, this.transformY);
+    } else {
+      this.ctx.fg.clearRect(0, 0, Config.canvas.width, Config.canvas.height);
+      this.ctx.fg.drawImage(
         R.Image.myTank,
         0,
         64 + this.flagStatus * 32,

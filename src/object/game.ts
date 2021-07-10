@@ -28,7 +28,9 @@ export class Game {
   }
 
   public init(): void {
-    Game.instance = new Game();
+    this.stage = 1;
+    this.mode = 'single';
+    this.isCustomed = false;
   }
 }
 

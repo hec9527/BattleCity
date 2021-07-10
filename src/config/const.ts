@@ -18,6 +18,8 @@ export const Config = {
     width: 516,
     height: 456,
     canvasId: 'game',
+    foregroundId: 'foreground',
+    backgroundId: 'background',
   },
   battleField: {
     width: 416,

@@ -1,4 +1,4 @@
-/** font-face定义的字体只要在字体被使用的时候才会加载 为了防止在Canvas中没有生效，需要先在含字符的元素中渲染 */
+/** font-face定义的字体只有在字体被使用的时候才会加载 为了防止在Canvas中没有生效，需要先在含字符的元素中渲染 */
 @font-face {
   font-family: 'prestart';
   src: url('../font/prstart.ttf');
@@ -70,7 +70,19 @@ body {
   position: absolute;
   width: 516px;
   height: 456px;
-  background: #abf2;
+  /* background: #abf2; */
+}
+
+#gameBox #game {
+  width: 416px;
+  height: 416px;
+  /* background: #f67; */
+  position: relative;
+  left: -15px;
+}
+
+canvas#background {
+  background: #000000;
 }
 
 #operate-tips h2 {

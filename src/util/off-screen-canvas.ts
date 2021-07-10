@@ -10,7 +10,7 @@ const paddingleft = Config.battleField.paddingLeft + Config.battleField.width + 
 
 /** 欢迎背景 */
 export function getWinStartBackground(): HTMLCanvasElement {
-  const { canvas, ctx } = getCanvas(Config.canvas.width, Config.canvas.height);
+  const [canvas, ctx] = getCanvas(Config.canvas.width, Config.canvas.height);
   ctx.fillStyle = Config.colors.black;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
@@ -42,7 +42,7 @@ export function getWinStartBackground(): HTMLCanvasElement {
 
 /** 构建场地 */
 export function getConstructionBackground(): ICanvasCompose {
-  const { canvas, ctx } = getCanvas(Config.canvas.width, Config.canvas.height);
+  const [canvas, ctx] = getCanvas(Config.canvas.width, Config.canvas.height);
   ctx.fillStyle = Config.colors.gray;
   ctx.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
   ctx.fillStyle = Config.colors.black;
@@ -52,12 +52,12 @@ export function getConstructionBackground(): ICanvasCompose {
     Config.battleField.width,
     Config.battleField.height
   );
-  return { canvas, ctx };
+  return [canvas, ctx];
 }
 
 /** 战场背景 */
 export function getBattleFiledBackground(): HTMLCanvasElement {
-  const { canvas, ctx } = getConstructionBackground();
+  const [canvas, ctx] = getConstructionBackground();
   ctx.font = '16px prestart';
   ctx.fillText('1P', paddingleft, Config.battleField.height - 140);
   ctx.drawImage(R.Image.tool, 16, 16, 16, 16, paddingleft, Config.battleField.height - 135, 16, 16);

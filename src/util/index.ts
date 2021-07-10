@@ -28,7 +28,7 @@ export function getCanvas(width: number, height: number, selecter?: string): ICa
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   canvas.width = width;
   canvas.height = height;
-  return { canvas, ctx };
+  return [canvas, ctx];
 }
 
 /**
