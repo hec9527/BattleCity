@@ -73,8 +73,17 @@ abstract class Win implements IGameWorld {
     this.callbackList.clear();
   }
 
-  protected next(): void {
-    this.animation = () => {};
+  protected next(callback?: (...args: any[]) => any): void {
+    this.animation = () => {
+      this.clearAll();
+      callback?.();
+    };
+  }
+
+  private clearAll(): void {
+    this.ctx.main.clearRect(0, 0, Config.canvas.width, Config.canvas.height);
+    this.ctx.bg.clearRect(0, 0, Config.canvas.width, Config.canvas.height);
+    this.ctx.fg.clearRect(0, 0, Config.canvas.width, Config.canvas.height);
   }
 
   abstract update(): void;

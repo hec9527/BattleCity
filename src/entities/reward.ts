@@ -58,20 +58,17 @@ class Reward extends Entity implements IReward {
 
   draw(): void {
     if (this.status === 0) return;
-    // 保证 reward 不会被其它实体掩盖，在这一帧最后绘制
-    this.world.beforeNextFrame(() => {
-      this.ctx.drawImage(
-        R.Image.bonus,
-        this.rewardType * 32,
-        0,
-        32,
-        32,
-        PL + this.rect[0],
-        PT + this.rect[1],
-        this.rect[2],
-        this.rect[3]
-      );
-    });
+    this.ctx.fg.drawImage(
+      R.Image.bonus,
+      this.rewardType * 32,
+      0,
+      32,
+      32,
+      PL + this.rect[0],
+      PT + this.rect[1],
+      this.rect[2],
+      this.rect[3]
+    );
   }
 }
 

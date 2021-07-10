@@ -137,6 +137,9 @@ declare interface IBrickOption {
 
 /** window  */
 declare interface IGameWorld {
+  canvas: IWindowCanvas;
+  ctx: IWindowCtx;
+
   addEntity: (entity: IEntity) => void;
   delEntity: (entity: IEntity) => void;
   addTicker: (ticker: ITicker) => void;

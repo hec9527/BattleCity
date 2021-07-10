@@ -12,8 +12,8 @@ class WinSelect extends Win {
 
   constructor() {
     super();
-    this.ctx.textAlign = 'center';
-    this.ctx.font = '16px prestart';
+    this.ctx.fg.textAlign = 'center';
+    this.ctx.fg.font = '16px prestart';
   }
 
   update(): void {
@@ -30,22 +30,23 @@ class WinSelect extends Win {
     }
   }
   draw(): void {
-    this.ctx.fillStyle = Config.colors.black;
-    this.ctx.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
-    this.ctx.fillStyle = Config.colors.gray;
-    this.ctx.fillRect(0, 0, Config.canvas.width, this.taggleWin);
-    this.ctx.fillRect(0, Config.canvas.height - this.taggleWin, Config.canvas.width, Config.canvas.height);
+    this.ctx.fg.fillStyle = Config.colors.black;
+    this.ctx.fg.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
+    this.ctx.fg.fillStyle = Config.colors.gray;
+    this.ctx.fg.fillRect(0, 0, Config.canvas.width, this.taggleWin);
+    this.ctx.fg.fillRect(0, Config.canvas.height - this.taggleWin, Config.canvas.width, Config.canvas.height);
     if (this.taggleWin >= this.targetHeight) {
-      this.ctx.fillStyle = Config.colors.black;
-      this.ctx.fillText('STAGE', 230, 228);
-      this.ctx.fillText(`${this.stage}`, 310, 228);
+      this.ctx.fg.fillStyle = Config.colors.black;
+      this.ctx.fg.fillText('STAGE', 230, 228);
+      this.ctx.fg.fillText(`${this.stage}`, 310, 228);
     }
   }
 
   next(): void {
-    import('./win-battle').then(win => {
-      new win.default();
-      super.next();
+    super.next(() => {
+      import('./win-battle').then(win => {
+        new win.default();
+      });
     });
   }
 }

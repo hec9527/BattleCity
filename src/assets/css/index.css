@@ -40,6 +40,7 @@ body {
   overflow: hidden;
   display: flex;
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 #container ::before {

@@ -1,9 +1,9 @@
 import Config from '@/config/const';
 import { Resource } from '@/loader';
 import Game from '@/object/game';
-import Reward from '@/object/reward';
-import AllyTank from '@/object/tank-ally';
-import EnemyTank from '@/object/tank-enemy';
+import Reward from '@/entities/reward';
+import AllyTank from '@/entities/tank-ally';
+import EnemyTank from '@/entities/tank-enemy';
 import { getBattleFiledBackground } from '@/util/off-screen-canvas';
 import Win from './win';
 
@@ -35,7 +35,7 @@ class WinBattle extends Win {
     for (let i = 0; i < num; i++) {
       const _l = i % 2;
       const _t = (i / 2) | 0;
-      this.ctx.drawImage(R.Image.tool, 0, 16, 16, 16, x + _l * 16, y + _t * 16, 16, 16);
+      this.ctx.bg.drawImage(R.Image.tool, 0, 16, 16, 16, x + _l * 16, y + _t * 16, 16, 16);
     }
   }
 
@@ -51,15 +51,15 @@ class WinBattle extends Win {
   }
 
   draw(): void {
-    this.ctx.drawImage(this.backImage, 0, 0);
+    this.ctx.bg.drawImage(this.backImage, 0, 0);
 
     this.drawEnemyFlag();
     this.entityList.forEach(entity => entity.draw());
 
     if (this.taggleWin > 0) {
-      this.ctx.fillStyle = Config.colors.gray;
-      this.ctx.fillRect(0, 0, Config.canvas.width, this.taggleWin);
-      this.ctx.fillRect(0, Config.canvas.height - this.taggleWin, Config.canvas.width, this.taggleWin);
+      this.ctx.fg.fillStyle = Config.colors.gray;
+      this.ctx.fg.fillRect(0, 0, Config.canvas.width, this.taggleWin);
+      this.ctx.fg.fillRect(0, Config.canvas.height - this.taggleWin, Config.canvas.width, this.taggleWin);
     }
   }
 }

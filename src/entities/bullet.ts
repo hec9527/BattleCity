@@ -9,8 +9,6 @@ import { Ticker } from '@/util/ticker';
 import EntityMoveAble from './entity-moveable';
 
 const R = Resource.getResource();
-const PL = Config.battleField.paddingLeft;
-const PT = Config.battleField.paddingTop;
 
 class Bullet extends EntityMoveAble implements IBullet {
   public readonly level: number;
@@ -81,7 +79,7 @@ class Bullet extends EntityMoveAble implements IBullet {
         }
         // 子弹-砖块
         else if (isBrick(entity)) {
-          entity.die();
+          entity.die(this);
           this.die();
         }
         // 子弹-坦克  不同阵营
@@ -106,9 +104,9 @@ class Bullet extends EntityMoveAble implements IBullet {
     const [x, y, w, h] = this.rect;
 
     if (this.lifeCircle === 'survival') {
-      this.ctx.drawImage(R.Image.tool, this.direction * 8, 0, 8, 8, PL + x, PT + y, w, h);
+      this.ctx.main.drawImage(R.Image.tool, this.direction * 8, 0, 8, 8, x, y, w, h);
     } else {
-      this.ctx.drawImage(R.Image.explode, this.explodeStatus * 64, 0, 64, 64, PL + x - 28, PT + y - 28, 64, 64);
+      this.ctx.main.drawImage(R.Image.explode, this.explodeStatus * 64, 0, 64, 64, x - 28, y - 28, 64, 64);
     }
   }
 }

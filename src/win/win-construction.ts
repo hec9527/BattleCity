@@ -11,12 +11,9 @@ import Log from '@/util/print';
 const M = Maps.getInstance();
 const R = Resource.getResource();
 const K = Keyboard.getInstance();
-const PL = Config.battleField.paddingLeft;
-const PT = Config.battleField.paddingTop;
 const moveSmear = 200;
 
 class WinConstruction extends Win {
-  private backImage: HTMLCanvasElement;
   private flagPos = { x: 0, y: 0 };
   private lastFlagPos = { ...this.flagPos };
   private flagShow = true;
@@ -27,18 +24,16 @@ class WinConstruction extends Win {
   constructor() {
     super();
 
-    this.backImage = getConstructionBackground().canvas;
+    const [background] = getConstructionBackground();
 
     this.tickerList.addTick(new Ticker(Config.ticker.moveStatusSlow, () => (this.flagShow = !this.flagShow), true));
 
-    this.ctx.drawImage(this.backImage, 0, 0);
-
-    this.ctx.fillStyle = Config.colors.black;
+    this.ctx.bg.drawImage(background, 0, 0);
 
     // 先绘制一次，后面增量绘制
     this.map.forEach((row, y) => {
       row.forEach((col, x) => {
-        this.ctx.drawImage(R.Image.brick, 32 * this.map[y][x], 0, 32, 32, PL + x * 32, PT + y * 32, 32, 32);
+        this.ctx.main.drawImage(R.Image.brick, 32 * this.map[y][x], 0, 32, 32, x * 32, y * 32, 32, 32);
       });
     });
   }
@@ -125,16 +120,16 @@ class WinConstruction extends Win {
     const { x: lx, y: ly } = this.lastFlagPos;
 
     // clear
-    this.ctx.fillRect(PL + x * 32, PT + y * 32, 32, 32);
-    this.ctx.fillRect(PL + lx * 32, PT + ly * 32, 32, 32);
+    this.ctx.main.fillRect(x * 32, y * 32, 32, 32);
+    this.ctx.main.fillRect(lx * 32, ly * 32, 32, 32);
 
     // draw
-    this.ctx.drawImage(R.Image.brick, this.map[ly][lx] * 32, 0, 32, 32, PL + lx * 32, PT + ly * 32, 32, 32);
-    this.ctx.drawImage(R.Image.brick, this.map[y][x] * 32, 0, 32, 32, PL + x * 32, PT + y * 32, 32, 32);
+    this.ctx.main.drawImage(R.Image.brick, this.map[ly][lx] * 32, 0, 32, 32, lx * 32, ly * 32, 32, 32);
+    this.ctx.main.drawImage(R.Image.brick, this.map[y][x] * 32, 0, 32, 32, x * 32, y * 32, 32, 32);
 
     // draw flag
     if (this.flagShow || this.isFlagJustMove) {
-      this.ctx.drawImage(R.Image.myTank, 0, 0, 32, 32, PL + this.flagPos.x * 32, PT + this.flagPos.y * 32, 32, 32);
+      this.ctx.main.drawImage(R.Image.myTank, 0, 0, 32, 32, this.flagPos.x * 32, this.flagPos.y * 32, 32, 32);
     }
   }
 }

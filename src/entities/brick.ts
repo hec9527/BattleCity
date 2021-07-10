@@ -11,7 +11,7 @@
 import Entity from './entity';
 
 function getBrickRect(pos: IBrickOption['pos'], index: number): IEntityRect {
-  let { x, y } = pos;
+  const { x, y } = pos;
   let w = 32;
   let h = 32;
   if ([2, 4, 7, 9, 17, 18, 19, 20].includes(index)) {
@@ -48,12 +48,17 @@ function getBrickType(index: number): IBrickType {
 class Brick extends Entity {
   public type: IEntityType;
   private brickType: IBrickType;
+  private cCtx: CanvasRenderingContext2D;
 
   constructor({ world, index, pos }: IBrickOption) {
     super(world, getBrickRect(pos, index));
     this.type = 'brick';
-
     this.brickType = getBrickType(index);
+    if (this.brickType === 'grass') {
+      this.cCtx = this.ctx.fg;
+    } else {
+      this.cCtx = this.ctx.bg;
+    }
   }
 
   update(): void {}

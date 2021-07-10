@@ -113,18 +113,18 @@ export function dispense(value: number, size = 20): Array<number> {
 }
 
 /** 确定派生类类型 */
-export function isEnemyTank(entity: IEntity): entity is import('../object/tank-enemy').default {
+export function isEnemyTank(entity: IEntity): entity is import('../entities/tank-enemy').default {
   return entity.type === 'enemyTank';
 }
-export function isAllyTank(entity: IEntity): entity is import('../object/tank-ally').default {
+export function isAllyTank(entity: IEntity): entity is import('../entities/tank-ally').default {
   return entity.type === 'allyTank';
 }
-export function isBrick(entity: IEntity): entity is import('../object/brick').default {
+export function isBrick(entity: IEntity): entity is import('../entities/brick').default {
   return entity.type === 'brick';
 }
-export function isBullet(entity: IEntity): entity is import('../object/bullet').default {
+export function isBullet(entity: IEntity): entity is import('../entities/bullet').default {
   return entity.type === 'bullet';
 }
-export function isReward(entity: IEntity): entity is import('../object/reward').default {
+export function isReward(entity: IEntity): entity is import('../entities/reward').default {
   return entity.type === 'reward';
 }
