@@ -2,7 +2,9 @@
 
 # Battle City
 
-![version](./svg/version-0.0.1-3963bc.svg)
+<!-- https://shields.io/ -->
+
+![version](./svg/version-1.0.0-3963bc.svg)
 ![node version](./svg/node-6.17.1+-3963bc.svg)
 ![License](./svg/license-MIT-3963bc.svg)
 ![mocha](./svg/test-mocha-3963bc.svg)
@@ -12,15 +14,11 @@
 
 </div>
 
-## 简介
+[Battle city](https://github.com/hec9527/BattleCity)是经典的红白机游戏之一，其操作简单，玩法经典，经久不衰。本项目使用 `h5` + `ts` + `canvas` 原滋原味的复刻了红白机的游戏逻辑和流程。项目包含多个分支对应不同的游戏实现版本`ts ? js`。同时配有有非常完善的开发文档及日志，梳理实现思路和优化方向，~~所有代码经过严格的代码测试~~
 
-[Battle city](https://github.com/hec9527/BattleCity)是经典的红白机游戏之一，其操作简单，玩法经典，同时易于上手，本项目包含游戏的多种版本，有非常完善的开发文档以及开发日志，并且经过严格的代码测试
+## 游戏截图
 
-Ts 重构版本，取消 webpack 打包，采用 Ts 编译器直接编译源码的方式，减少开发依赖
-
-- [js 版本](https://github.com/hec9527/BattleCity)
-
-- [ts 版本](https://github.com/hec9527/BattleCity)
+![](images/start.png)
 
 ## 关卡数据
 

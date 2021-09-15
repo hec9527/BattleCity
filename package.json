@@ -1,6 +1,6 @@
 {
   "name": "battlecity",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Battle City base on H5, play and  enjoy it",
   "main": "index.js",
   "directories": {
