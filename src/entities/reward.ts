@@ -67,7 +67,7 @@ class Reward extends Entity implements IReward {
       PL + this.rect[0],
       PT + this.rect[1],
       this.rect[2],
-      this.rect[3]
+      this.rect[3],
     );
   }
 }

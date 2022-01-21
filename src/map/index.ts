@@ -3,12 +3,12 @@
  * @author  hec9527
  */
 
-import Print from '@/util/print';
+import Print from '../util/print';
 import maps from './mapDatas';
 
 export class Maps {
   private static instance: Maps;
-  private readonly maps: IMapData[] = [([] as unknown) as IMapData, ...maps];
+  private readonly maps: IMapData[] = [[] as unknown as IMapData, ...maps];
   private isCustomRound = false;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

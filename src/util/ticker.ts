@@ -37,7 +37,7 @@ export class Ticker implements ITicker {
     /** 计时器经过指定次循环之后，执行的回调 */
     private callback: () => void,
     /** 是否使用循环模式，在循环模式下计时器不会被销毁，每次计时的结束都是新一轮计时的开始 */
-    private cycle: boolean = false
+    private cycle: boolean = false,
   ) {}
 
   public update(): void {

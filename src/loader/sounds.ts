@@ -3,7 +3,7 @@
  * @author  hec9527
  */
 
-import Printer from '@/util/print';
+import Printer from '../util/print';
 
 /** 音乐文件列表 */
 const files = [
@@ -25,7 +25,8 @@ type Files = typeof files[number];
 export type CacheSound = { [K in Files]: HTMLAudioElement };
 
 export function loadAudio(): Promise<CacheSound> {
-  const context = require.context('../assets/audio/', false, /\.mp3/, 'sync');
+  // const context = require.context('../assets/audio/', false, /\.mp3/, 'sync');
+  const context = import.meta.globEager('./assets/audio/**.mp3');
   const sounds: CacheSound = {} as CacheSound;
 
   return new Promise<CacheSound>((resolve, reject) => {
@@ -35,7 +36,7 @@ export function loadAudio(): Promise<CacheSound> {
           const audio = new Audio();
           audio.oncanplay = res;
           audio.onerror = rej;
-          audio.src = context(`./${key}.mp3`).default;
+          // audio.src = context(`./${key}.mp3`).default;
           sounds[key] = audio;
         });
       }),
@@ -48,7 +49,7 @@ export function loadAudio(): Promise<CacheSound> {
       rej => {
         Printer.error(`音频资源加载失败: ${rej}`);
         reject();
-      }
+      },
     );
   });
 }

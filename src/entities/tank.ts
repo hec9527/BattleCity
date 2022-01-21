@@ -52,7 +52,7 @@ abstract class Tank extends EntityMoveAble {
           this.birthStatus = 0;
         }
       },
-      true
+      true,
     );
     this.world.addTicker(this.birthTicker);
     this.world.addTicker(
@@ -60,14 +60,14 @@ abstract class Tank extends EntityMoveAble {
         this.lifeCircle = 'survival';
         this.world.delTicker(this.birthTicker!);
         this.birthTicker = undefined;
-      })
+      }),
     );
     this.moveTicker = new Ticker(
       Config.ticker.moveStatus,
       () => {
         this.wheelStatus = this.wheelStatus ? 0 : 1;
       },
-      true
+      true,
     );
   }
 
@@ -96,7 +96,7 @@ abstract class Tank extends EntityMoveAble {
         level: this.level,
         direction: this.direction,
         beforeDie: (bullet: IBullet) => this.bullets.delete(bullet),
-      })
+      }),
     );
     this.isCanShoot = false;
     this.world.addTicker(new Ticker(Config.ticker.shoot, () => (this.isCanShoot = true)));
@@ -131,7 +131,7 @@ abstract class Tank extends EntityMoveAble {
     this.protectTicker = new Ticker(
       Config.ticker.protecterStatus,
       () => (this.protecterStatus = this.protecterStatus ? 0 : 1),
-      true
+      true,
     );
     this.world.addTicker(this.protectTicker);
     this.world.addTicker(
@@ -139,7 +139,7 @@ abstract class Tank extends EntityMoveAble {
         this.world.delTicker(this.protectTicker!);
         this.protectTicker = undefined;
         this.isProtected = false;
-      })
+      }),
     );
     this.isProtected = true;
   }
@@ -184,7 +184,7 @@ abstract class Tank extends EntityMoveAble {
             this.explodeStatusStep = -this.explodeStatusStep as IExplodeStatusStep;
           }
         },
-        true
+        true,
       );
       this.world.addTicker(this.explodeTicker);
       this.world.addTicker(
@@ -194,7 +194,7 @@ abstract class Tank extends EntityMoveAble {
           this.explodeTicker = undefined;
           super.die();
           callback?.();
-        })
+        }),
       );
     } else {
       this.life--;

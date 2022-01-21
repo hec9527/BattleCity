@@ -30,7 +30,7 @@ class WinStart extends Win {
 
     // ticker
     this.tickerList.addTick(
-      new Ticker(Config.ticker.moveStatusFast, () => (this.flagStatus = this.flagStatus ? 0 : 1), true)
+      new Ticker(Config.ticker.moveStatusFast, () => (this.flagStatus = this.flagStatus ? 0 : 1), true),
     );
 
     document.addEventListener(
@@ -40,7 +40,7 @@ class WinStart extends Win {
         this.ctx.bg.drawImage(this.background, 0, this.transformY);
         setTimeout(() => K.setBlockAll(false), 100);
       },
-      { once: true }
+      { once: true },
     );
     setTimeout(() => K.setBlockAll(false), 3800); // 自动滚动后立即解锁按键
   }
@@ -74,7 +74,7 @@ class WinStart extends Win {
         textMarginleft - 50,
         this.flag * 35 + 242,
         32,
-        32
+        32,
       );
     }
   }

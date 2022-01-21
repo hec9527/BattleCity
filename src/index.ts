@@ -1,6 +1,6 @@
-import Loader from '@/loader';
+import Loader from './loader/';
 import Log from './util/print';
-import './assets/css/index.css';
+import '/src/assets/less/index.less';
 
 Loader().then(() => {
   Log.info('资源加载完毕');

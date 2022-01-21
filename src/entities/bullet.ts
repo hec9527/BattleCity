@@ -45,7 +45,7 @@ class Bullet extends EntityMoveAble implements IBullet {
       this.explodeTicker = new Ticker(
         Config.ticker.explodeStatusbullet,
         () => (this.explodeStatus = this.explodeStatus ? 0 : 1),
-        true
+        true,
       );
       this.world.addTicker(this.explodeTicker);
       this.world.addTicker(
@@ -53,7 +53,7 @@ class Bullet extends EntityMoveAble implements IBullet {
           this.world.delTicker(this.explodeTicker!);
           this.explodeTicker = undefined;
           super.die();
-        })
+        }),
       );
     }
   }

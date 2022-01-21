@@ -50,7 +50,7 @@ export function getConstructionBackground(): ICanvasCompose {
     Config.battleField.paddingLeft,
     Config.battleField.paddingTop,
     Config.battleField.width,
-    Config.battleField.height
+    Config.battleField.height,
   );
   return [canvas, ctx];
 }

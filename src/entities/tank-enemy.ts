@@ -156,7 +156,7 @@ class EnemyTank extends Tank {
         Config.battleField.paddingLeft + x,
         Config.battleField.paddingTop + y,
         w,
-        h
+        h,
       );
     }
     super.draw();
