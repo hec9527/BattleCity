@@ -19,19 +19,40 @@ declare type IBulletLifeCircle = 'survival' | 'death';
 
 declare type ITankLifeCircle = 'birth' | IBulletLifeCircle;
 
-declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet' | 'entity';
+declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet' | 'entity' | 'entityMoveAble';
 
 declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
 
 declare type IMapData = TupleArray<TupleArray<number, 13>, 13>;
 
 declare type IExplodeStatusStep = 1 | -1;
+
 declare type IExplodeStatus = IDirection;
+
 declare type IBirthStatus = IDirection;
+
 declare type IProtectorStatus = IMoveStatus;
+
 declare type IEnemyType = IDirection;
+
 declare type IRewardStatus = IMoveStatus;
+
 declare type ICtxType = 'fg' | 'bg' | 'main';
+
+declare type IControllerStatus = {
+  [K in 'up' | 'right' | 'down' | 'left' | 'single' | 'double' | 'select' | 'start']: boolean;
+};
+
+/**
+ * 定义控制器接口
+ * 每个控制器应该有
+ * 每个控制器应该有是否屏蔽状态
+ */
+declare interface IController {
+  readonly buttons: IControllerStatus;
+  blocked: boolean;
+  deputy: boolean; // 副手
+}
 
 declare type IWindowCanvas = {
   [K in ICtxType]: HTMLCanvasElement;
@@ -80,7 +101,6 @@ declare interface IBullet extends IEntity {
 }
 
 declare interface IEntityOption {
-  world: IGameWorld;
   rect: IEntityRect;
   camp: ICamp;
 }

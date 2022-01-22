@@ -1,5 +1,5 @@
 /**
- * 实体子类   ---  可以移动的部分
+ * 实体子类   ---  可以移动的实体类
  */
 
 import Config from '../config/const';
@@ -7,13 +7,13 @@ import { isEntityCollision } from '../util';
 import Entity from './entity';
 
 abstract class EntityMoveAble extends Entity {
-  protected direction: IDirection;
   protected speed: number;
-  public type: IEntityType;
+  protected direction: IDirection;
+  public readonly type: IEntityType = 'entityMoveAble';
 
   constructor(option: IEntityMoveAbleOption) {
-    const { world, rect, camp, direction, speed } = option;
-    super(world, rect, camp);
+    const { rect, camp, direction, speed } = option;
+    super(rect, camp);
     this.direction = direction || 0;
     this.speed = speed || 0;
     this.type = 'entity';
@@ -42,8 +42,8 @@ abstract class EntityMoveAble extends Entity {
   }
 
   /** 检测下一帧是否会碰撞到其它实体 */
-  protected isCollisionEntityNextFrame(rect: IEntityRect): boolean {
-    return isEntityCollision(this.getNextRect(), rect);
+  protected isCollisionEntityNextFrame(entity: IEntity): boolean {
+    return isEntityCollision(this.getNextRect(), entity.rect);
     // const [x1, y1, w1, h1] = this.getNextRect();
     // const [x2, y2, w2, h2] = rect;
     // const dx = x2 - x1;

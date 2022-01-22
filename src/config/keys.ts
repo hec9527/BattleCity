@@ -5,22 +5,22 @@
  */
 
 enum P1 {
-  Up = 'w',
-  Down = 's',
-  Left = 'a',
-  Right = 'd',
-  Single = 'g',
-  Double = 'h',
+  up = 'w',
+  down = 's',
+  left = 'a',
+  right = 'd',
+  single = 'g',
+  double = 'h',
   Start = 'b',
 }
 
 enum P2 {
-  Up = 'ArrowUp',
-  Down = 'ArrowDown',
-  Left = 'ArrowLeft',
-  Right = 'ArrowRight',
-  Single = 'k',
-  Double = 'l',
+  up = 'ArrowUp',
+  down = 'ArrowDown',
+  left = 'ArrowLeft',
+  right = 'ArrowRight',
+  single = 'k',
+  double = 'l',
 }
 
 export const keys = { P1, P2 };

@@ -16,6 +16,7 @@ const BIRTH_POS: IEntityRect[] = [
   [128, 384, 32, 32],
   [192, 384, 32, 32],
 ];
+
 const directionKeys = ['Up', 'Right', 'Down', 'Left'] as const;
 
 class AllyTank extends Tank {

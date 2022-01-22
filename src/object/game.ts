@@ -20,6 +20,8 @@ export class Game {
   private players: Player[] = [];
   /** 游戏地图 */
   private readonly map: IMapData[] = [];
+  /** 游戏场景窗口 */
+  private win?: IGameWorld;
 
   private constructor() {}
 
@@ -85,6 +87,16 @@ export class Game {
   public setCustomMap(map: IMapData): Game {
     this.customMap = fixMapBossPlace(fixMapBirthPlace(map));
     return this;
+  }
+
+  public setGameWin(win: IGameWorld): Game {
+    this.win = win;
+    return this;
+  }
+
+  public getGameWin(): IGameWorld {
+    if (!this.win) throw new Error('未初始化或未绑定窗口到游戏全局');
+    return this.win;
   }
 
   public init(): void {

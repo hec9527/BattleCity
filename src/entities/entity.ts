@@ -3,16 +3,20 @@
  * 所有演员类的父类
  */
 
+import Game from '../object/game';
+
 abstract class Entity implements IEntity {
   /** 是否参与碰撞检测 */
-  public isCollision = true;
-  public type: IEntityType = 'entity';
+  public readonly isCollision = true;
+  public readonly type: IEntityType = 'entity';
   protected canvas: IWindowCanvas;
   protected ctx: IWindowCtx;
+  protected world: IGameWorld;
 
-  constructor(protected world: IGameWorld, public rect: IEntityRect, public readonly camp: ICamp = 'neutral') {
-    this.canvas = world.canvas;
-    this.ctx = world.ctx;
+  constructor(public rect: IEntityRect, public readonly camp: ICamp = 'neutral') {
+    this.world = Game.getInstance().getGameWin();
+    this.canvas = this.world.canvas;
+    this.ctx = this.world.ctx;
     this.world.addEntity(this);
   }
 
