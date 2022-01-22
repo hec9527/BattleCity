@@ -6,19 +6,9 @@
 import Printer from '../util/print';
 
 /** 音乐文件列表 */
-const files = [
-  'attack',
-  'attackOver',
-  'bomb',
-  'count',
-  'eat',
-  'life',
-  'misc',
-  'move',
-  'over',
-  'pause',
-  'start',
-] as const;
+import config from '../config/const';
+
+const files = config.resource.audios;
 
 export type Files = typeof files[number];
 

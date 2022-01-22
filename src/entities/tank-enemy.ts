@@ -53,14 +53,14 @@ class EnemyTank extends Tank {
     this.type = 'enemyTank';
     this.life = randomInt(1, enemyType === 3 ? 5 : 1);
     this.tankType = enemyType;
-    this.world.addTicker(new Ticker(Config.ticker.brith / 3, () => (EnemyTank.isBuildingEnemy = false)));
+    this.world.addTicker(new Ticker(Config.ticker.birth / 3, () => (EnemyTank.isBuildingEnemy = false)));
     randomInt(0, 10) < 30 && this.addLife();
   }
 
   /** ### 初始化敌方坦克
    *  - 回合数越高，高级坦克越多 */
   public static initEnemyCamp(round: number): void {
-    const enemyCombatAbility = Config.entity.enemyTank.combatAblitiyBase + round;
+    const enemyCombatAbility = Config.entity.enemyTank.combatAbilityBase + round;
     this.enemyAll = dispense(enemyCombatAbility, 20);
     this.enemyAlive = new Set();
     this.birthIndex = randomInt(0, 2) as IBirthPosIndex;
@@ -130,7 +130,7 @@ class EnemyTank extends Tank {
   }
 
   public update(entityList: readonly IEntity[]): void {
-    if (this.lifeCircle !== 'survival' || this.isStoped) return;
+    if (this.lifeCircle !== 'survival' || this.isStopped) return;
     this.move(entityList);
     randomInt(0, 100) < 5 && this.shoot();
     randomInt(0, 1000) < 5 && this.changeDirection();

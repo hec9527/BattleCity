@@ -23,11 +23,11 @@ export function getRealStage(fakeStage: number): number {
  * @returns 修复后的地图数据
  */
 export function fixMapBirthPlace(map: IMapData): IMapData {
-  map[0][0] = Brick.block;
-  map[0][6] = Brick.block;
-  map[0][12] = Brick.block;
-  map[12][4] = Brick.block;
-  map[12][8] = Brick.block;
+  map[0][0] = Brick.blank;
+  map[0][6] = Brick.blank;
+  map[0][12] = Brick.blank;
+  map[12][4] = Brick.blank;
+  map[12][8] = Brick.blank;
   return map;
 }
 
@@ -54,4 +54,50 @@ export function fixMapWallPlace(map: IMapData, type: Brick.ice | Brick.brick): I
   map[12][5] = type === Brick.brick ? Brick.brickRight : Brick.ironRight;
   map[12][7] = type === Brick.brick ? Brick.brickLeft : Brick.ironLeft;
   return map;
+}
+
+/**
+ * 获取砖块位置 Rect
+ * @param pos 位置 x y
+ * @param index 索引
+ * @returns
+ */
+export function getBrickRect(pos: IBrickOption['pos'], index: number): IEntityRect {
+  const { x, y } = pos;
+  let w = 32;
+  let h = 32;
+  if ([2, 4, 7, 9, 17, 18, 19, 20].includes(index)) {
+    h = 16;
+  }
+  if ([3, 5, 8, 10, 17, 18, 19, 20].includes(index)) {
+    w = 16;
+  }
+  return [x, y, w, h];
+}
+
+/**
+ * 获取砖块类型
+ * @param index 砖块索引
+ * @returns 砖块类型
+ */
+export function getBrickType(index: number): IBrickType {
+  if ([1, 2, 3, 4, 5, 17, 18].includes(index)) {
+    return 'brick';
+  }
+  if ([6, 7, 8, 9, 10, 19, 20].includes(index)) {
+    return 'iron';
+  }
+  if (index === 11) {
+    return 'grass';
+  }
+  if (index === 12) {
+    return 'ice';
+  }
+  if ([13, 14].indexOf(index)) {
+    return 'river';
+  }
+  if ([15, 16].indexOf(index)) {
+    return 'boss';
+  }
+  return 'blank';
 }

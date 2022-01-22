@@ -6,13 +6,13 @@
 export const Config = {
   game: {
     /** 最小关卡 */
-    minStage: 1,
+    minStage: 0,
     /** 最大关卡 */
     maxStage: 256,
   },
   resource: {
-    audios: ['attack', 'attackOver', 'bomb', 'count', 'eat', 'life', 'misc', 'move', 'over', 'pause', 'start'],
-    images: ['bonus', 'brick', 'enemyTank', 'explode', 'getScore', 'getScoreDouble', 'myTank', 'tool', 'UI'],
+    audios: ['attack', 'attackOver', 'bomb', 'count', 'eat', 'life', 'misc', 'move', 'over', 'pause', 'start'] as const,
+    images: ['bonus', 'brick', 'enemyTank', 'explode', 'getScore', 'getScoreDouble', 'myTank', 'tool', 'UI'] as const,
   },
   canvas: {
     width: 516,
@@ -36,12 +36,12 @@ export const Config = {
     moveStatusSlow: 20,
     // moveStatus
     /** 出身动画时间 */
-    brith: 100,
-    brithStatus: 5,
+    birth: 100,
+    birthStatus: 5,
     /** 保护罩 10s 600帧 */
-    protecter: 600,
-    protecterShort: 300,
-    protecterStatus: 3,
+    protector: 600,
+    protectorShort: 300,
+    protectorStatus: 3,
     /** 奖励持续时间 */
     reward: 600,
     rewardStatus: 15,
@@ -53,7 +53,7 @@ export const Config = {
     /** 子弹爆炸时间 */
     explodeBullet: 8,
     /** 子弹爆炸时间 */
-    explodeStatusbullet: 3,
+    bulletExplodeStatus: 3,
     /** 定身时间 */
     stopStatus: 100,
   },
@@ -65,15 +65,24 @@ export const Config = {
   },
   entity: {
     allyTank: {
+      birthPos: [
+        [128, 384, 32, 32],
+        [192, 384, 32, 32],
+      ],
       speed: 2, // 正常值
     },
     enemyTank: {
+      birthPos: [
+        [0, 0, 32, 32],
+        [192, 0, 32, 32],
+        [384, 0, 32, 32],
+      ],
       // 实例参数
       speed: 1.8,
       speedSlow: 1.2,
       speedFast: 2.5,
       // 类参数
-      combatAblitiyBase: 30, // 战斗值，越高越容易生成高级坦克
+      combatAbilityBase: 30, // 战斗值，越高越容易生成高级坦克
       combatUnit: 5, // 作战单位， 同时在场个数
     },
     bullet: {

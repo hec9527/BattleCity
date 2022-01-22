@@ -7,7 +7,7 @@ import keys from '../config/keys';
 import { Resource } from '../loader';
 import Keyboard from '../util/keyboard';
 import Tank from './tank';
-import Game from './game';
+import Game from '../object/game';
 
 const G = Game.getInstance();
 const K = Keyboard.getInstance();
@@ -63,7 +63,7 @@ class AllyTank extends Tank {
   }
 
   public update(entityList: readonly IEntity[]): void {
-    if (this.lifeCircle !== 'survival' || this.isStoped) return;
+    if (this.lifeCircle !== 'survival' || this.isStopped) return;
 
     directionKeys.forEach((k, index) => {
       if (K.isPressedKey(this.keys[k])) {

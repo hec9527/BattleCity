@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 /**
  * 坦克类
  */
@@ -16,7 +15,7 @@ abstract class Tank extends EntityMoveAble {
   // basic info
   protected life: number;
   protected level: number;
-  protected isStoped = false; // 定身，无法移动和射击
+  protected isStopped = false; // 定身，无法移动和射击
   protected isProtected = false;
   protected bulletNum = 1;
   protected bullets: Set<IBullet> = new Set<IBullet>();
@@ -25,10 +24,10 @@ abstract class Tank extends EntityMoveAble {
   // status
   protected isCanShoot = true;
   protected wheelStatus: IMoveStatus = 0;
-  protected birthStatus: IBrithStatus = 0;
+  protected birthStatus: IBirthStatus = 0;
   protected explodeStatus: IExplodeStatus = 0;
   protected explodeStatusStep: IExplodeStatusStep = 1;
-  protected protecterStatus: IProtecterStatus = 0;
+  protected protectorStatus: IProtectorStatus = 0;
 
   // Ticker
   private stopTicker?: Ticker;
@@ -46,7 +45,7 @@ abstract class Tank extends EntityMoveAble {
 
     // 初始化计时器
     this.birthTicker = new Ticker(
-      Config.ticker.brithStatus,
+      Config.ticker.birthStatus,
       () => {
         if (++this.birthStatus > 3) {
           this.birthStatus = 0;
@@ -56,7 +55,7 @@ abstract class Tank extends EntityMoveAble {
     );
     this.world.addTicker(this.birthTicker);
     this.world.addTicker(
-      new Ticker(Config.ticker.brith, () => {
+      new Ticker(Config.ticker.birth, () => {
         this.lifeCircle = 'survival';
         this.world.delTicker(this.birthTicker!);
         this.birthTicker = undefined;
@@ -124,13 +123,13 @@ abstract class Tank extends EntityMoveAble {
   protected abstract stopAllOppositeCampTank(): void;
   protected abstract killAllOppositeCampTank(): void;
 
-  protected addProtector(tickerTime = Config.ticker.protecter): void {
+  protected addProtector(tickerTime = Config.ticker.protector): void {
     if (this.protectTicker) {
       this.world.delTicker(this.protectTicker);
     }
     this.protectTicker = new Ticker(
-      Config.ticker.protecterStatus,
-      () => (this.protecterStatus = this.protecterStatus ? 0 : 1),
+      Config.ticker.protectorStatus,
+      () => (this.protectorStatus = this.protectorStatus ? 0 : 1),
       true,
     );
     this.world.addTicker(this.protectTicker);
@@ -167,7 +166,7 @@ abstract class Tank extends EntityMoveAble {
       this.stopTicker = undefined;
     });
     this.world.addTicker(this.stopTicker);
-    this.isStoped = stop;
+    this.isStopped = stop;
   }
 
   /**- 正在执行出生动画或者受保护的个体暂时免疫死亡
@@ -277,7 +276,7 @@ abstract class Tank extends EntityMoveAble {
     } else {
       // 绘制保护罩
       if (this.isProtected) {
-        this.ctx.drawImage(R.Image.tool, 32 + 32 * this.protecterStatus, 0, 32, 32, x, y, w, h);
+        this.ctx.drawImage(R.Image.tool, 32 + 32 * this.protectorStatus, 0, 32, 32, x, y, w, h);
       }
     }
   }

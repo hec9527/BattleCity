@@ -6,6 +6,7 @@ import { TickerList } from '../util/ticker';
 import { getCanvas } from '../util';
 import Config from '../config/const';
 
+const SECOND_PER_FRAME = 1000 / 60;
 let lastTick = 0;
 
 abstract class Win implements IGameWorld {
@@ -66,6 +67,7 @@ abstract class Win implements IGameWorld {
     lastTick = currentTick;
 
     requestAnimationFrame(this.animation.bind(this));
+
     this.tickerList.updateAllTick();
     this.update();
     this.draw();

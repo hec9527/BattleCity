@@ -3,7 +3,7 @@
  *  单例模式
  */
 
-import Players from './player';
+import Player from './player';
 import { fixMapBirthPlace, fixMapBossPlace, getRealStage } from '../util/map-tool';
 
 export class Game {
@@ -17,7 +17,7 @@ export class Game {
   /** 自定义地图 */
   private customMap: IMapData | undefined = undefined;
   /** 玩家 */
-  private players!: Players;
+  private players: Player[] = [];
   /** 游戏地图 */
   private readonly map: IMapData[] = [];
 
@@ -32,7 +32,12 @@ export class Game {
 
   public initPlayers(num: 1 | 2): Game {
     this.mode = num === 1 ? 'single' : 'double';
-    this.players = new Players(num);
+    this.players[0] = new Player();
+    if (num === 2) {
+      this.players[1] = new Player();
+      this.players[0].setAlly(this.players[1]);
+      this.players[1].setAlly(this.players[0]);
+    }
     return this;
   }
 
@@ -53,7 +58,7 @@ export class Game {
     return this.mode;
   }
 
-  public getPlayer(): Players {
+  public getPlayer(): Player[] {
     return this.players;
   }
 

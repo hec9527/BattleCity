@@ -4,9 +4,9 @@
  */
 
 import Printer from '../util/print';
+import Config from '../config/const';
 
-/** 文件列表  */
-const files = ['bonus', 'brick', 'enemyTank', 'explode', 'getScore', 'getScoreDouble', 'myTank', 'tool', 'UI'] as const;
+const files = Config.resource.images;
 
 export type Files = typeof files[number];
 

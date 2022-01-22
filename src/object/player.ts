@@ -1,38 +1,49 @@
 type AllyTank = import('../entities/tank-ally').default;
-export type PlayerList = [Player, Player] | [Player, undefined];
+type EnemyTank = import('../entities/tank-enemy').default;
 
-class Player {
+export default class Player {
   private ally: Player | null;
   private tank: AllyTank | null;
   private life: number;
+  /** 当前分数 */
+  private score = 0;
+  /** 上次获取奖励的分数 */
+  private lastScore = 0;
 
-  constructor() {
+  constructor(private deputy: boolean = false) {
     this.life = 3;
     this.tank = null;
     this.ally = null;
   }
 
-  public getLife() {
+  // public addScore(tank: EnemyTank): void {
+  //   tank.score
+  // }
+
+  public getLife(): number {
     return this.life;
   }
 
-  public getTank() {
+  public getTank(): AllyTank | null {
     return this.tank;
   }
 
-  public setAlly(ally: Player) {
+  public setAlly(ally: Player): Player {
     this.ally = ally;
+    return this;
   }
 
-  public setTank(tank: AllyTank | null) {
+  public setTank(tank: AllyTank | null): Player {
     this.tank = tank;
+    return this;
   }
 
-  public addLife() {
-    return ++this.life;
+  public addLife(): Player {
+    ++this.life;
+    return this;
   }
 
-  public stealLife() {
+  public stealLife(): boolean {
     if (this.life <= 0 && this.ally?.life && this.ally.life >= 2) {
       this.ally.life--;
       this.life++;
@@ -41,31 +52,11 @@ class Player {
     return false;
   }
 
-  public newLife() {
+  public newLife(): boolean {
     if (this.life > 1) {
       this.life--;
       return true;
     }
     return false;
-  }
-}
-
-export default class Players {
-  private playerList: PlayerList = [new Player(), undefined];
-
-  public constructor(private num: 1 | 2 = 1) {
-    if (this.num === 2) {
-      this.playerList[1] = new Player();
-      this.playerList[1].setAlly(this.playerList[0]);
-      this.playerList[0].setAlly(this.playerList[1]);
-    }
-  }
-
-  public getPlayer(): PlayerList {
-    return this.playerList;
-  }
-
-  public getPlayerNum(): number {
-    return this.num;
   }
 }

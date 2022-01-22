@@ -7,34 +7,27 @@ declare type TupleArray<T extends any, len extends number> = [T, ...T[]] & { len
 /** 实体阵营 */
 declare type ICamp = 'ally' | 'enemy' | 'neutral';
 
-/**
- * 实体方向
- * - `0 - up`
- * - `1 - right`
- * - `2 - down`
- * - `3 - left` */
-declare type IDirection = 0 | 1 | 2 | 3;
+declare type IDirection = 0 | 1 | 2 | 3; // 上  右  下 左
 
 declare type IMoveStatus = 0 | 1;
 
-/** 游戏模式  单人/双人 */
 declare type IGameMode = 'single' | 'double';
 
 declare type IEntityRect = [number, number, number, number];
 
-declare type ITankLifeCircle = 'birth' | 'survival' | 'death';
-
 declare type IBulletLifeCircle = 'survival' | 'death';
+
+declare type ITankLifeCircle = 'birth' | IBulletLifeCircle;
 
 declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet' | 'entity';
 
-declare type IBrickType = 'soil' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
+declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
 
 declare type IMapData = TupleArray<TupleArray<number, 13>, 13>;
 
 declare type IExplodeStatusStep = 1 | -1;
 declare type IExplodeStatus = IDirection;
-declare type IBrithStatus = IDirection;
+declare type IBirthStatus = IDirection;
 declare type IProtectorStatus = IMoveStatus;
 declare type IEnemyType = IDirection;
 declare type IRewardStatus = IMoveStatus;

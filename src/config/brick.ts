@@ -1,5 +1,5 @@
 export enum Brick {
-  block = 0,
+  blank = 0,
   brick = 1,
   brickTop = 2,
   brickRight = 3,
