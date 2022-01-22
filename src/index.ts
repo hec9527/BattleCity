@@ -1,9 +1,8 @@
 import Loader from './loader/';
 import Printer from './util/print';
 import '/src/assets/less/index.less';
-// import LoadImage from './loader/images';
 
-Printer.copyright();
+// Printer.copyright();
 
 Loader().then(() => {
   Printer.info('资源加载完毕');
@@ -11,5 +10,3 @@ Loader().then(() => {
     new win.default();
   });
 });
-
-// LoadImage().then(console.log.bind(undefined));

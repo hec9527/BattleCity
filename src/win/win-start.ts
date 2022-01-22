@@ -7,12 +7,11 @@ import Keys from '../config/keys';
 import { Ticker } from '../util/ticker';
 import Game from '../object/game';
 import { getWinStartBackground } from '../util/off-screen-canvas';
-import Players from '../object/player';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
 const K = Keyboard.getInstance();
-const textMarginleft = (Config.canvas.width / 2 - 60) | 0;
+const textMarginLeft = (Config.canvas.width / 2 - 60) | 0;
 
 class WinStart extends Win {
   private transformY: number = Config.canvas.height;
@@ -71,7 +70,7 @@ class WinStart extends Win {
         64 + this.flagStatus * 32,
         32,
         32,
-        textMarginleft - 50,
+        textMarginLeft - 50,
         this.flag * 35 + 242,
         32,
         32,
@@ -83,21 +82,19 @@ class WinStart extends Win {
     super.next(() => {
       switch (this.flag) {
         case 0: {
-          G.mode = 'single';
-          G.players = Players.getInstance(1);
+          G.initPlayers(1);
           Log.info('To winSelect, one player');
           import('./win-select').then(win => new win.default());
           break;
         }
         case 1: {
-          G.mode = 'double';
-          G.players = Players.getInstance(2);
+          G.initPlayers(2);
           Log.info('To winSelect, two plater');
           import('./win-select').then(win => new win.default());
           break;
         }
         case 2: {
-          G.isCustomed = true;
+          G.isCustomized = true;
           Log.info('To Constructor');
           import('./win-construction').then(win => new win.default());
           break;

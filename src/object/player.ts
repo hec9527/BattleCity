@@ -51,25 +51,14 @@ class Player {
 }
 
 export default class Players {
-  private static instance: Players;
   private playerList: PlayerList = [new Player(), undefined];
 
-  private constructor(private num = 1) {
+  public constructor(private num: 1 | 2 = 1) {
     if (this.num === 2) {
       this.playerList[1] = new Player();
       this.playerList[1].setAlly(this.playerList[0]);
       this.playerList[0].setAlly(this.playerList[1]);
     }
-  }
-
-  public static getInstance(num = 1): Players {
-    if (num !== 1 && num !== 2) {
-      throw new Error(`expected 1 or 2 player, recived ${num}`);
-    }
-    if (!Players.instance) {
-      Players.instance = new Players(num);
-    }
-    return Players.instance;
   }
 
   public getPlayer(): PlayerList {

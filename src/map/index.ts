@@ -4,9 +4,9 @@
  */
 
 import Print from '../util/print';
-import maps from './mapDatas';
+import maps from './map-data';
 
-export class Maps {
+export default class Maps {
   private static instance: Maps;
   private readonly maps: IMapData[] = [[] as unknown as IMapData, ...maps];
   private isCustomRound = false;
@@ -70,11 +70,11 @@ export class Maps {
    */
   public setCustomMap(mapData: IMapData): void | never {
     if (mapData.length !== 13) {
-      throw new Error('each custome map row should have length 13');
+      throw new Error('each custom map row should have length 13');
     }
     for (let row = 0; row < 13; row++) {
       if (mapData[row].length !== 13) {
-        throw new Error('each custome map col should have length 13');
+        throw new Error('each custom map col should have length 13');
       }
     }
     this.isCustomRound = true;

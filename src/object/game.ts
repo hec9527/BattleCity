@@ -3,22 +3,25 @@
  *  单例模式
  */
 
+import Players from './player';
+import { fixMapBirthPlace, fixMapBossPlace, getRealStage } from '../util/map-tool';
+
 export class Game {
   private static instance: Game;
+  /** 游戏是否结束 */
+  private gameOver = false;
   /** 当前关卡 */
-  public stage: number;
+  private stage = 1;
   /** 游戏模式，单人 / 双人 */
-  public mode: IGameMode;
+  private mode: IGameMode = 'single';
   /** 自定义地图 */
-  public isCustomed: boolean;
+  private customMap: IMapData | undefined = undefined;
   /** 玩家 */
-  public players!: import('./player').default;
+  private players!: Players;
+  /** 游戏地图 */
+  private readonly map: IMapData[] = [];
 
-  private constructor() {
-    this.stage = 1;
-    this.mode = 'single';
-    this.isCustomed = false;
-  }
+  private constructor() {}
 
   public static getInstance(): Game {
     if (!Game.instance) {
@@ -27,10 +30,63 @@ export class Game {
     return Game.instance;
   }
 
+  public initPlayers(num: 1 | 2): Game {
+    this.mode = num === 1 ? 'single' : 'double';
+    this.players = new Players(num);
+    return this;
+  }
+
+  public setStage(stage: number): number {
+    if (stage < 0) throw new Error('stage must greater than 0');
+    return (this.stage = stage);
+  }
+
+  public nextStage(): number {
+    return ++this.stage;
+  }
+
+  public getStage(): number {
+    return this.stage;
+  }
+
+  public getMode(): IGameMode {
+    return this.mode;
+  }
+
+  public getPlayer(): Players {
+    return this.players;
+  }
+
+  public getMapData(): IMapData {
+    let map: IMapData;
+    if (this.customMap) {
+      map = this.customMap;
+      this.customMap = undefined;
+    } else {
+      map = this.map[getRealStage(this.stage)];
+    }
+    return map;
+  }
+
+  public getGameOver(): boolean {
+    return this.gameOver;
+  }
+
+  public setGameOver(): Game {
+    this.gameOver = true;
+    return this;
+  }
+
+  public setCustomMap(map: IMapData): Game {
+    this.customMap = fixMapBossPlace(fixMapBirthPlace(map));
+    return this;
+  }
+
   public init(): void {
     this.stage = 1;
     this.mode = 'single';
-    this.isCustomed = false;
+    this.gameOver = false;
+    this.customMap = undefined;
   }
 }
 
