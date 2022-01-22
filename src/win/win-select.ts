@@ -1,6 +1,6 @@
-import Config from '@/config/const';
-import keys from '@/config/keys';
-import Keyboard from '@/util/keyboard';
+import Config from '../config/const';
+import keys from '../config/keys';
+import Keyboard from '../util/keyboard';
 import Win from './win';
 
 const K = Keyboard.getInstance();

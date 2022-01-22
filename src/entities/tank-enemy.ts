@@ -4,11 +4,11 @@
 
 import Tank from './tank';
 import { dispense, randomInt } from '../util/index';
-import Config from '@/config/const';
-import { Ticker } from '@/util/ticker';
-import { Resource } from '@/loader';
+import Config from '../config/const';
+import { Ticker } from '../util/ticker';
+import { Resource } from '../loader';
 import Reward from './reward';
-import Game from './game';
+import Game from '../object/game';
 
 type IBirthPosIndex = 0 | 1 | 2;
 

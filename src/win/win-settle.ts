@@ -1,4 +1,4 @@
-import Config from '@/config/const';
+import Config from '../config/const';
 import Win from './win';
 
 class WinSettle extends Win {

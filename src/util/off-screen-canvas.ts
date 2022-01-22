@@ -1,7 +1,7 @@
-import Config from '@/config/const';
+import Config from '../config/const';
 import { getCanvas } from './index';
-import { Resource } from '@/loader';
-import Game from '@/object/game';
+import { Resource } from '../loader';
+import Game from '../object/game';
 
 const G = Game.getInstance();
 const R = Resource.getResource();

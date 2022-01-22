@@ -1,4 +1,4 @@
-type AllyTank = import('./tank-ally').default;
+type AllyTank = import('../entities/tank-ally').default;
 export type PlayerList = [Player, Player] | [Player, undefined];
 
 class Player {

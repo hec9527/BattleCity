@@ -5,10 +5,10 @@
 
 import Bullet from './bullet';
 import EntityMoveAble from './entity-moveable';
-import { getBulletPos, getDistance, isAllyTank, isBrick, isEnemyTank, isReward } from '@/util/index';
-import { Ticker } from '@/util/ticker';
-import Config from '@/config/const';
-import { Resource } from '@/loader';
+import { getBulletPos, getDistance, isAllyTank, isBrick, isEnemyTank, isReward } from '../util/index';
+import { Ticker } from '../util/ticker';
+import Config from '../config/const';
+import { Resource } from '../loader';
 
 const R = Resource.getResource();
 

@@ -1,10 +1,16 @@
 import Loader from './loader/';
-import Log from './util/print';
+import Printer from './util/print';
 import '/src/assets/less/index.less';
+// import LoadImage from './loader/images';
+
+// TODO 解决copyright显示问题
+// Printer.copyright();
 
 Loader().then(() => {
-  Log.info('资源加载完毕');
+  Printer.info('资源加载完毕');
   import('./win/win-start').then(win => {
     new win.default();
   });
 });
+
+// LoadImage().then(console.log.bind(undefined));

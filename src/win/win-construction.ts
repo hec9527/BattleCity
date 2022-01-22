@@ -1,12 +1,12 @@
 import Win from './win';
-import keys from '@/config/keys';
-import Keyboard from '@/util/keyboard';
-import { getConstructionBackground } from '@/util/off-screen-canvas';
-import { Resource } from '@/loader';
-import Config from '@/config/const';
-import { Ticker } from '@/util/ticker';
-import { Maps, fixMapDataAll } from '@/map';
-import Log from '@/util/print';
+import keys from '../config/keys';
+import Keyboard from '../util/keyboard';
+import { getConstructionBackground } from '../util/off-screen-canvas';
+import { Resource } from '../loader';
+import Config from '../config/const';
+import { Ticker } from '../util/ticker';
+import { Maps, fixMapDataAll } from '../map';
+import Log from '../util/print';
 
 const M = Maps.getInstance();
 const R = Resource.getResource();

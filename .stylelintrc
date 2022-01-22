@@ -2,7 +2,6 @@
   "extends": ["stylelint-config-standard", "stylelint-config-rational-order", "stylelint-config-prettier"],
   "plugins": ["stylelint-order"],
   "rules": {
-    "indentation": 4,
     "font-family-no-missing-generic-family-keyword": null,
     "no-descending-specificity": null
   },

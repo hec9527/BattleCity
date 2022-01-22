@@ -2,10 +2,10 @@
  * 子弹类
  */
 
-import Config from '@/config/const';
-import { Resource } from '@/loader';
-import { isAllyTank, isBrick, isBullet, isEnemyTank } from '@/util';
-import { Ticker } from '@/util/ticker';
+import Config from '../config/const';
+import { Resource } from '../loader';
+import { isAllyTank, isBrick, isBullet, isEnemyTank } from '../util';
+import { Ticker } from '../util/ticker';
 import EntityMoveAble from './entity-moveable';
 
 const R = Resource.getResource();

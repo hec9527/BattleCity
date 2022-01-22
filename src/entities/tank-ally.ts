@@ -2,10 +2,10 @@
  * 我方坦克类
  */
 
-import Config from '@/config/const';
-import keys from '@/config/keys';
-import { Resource } from '@/loader';
-import Keyboard from '@/util/keyboard';
+import Config from '../config/const';
+import keys from '../config/keys';
+import { Resource } from '../loader';
+import Keyboard from '../util/keyboard';
 import Tank from './tank';
 import Game from './game';
 

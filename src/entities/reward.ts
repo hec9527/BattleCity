@@ -3,10 +3,10 @@
  * 奖励类因为全局只有一个所以需要设计成单例模式
  */
 
-import Config from '@/config/const';
-import { Resource } from '@/loader';
-import { isEntityCollision, randomInt } from '@/util';
-import { Ticker } from '@/util/ticker';
+import Config from '../config/const';
+import { Resource } from '../loader';
+import { isEntityCollision, randomInt } from '../util';
+import { Ticker } from '../util/ticker';
 import Entity from './entity';
 
 const R = Resource.getResource();

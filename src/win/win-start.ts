@@ -1,13 +1,13 @@
-import Config from '@/config/const';
-import Log from '@/util/print';
+import Config from '../config/const';
+import Log from '../util/print';
 import Win from './win';
-import { Resource } from '@/loader';
-import Keyboard from '@/util/keyboard';
-import Keys from '@/config/keys';
-import { Ticker } from '@/util/ticker';
-import Game from '@/object/game';
-import { getWinStartBackground } from '@/util/off-screen-canvas';
-import Players from '@/object/player';
+import { Resource } from '../loader';
+import Keyboard from '../util/keyboard';
+import Keys from '../config/keys';
+import { Ticker } from '../util/ticker';
+import Game from '../object/game';
+import { getWinStartBackground } from '../util/off-screen-canvas';
+import Players from '../object/player';
 
 const G = Game.getInstance();
 const R = Resource.getResource();

@@ -2,8 +2,8 @@
  * 实体子类   ---  可以移动的部分
  */
 
-import Config from '@/config/const';
-import { isEntityCollision } from '@/util';
+import Config from '../config/const';
+import { isEntityCollision } from '../util';
 import Entity from './entity';
 
 abstract class EntityMoveAble extends Entity {

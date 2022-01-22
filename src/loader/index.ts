@@ -5,20 +5,19 @@
  */
 
 import { loadImages, CacheImg } from './images';
-import { loadAudio, CacheSound } from './sounds';
+import { loadAudio, Sound } from './audio';
 
-// TODO Audio 导出对象应该为一个包含play的对象，而不是直接导出资源
-export type ResourceType = {
+export type CacheResource = {
   Image: CacheImg;
-  Audio: CacheSound;
+  Audio: Sound;
 };
 
-export default function loadSource(): Promise<ResourceType> {
-  const resource: ResourceType = {
+export default function loadSource(): Promise<CacheResource> {
+  const resource: CacheResource = {
     Image: {} as CacheImg,
-    Audio: {} as CacheSound,
+    Audio: {} as Sound,
   };
-  return new Promise<ResourceType>((resolve, reject) => {
+  return new Promise<CacheResource>((resolve, reject) => {
     Promise.all([loadAudio(), loadImages()]).then(([audio, image]) => {
       resource.Image = image;
       resource.Audio = audio;
@@ -31,9 +30,9 @@ export default function loadSource(): Promise<ResourceType> {
 export class Resource {
   private static instance: Resource;
 
-  private constructor(public Image: ResourceType['Image'], public Audio: ResourceType['Audio']) {}
+  private constructor(public Image: CacheResource['Image'], public Audio: CacheResource['Audio']) {}
 
-  public static getResource(resouce?: ResourceType): Resource {
+  public static getResource(resouce?: CacheResource): Resource {
     if (!Resource.instance && resouce) {
       Resource.instance = new Resource(resouce.Image, resouce.Audio);
     }

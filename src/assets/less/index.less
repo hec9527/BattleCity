@@ -1,6 +1,6 @@
 /** font-face定义的字体只有在字体被使用的时候才会加载 为了防止在Canvas中没有生效，需要先在含字符的元素中渲染 */
 @font-face {
-  font-family: 'prestart';
+  font-family: prestart;
   src: url('../font/prstart.ttf');
 }
 
@@ -10,8 +10,8 @@
 }
 
 * {
-  padding: 0;
   margin: 0;
+  padding: 0;
   list-style: none;
   user-select: none !important;
 }
@@ -23,131 +23,133 @@ body {
 }
 
 body {
-  background: url('../img/bilibili.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   display: grid;
+  background: url('../img/bilibili.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   place-items: center;
 }
 
 #container {
+  position: relative;
+  display: flex;
   width: 900px;
   height: 550px;
-  background: #abf7;
-  position: relative;
-  border-radius: 16px;
   overflow: hidden;
-  display: flex;
-  backdrop-filter: blur(30px);
+  background: #abf7;
+  border-radius: 16px;
   box-shadow: 2px 2px 20px 4px #6664;
+  backdrop-filter: blur(30px);
 
   &::before {
-    content: '';
-    background-image: url('/glass-texture.png');
-    display: block;
-    z-index: -1;
     position: absolute;
+    z-index: -1;
+    display: block;
     width: 100%;
     height: 100%;
+    background-image: url('/glass-texture.png');
+    content: '';
+  }
+
+  #video-container {
+    position: relative;
+    display: grid;
+    width: 600px;
+    height: inherit;
+    place-items: center;
+
+    &::after {
+      position: absolute;
+      right: -1px;
+      width: 1px;
+      height: inherit;
+      background: #75737344;
+      content: '';
+    }
+
+    & canvas {
+      position: absolute;
+      width: 516px;
+      height: 456px;
+    }
+
+    & #game {
+      position: relative;
+      left: -15px;
+      width: 416px;
+      height: 416px;
+    }
+
+    & #background {
+      background: #000;
+    }
   }
 }
 
-#gameBox {
-  width: 600px;
-  height: inherit;
-  position: relative;
-  display: grid;
-  place-items: center;
-}
-#gameBox::after {
-  content: '';
-  position: absolute;
-  width: 1px;
-  height: inherit;
-  background: #75737344;
-  right: -1px;
-}
-
-#gameBox canvas {
-  position: absolute;
-  width: 516px;
-  height: 456px;
-  /* background: #abf2; */
-}
-
-#gameBox #game {
-  width: 416px;
-  height: 416px;
-  /* background: #f67; */
-  position: relative;
-  left: -15px;
-}
-
-canvas#background {
-  background: #000000;
-}
-
-#operate-tips h2 {
-  -webkit-background-clip: text !important;
-  background-clip: text;
-  font-weight: 900;
-  font-size: 36px;
-  margin: 85px 0 30px 0;
-  text-align: center;
-  color: transparent;
-  background: url('../img/text.png');
-}
-
-.operate-group {
-  font-family: prestart, prestart2p, 'Heiti SC', 'Myriad Pro', 'San Francisco';
-  color: #5d6999d3;
-}
-.operate-group > div {
-  margin: 0 24px;
-  font-size: 14px;
-  text-align: center;
-  display: grid;
-  gap: 16px 4px;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-}
-
-.opt-btn {
-  display: grid;
-  place-items: center;
-  grid-template-columns: repeat(2, 1fr);
-  height: 22px;
-  background: #d8eaff;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.opt-btn > div {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  background: #d0d8fd;
-}
-
-.operate-group h3 {
-  margin: 35px 0 10px 0;
-  text-align: center;
-  color: #5d6999;
-}
-
-#mesBox {
+#tips-container {
   width: 300px;
-}
 
-#copyRight {
-  position: absolute;
-  font-family: prestart, prestart2p, 'Heiti SC', 'Myriad Pro', 'San Francisco';
-  bottom: 15px;
-  right: 15px;
-  transform-origin: right bottom;
-  transform: scale(0.5);
-  font-size: 12px;
-  color: #abf;
+  h2 {
+    margin: 85px 0 30px;
+    color: transparent;
+    font-weight: 900;
+    font-size: 36px;
+    text-align: center;
+    background: url('../img/text.png');
+    background-clip: text !important;
+    // prettier-ignore
+    -webkit-background-clip: text;
+  }
+
+  h3 {
+    margin: 35px 0 10px;
+    color: #5d6999;
+    text-align: center;
+  }
+
+  .operate-group {
+    color: #5d6999d3;
+    font-family: prestart, 'prestart2p', 'Heiti SC', 'Myriad Pro', 'San Francisco';
+
+    > div {
+      display: grid;
+      grid-template-rows: repeat(2, 1fr);
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px 4px;
+      margin: 0 24px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .opt-btn {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      height: 22px;
+      overflow: hidden;
+      background: #d8eaff;
+      border-radius: 4px;
+      place-items: center;
+
+      > div {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+        background: #d0d8fd;
+      }
+    }
+  }
+
+  #copy-right {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    color: #abf;
+    font-size: 12px;
+    font-family: prestart, prestart2p, 'Heiti SC', 'Myriad Pro', 'San Francisco';
+    transform: scale(0.85);
+    transform-origin: right bottom;
+    text-shadow: 1px 1px 3px #fff, -1px -1px 1px #666;
+  }
 }

@@ -1,10 +1,10 @@
-import Config from '@/config/const';
-import { Resource } from '@/loader';
-import Game from '@/object/game';
-import Reward from '@/entities/reward';
-import AllyTank from '@/entities/tank-ally';
-import EnemyTank from '@/entities/tank-enemy';
-import { getBattleFiledBackground } from '@/util/off-screen-canvas';
+import Config from '../config/const';
+import { Resource } from '../loader';
+import Game from '../object/game';
+import Reward from '../entities/reward';
+import AllyTank from '../entities/tank-ally';
+import EnemyTank from '../entities/tank-enemy';
+import { getBattleFiledBackground } from '../util/off-screen-canvas';
 import Win from './win';
 
 const G = Game.getInstance();
