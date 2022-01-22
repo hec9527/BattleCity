@@ -40,8 +40,7 @@ export function loadAudio(): Promise<Sound> {
   };
 
   return Promise.all(files.map(loadAudio)).then(() => {
-    Printer.info('音频资源加载完成...');
-    Printer.debug('音频缓存：', cache);
+    Printer.info('音频加载完成', cache);
     return new Sound(cache);
   });
 }

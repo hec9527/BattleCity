@@ -3,8 +3,7 @@ import Printer from './util/print';
 import '/src/assets/less/index.less';
 // import LoadImage from './loader/images';
 
-// TODO 解决copyright显示问题
-// Printer.copyright();
+Printer.copyright();
 
 Loader().then(() => {
   Printer.info('资源加载完毕');

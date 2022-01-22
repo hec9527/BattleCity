@@ -28,8 +28,7 @@ export async function loadImages(): Promise<CacheImg> {
   };
 
   return Promise.all(files.map(loadImage)).then(() => {
-    Printer.info('图片加载完成...');
-    Printer.debug('图片缓存：', cache);
+    Printer.info('图片加载完成', cache);
     return cache;
   });
 }
