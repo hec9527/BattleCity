@@ -1,5 +1,5 @@
 type AllyTank = import('../entities/tank-ally').default;
-type EnemyTank = import('../entities/tank-enemy').default;
+// type EnemyTank = import('../entities/tank-enemy').default;
 
 export default class Player {
   private ally: Player | null;
@@ -15,10 +15,6 @@ export default class Player {
     this.tank = null;
     this.ally = null;
   }
-
-  // public addScore(tank: EnemyTank): void {
-  //   tank.score
-  // }
 
   public getLife(): number {
     return this.life;

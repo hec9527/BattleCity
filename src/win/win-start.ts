@@ -1,16 +1,16 @@
+import { getWinStartBackground } from '../util/off-screen-canvas';
+import AllyController from '../util/ally-controller';
+import { Ticker } from '../util/ticker';
 import Config from '../config/const';
+import { P1 } from '../config/keys';
+import { Resource } from '../loader';
+import Game from '../object/game';
 import Log from '../util/print';
 import Win from './win';
-import { Resource } from '../loader';
-import Keyboard from '../util/keyboard';
-import Keys from '../config/keys';
-import { Ticker } from '../util/ticker';
-import Game from '../object/game';
-import { getWinStartBackground } from '../util/off-screen-canvas';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
-const K = Keyboard.getInstance();
+const K = AllyController.getInstance();
 const textMarginLeft = (Config.canvas.width / 2 - 60) | 0;
 
 class WinStart extends Win {
@@ -22,7 +22,8 @@ class WinStart extends Win {
   constructor() {
     super();
     Log.info('开始界面，init...');
-    K.setBlockAll(true);
+    // 屏蔽第一次按键点击
+    K.lock();
 
     // init cache background
     this.background = getWinStartBackground();
@@ -37,23 +38,23 @@ class WinStart extends Win {
       () => {
         this.transformY = 0;
         this.ctx.bg.drawImage(this.background, 0, this.transformY);
-        setTimeout(() => K.setBlockAll(false), 100);
+        setTimeout(() => K.unlock(), 100);
       },
       { once: true },
     );
-    setTimeout(() => K.setBlockAll(false), 3800); // 自动滚动后立即解锁按键
+    setTimeout(() => K.unlock(), 3800); // 自动滚动后立即解锁按键
   }
 
   update(): void {
     if (this.transformY > 0) {
       this.transformY -= 2;
     } else {
-      if (K.isBlockAll()) return;
-      if (K.isPulseKey(Keys.P1.Up)) {
+      if (K.isLocked) return;
+      if (K.isTapKey(P1.up)) {
         this.flag === 0 ? (this.flag = 2) : this.flag--;
-      } else if (K.isPulseKey(Keys.P1.Down)) {
+      } else if (K.isTapKey(P1.down) || K.isTapKey(P1.select)) {
         this.flag === 2 ? (this.flag = 0) : this.flag++;
-      } else if (K.isPulseKey(Keys.P1.Start)) {
+      } else if (K.isTapKey(P1.start)) {
         this.next();
       }
     }
@@ -82,19 +83,18 @@ class WinStart extends Win {
     super.next(() => {
       switch (this.flag) {
         case 0: {
-          G.initPlayers(1);
+          G.setMode('single');
           Log.info('To winSelect, one player');
           import('./win-select').then(win => new win.default());
           break;
         }
         case 1: {
-          G.initPlayers(2);
+          G.setMode('double');
           Log.info('To winSelect, two plater');
           import('./win-select').then(win => new win.default());
           break;
         }
         case 2: {
-          G.isCustomized = true;
           Log.info('To Constructor');
           import('./win-construction').then(win => new win.default());
           break;

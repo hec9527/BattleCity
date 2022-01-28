@@ -1,9 +1,6 @@
 import Loader from './loader/';
 import Printer from './util/print';
 import '/src/assets/less/index.less';
-import Controller from './util/ally-control';
-
-new Controller();
 
 // Printer.copyright();
 

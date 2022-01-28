@@ -5,13 +5,14 @@
 import { TickerList } from '../util/ticker';
 import { getCanvas } from '../util';
 import Config from '../config/const';
+import Game from '../object/game';
 
-const SECOND_PER_FRAME = 1000 / 60;
 let lastTick = 0;
 
 abstract class Win implements IGameWorld {
   protected entityList = new Set<IEntity>();
   protected tickerList: TickerList = new TickerList();
+  protected readonly game = Game.getInstance();
   private callbackList = new Set<() => void>();
   public canvas: IWindowCanvas;
   public ctx: IWindowCtx;
@@ -23,17 +24,10 @@ abstract class Win implements IGameWorld {
     const [mainCanvas, mainCtx] = getCanvas(bConf.width, bConf.height, cConf.canvasId);
     const [fgCanvas, fgCtx] = getCanvas(cConf.width, cConf.height, cConf.foregroundId);
     const [bgCanvas, bgCtx] = getCanvas(cConf.width, cConf.height, cConf.backgroundId);
-    this.canvas = {
-      main: mainCanvas,
-      bg: bgCanvas,
-      fg: fgCanvas,
-    };
 
-    this.ctx = {
-      main: mainCtx,
-      bg: bgCtx,
-      fg: fgCtx,
-    };
+    this.canvas = { main: mainCanvas, bg: bgCanvas, fg: fgCanvas };
+
+    this.ctx = { main: mainCtx, bg: bgCtx, fg: fgCtx };
 
     // TODO fix
     (window as any).entity = this.entityList;

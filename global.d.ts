@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/// <reference path='src/typings/utile.d.ts'/>
+/// <reference types="vite/client" />
 
 declare module '*.png';
+
+declare type AnyObject = {
+  [K in symbol | string | number]: any;
+};
 
 declare type TupleArray<T extends any, len extends number> = [T, ...T[]] & { length: len };
 
@@ -39,21 +45,6 @@ declare type IRewardStatus = IMoveStatus;
 
 declare type ICtxType = 'fg' | 'bg' | 'main';
 
-declare type IControllerStatus = {
-  [K in 'up' | 'right' | 'down' | 'left' | 'single' | 'double' | 'select' | 'start']: boolean;
-};
-
-/**
- * 定义控制器接口
- * 每个控制器应该有
- * 每个控制器应该有是否屏蔽状态
- */
-declare interface IController {
-  readonly buttons: IControllerStatus;
-  blocked: boolean;
-  deputy: boolean; // 副手
-}
-
 declare type IWindowCanvas = {
   [K in ICtxType]: HTMLCanvasElement;
 };
@@ -74,6 +65,15 @@ declare type IWindowCtx = {
 declare type IRewardType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 declare type ICanvasCompose = [HTMLCanvasElement, CanvasRenderingContext2D];
+
+declare interface IAllyController {
+  lock(): void;
+  unlock(): void;
+  get isLocked(): boolean;
+  isTapKey(key: any): boolean;
+  isPulseKey(key: any, pulseTime: number): boolean;
+  isPressKey(key: any): boolean;
+}
 
 declare interface IAnyFunction {
   (...args: any[]): any;

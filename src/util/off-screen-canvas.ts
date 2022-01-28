@@ -5,8 +5,8 @@ import Game from '../object/game';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
-const textMarginleft = (Config.canvas.width / 2 - 60) | 0;
-const paddingleft = Config.battleField.paddingLeft + Config.battleField.width + 15;
+const textMarginLeft = (Config.canvas.width / 2 - 60) | 0;
+const paddingLeft = Config.battleField.paddingLeft + Config.battleField.width + 15;
 
 /** 欢迎背景 */
 export function getWinStartBackground(): HTMLCanvasElement {
@@ -20,14 +20,14 @@ export function getWinStartBackground(): HTMLCanvasElement {
   // 底部信息
   ctx.font = '16px prestart';
   ctx.fillStyle = Config.colors.red;
-  ctx.fillText('HEC9527', textMarginleft + 20, 365);
+  ctx.fillText('HEC9527', textMarginLeft + 20, 365);
   ctx.fillStyle = Config.colors.white_100;
-  ctx.fillText('© 1995 2021', textMarginleft - 20, 400);
-  ctx.fillText('ALL RIGHTS RESERVED', textMarginleft - 70, 425);
+  ctx.fillText('© 1995 2021', textMarginLeft - 20, 400);
+  ctx.fillText('ALL RIGHTS RESERVED', textMarginLeft - 70, 425);
   // 选项
-  ctx.fillText('1 PLAYER', textMarginleft, 260);
-  ctx.fillText('2 PLAYERS', textMarginleft, 295);
-  ctx.fillText('CONSTRUCTION', textMarginleft, 330);
+  ctx.fillText('1 PLAYER', textMarginLeft, 260);
+  ctx.fillText('2 PLAYERS', textMarginLeft, 295);
+  ctx.fillText('CONSTRUCTION', textMarginLeft, 330);
   // 顶部信息
   ctx.font = '14px prestart';
   ctx.fillText('1P-', 50, 40);
@@ -59,13 +59,13 @@ export function getConstructionBackground(): ICanvasCompose {
 export function getBattleFiledBackground(): HTMLCanvasElement {
   const [canvas, ctx] = getConstructionBackground();
   ctx.font = '16px prestart';
-  ctx.fillText('1P', paddingleft, Config.battleField.height - 140);
-  ctx.drawImage(R.Image.tool, 16, 16, 16, 16, paddingleft, Config.battleField.height - 135, 16, 16);
-  if (G.mode === 'double') {
-    ctx.fillText('2P', paddingleft, Config.battleField.height - 85);
-    ctx.drawImage(R.Image.tool, 16, 16, 16, 16, paddingleft, Config.battleField.height - 80, 16, 16);
+  ctx.fillText('1P', paddingLeft, Config.battleField.height - 140);
+  ctx.drawImage(R.Image.tool, 16, 16, 16, 16, paddingLeft, Config.battleField.height - 135, 16, 16);
+  if (G.getMode() === 'double') {
+    ctx.fillText('2P', paddingLeft, Config.battleField.height - 85);
+    ctx.drawImage(R.Image.tool, 16, 16, 16, 16, paddingLeft, Config.battleField.height - 80, 16, 16);
   }
-  ctx.drawImage(R.Image.tool, 32 * 4, 0, 32, 32, paddingleft, Config.battleField.height - 45, 32, 32);
+  ctx.drawImage(R.Image.tool, 32 * 4, 0, 32, 32, paddingLeft, Config.battleField.height - 45, 32, 32);
 
   return canvas;
 }

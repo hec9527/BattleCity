@@ -23,24 +23,15 @@ export class Game {
   /** 游戏场景窗口 */
   private win?: IGameWorld;
 
-  private constructor() {}
+  private constructor() {
+    this.players[0] = new Player();
+  }
 
   public static getInstance(): Game {
     if (!Game.instance) {
       Game.instance = new Game();
     }
     return Game.instance;
-  }
-
-  public initPlayers(num: 1 | 2): Game {
-    this.mode = num === 1 ? 'single' : 'double';
-    this.players[0] = new Player();
-    if (num === 2) {
-      this.players[1] = new Player();
-      this.players[0].setAlly(this.players[1]);
-      this.players[1].setAlly(this.players[0]);
-    }
-    return this;
   }
 
   public setStage(stage: number): number {
@@ -54,6 +45,16 @@ export class Game {
 
   public getStage(): number {
     return this.stage;
+  }
+
+  public setMode(mode: IGameMode): Game {
+    this.mode = mode;
+    if (this.mode === 'double') {
+      this.players.push(new Player(true));
+      this.players[0].setAlly(this.players[1]);
+      this.players[1].setAlly(this.players[0]);
+    }
+    return this;
   }
 
   public getMode(): IGameMode {
@@ -104,6 +105,7 @@ export class Game {
     this.mode = 'single';
     this.gameOver = false;
     this.customMap = undefined;
+    this.players = [new Player()];
   }
 }
 
