@@ -16,21 +16,19 @@ const K = AllyController.getInstance();
 const directionKeys = ['up', 'right', 'down', 'left'] as const;
 
 class AllyTank extends Tank {
-  private isDeputy: boolean;
   private keys: typeof keys.P1 | typeof keys.P2;
   public type: IEntityType = 'allyTank';
   public isCollision = true;
 
-  constructor({ isDeputy = false }: ITankAllyOption) {
+  constructor(private isDeputy: boolean = false) {
     super({ rect: [...Config.entity.allyTank.birthPos[isDeputy ? 1 : 0]], direction: 0, camp: 'ally' });
 
     this.speed = Config.entity.allyTank.speed;
     this.keys = isDeputy ? keys.P2 : keys.P1;
-    this.isDeputy = isDeputy;
 
     // TODO fix
     this.addProtector(10000000);
-    // this.addProtector(Config.ticker.protecterShort);
+    // this.addProtector(Config.ticker.protectorShort);
 
     G.getPlayer()[isDeputy ? 1 : 0]?.setTank(this);
   }
@@ -40,14 +38,14 @@ class AllyTank extends Tank {
   }
 
   protected killAllOppositeCampTank(): void {
-    import('./tank-enemy').then(res => {
+    import('./enemy-tank').then(res => {
       const EnemyTank = res.default;
       EnemyTank.killAllEnemy();
     });
   }
 
   protected stopAllOppositeCampTank(): void {
-    import('./tank-enemy').then(res => {
+    import('./enemy-tank').then(res => {
       const EnemyTank = res.default;
       EnemyTank.getEnemyAliveTank().forEach(e => e.setStopStatus(true));
     });
@@ -82,18 +80,13 @@ class AllyTank extends Tank {
   public draw(): void {
     // 绘制自身
     if (this.lifeCircle === 'survival') {
-      const [x, y, w, h] = this.rect;
-
       this.ctx.main.drawImage(
         R.Image.myTank,
         (Math.min(3, this.level - 1) + (this.isDeputy ? 4 : 0)) * 32,
         this.direction * 64 + this.wheelStatus * 32,
         32,
         32,
-        Config.battleField.paddingLeft + x,
-        Config.battleField.paddingTop + y,
-        w,
-        h,
+        ...this.rect,
       );
     }
     super.draw();

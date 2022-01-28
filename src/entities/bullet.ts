@@ -93,6 +93,7 @@ class Bullet extends EntityMoveAble implements IBullet {
           if (!entity.isCollision) return true;
           entity.die();
           this.die();
+          // 坦克有保护罩子弹没有爆炸动画
         }
       }
       return true;

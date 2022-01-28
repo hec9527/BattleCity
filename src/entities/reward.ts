@@ -15,6 +15,7 @@ const PT = Config.battleField.paddingTop;
 
 class Reward extends Entity implements IReward {
   private static instance: Reward | undefined = undefined;
+
   private status: IRewardStatus;
   public type: IEntityType;
   public readonly rewardType: IRewardType;
@@ -40,12 +41,15 @@ class Reward extends Entity implements IReward {
   }
 
   public static getNewReward(): Reward {
-    this.instance?.die();
-    return (this.instance = new Reward());
+    if (Reward.instance) {
+      Reward.instance.die();
+    }
+    Reward.instance = new Reward();
+    return Reward.instance;
   }
 
   die(): void {
-    if (this.survivalTicker) {
+    if (this.survivalTicker?.isAlive) {
       this.world.delTicker(this.statusTicker!);
       this.world.delTicker(this.survivalTicker);
       this.statusTicker = undefined;

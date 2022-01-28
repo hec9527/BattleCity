@@ -123,10 +123,10 @@ export function getRewardRect(): IEntityRect {
 }
 
 /** 确定派生类类型 */
-export function isEnemyTank(entity: IEntity): entity is import('../entities/tank-enemy').default {
+export function isEnemyTank(entity: IEntity): entity is import('../entities/enemy-tank').default {
   return entity.type === 'enemyTank';
 }
-export function isAllyTank(entity: IEntity): entity is import('../entities/tank-ally').default {
+export function isAllyTank(entity: IEntity): entity is import('../entities/ally-tank').default {
   return entity.type === 'allyTank';
 }
 export function isBrick(entity: IEntity): entity is import('../entities/brick').default {

@@ -80,29 +80,28 @@ class WinStart extends Win {
   }
 
   next(): void {
-    super.next(() => {
-      switch (this.flag) {
-        case 0: {
-          G.setMode('single');
-          Log.info('To winSelect, one player');
-          import('./win-select').then(win => new win.default());
-          break;
-        }
-        case 1: {
-          G.setMode('double');
-          Log.info('To winSelect, two plater');
-          import('./win-select').then(win => new win.default());
-          break;
-        }
-        case 2: {
-          Log.info('To Constructor');
-          import('./win-construction').then(win => new win.default());
-          break;
-        }
-        default:
-          Log.error('unexpected flag number, expected 0-2');
+    switch (this.flag) {
+      case 0:
+      case 1: {
+        G.setMode(this.flag === 0 ? 'single' : 'double');
+        Log.info('To winSelect');
+        import('./win-select').then(win => {
+          super.next(true);
+          new win.default();
+        });
+        break;
       }
-    });
+      case 2: {
+        Log.info('To Constructor');
+        import('./win-construction').then(win => {
+          super.next(true);
+          new win.default();
+        });
+        break;
+      }
+      default:
+        Log.error('unexpected flag number, expected 0-2');
+    }
   }
 }
 

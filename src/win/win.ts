@@ -8,11 +8,12 @@ import Config from '../config/const';
 import Game from '../object/game';
 
 let lastTick = 0;
+const G = Game.getInstance();
 
 abstract class Win implements IGameWorld {
   protected entityList = new Set<IEntity>();
   protected tickerList: TickerList = new TickerList();
-  protected readonly game = Game.getInstance();
+  protected readonly game = G;
   private callbackList = new Set<() => void>();
   public canvas: IWindowCanvas;
   public ctx: IWindowCtx;
@@ -26,8 +27,9 @@ abstract class Win implements IGameWorld {
     const [bgCanvas, bgCtx] = getCanvas(cConf.width, cConf.height, cConf.backgroundId);
 
     this.canvas = { main: mainCanvas, bg: bgCanvas, fg: fgCanvas };
-
     this.ctx = { main: mainCtx, bg: bgCtx, fg: fgCtx };
+
+    G.setGameWin(this);
 
     // TODO fix
     (window as any).entity = this.entityList;
@@ -69,9 +71,9 @@ abstract class Win implements IGameWorld {
     this.callbackList.clear();
   }
 
-  protected next(callback?: (...args: any[]) => any): void {
+  protected next(clear = false, callback?: (...args: any[]) => any): void {
     this.animation = () => {
-      this.clearAll();
+      clear && this.clearAll();
       callback?.();
     };
   }

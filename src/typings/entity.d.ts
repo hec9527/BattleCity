@@ -67,11 +67,6 @@ declare interface IEnemyTankOption {
   enemyType: IEnemyType;
 }
 
-declare interface ITankAllyOption {
-  world: IGameWorld;
-  isDeputy?: boolean;
-}
-
 declare interface IBulletOption extends Omit<IEntityMoveAbleOption, 'speed'> {
   direction: IDirection;
   level?: number;

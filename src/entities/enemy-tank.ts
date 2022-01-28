@@ -49,7 +49,7 @@ class EnemyTank extends Tank {
     this.score = 100;
     this.life = randomInt(1, tankType === 3 ? 5 : 1);
     this.tankType = tankType;
-    randomInt(0, 10) < 30 && this.addLife();
+    this.addLife();
   }
 
   /** ### 初始化敌方坦克
@@ -89,7 +89,7 @@ class EnemyTank extends Tank {
   }
 
   protected stopAllOppositeCampTank(): void {
-    G.getPlayer().forEach(p => p?.getTank()?.setStopStatus(true));
+    // G.getGameWin().addTicker(())
   }
 
   changeDirection(): void {
@@ -129,7 +129,7 @@ class EnemyTank extends Tank {
 
   public draw(): void {
     if (this.lifeCircle === 'survival') {
-      const [x, y, w, h] = this.rect;
+      const [, , w, h] = this.rect;
       let sx;
 
       if (this.tankType < 3) {
@@ -144,10 +144,7 @@ class EnemyTank extends Tank {
         this.direction * 64 + this.wheelStatus * 32,
         w,
         h,
-        Config.battleField.paddingLeft + x,
-        Config.battleField.paddingTop + y,
-        w,
-        h,
+        ...this.rect,
       );
     }
     super.draw();

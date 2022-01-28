@@ -272,19 +272,15 @@ abstract class Tank extends EntityMoveAble {
   }
 
   public draw(): void {
-    // eslint-disable-next-line prefer-const
-    let [x, y, w, h] = this.rect;
-    x += Config.battleField.paddingLeft;
-    y += Config.battleField.paddingTop;
+    const [x, y, w, h] = this.rect;
 
     // 出生动画 / 死亡动画   坦克自身由各个派生类自己实现
     if (this.lifeCircle === 'birth') {
       this.ctx.main.drawImage(R.Image.bonus, 32 * this.birthStatus, 64, 32, 32, x, y, w, h);
     } else if (this.lifeCircle === 'death') {
       this.ctx.main.drawImage(R.Image.explode, 64 * this.explodeStatus, 0, 64, 64, x - 16, y - 16, 64, 64);
-    }
-    // 绘制保护罩
-    if (this.isProtected) {
+    } else if (this.isProtected) {
+      // 绘制保护罩
       this.ctx.main.drawImage(R.Image.tool, 32 + 32 * this.protectorStatus, 0, 32, 32, x, y, w, h);
     }
   }

@@ -23,6 +23,7 @@ abstract class Entity implements IEntity {
   public abstract update(list: readonly IEntity[]): void;
   public abstract draw(): void;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public die(...args: any[]): void {
     this.world.delEntity(this);
   }

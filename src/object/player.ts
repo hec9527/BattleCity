@@ -1,5 +1,4 @@
-type AllyTank = import('../entities/tank-ally').default;
-// type EnemyTank = import('../entities/tank-enemy').default;
+import AllyTank from '../entities/ally-tank';
 
 export default class Player {
   private ally: Player | null;
@@ -20,13 +19,20 @@ export default class Player {
     return this.life;
   }
 
-  public getTank(): AllyTank | null {
-    return this.tank;
-  }
-
   public setAlly(ally: Player): Player {
     this.ally = ally;
     return this;
+  }
+
+  public getNewTank(): AllyTank | null {
+    if (this.life < 0) return null;
+    this.life--;
+    this.tank = new AllyTank(this.deputy);
+    return this.tank;
+  }
+
+  public getTank(): AllyTank | null {
+    return this.tank || this.getNewTank();
   }
 
   public setTank(tank: AllyTank | null): Player {

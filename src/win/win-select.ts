@@ -5,7 +5,7 @@ import Win from './win';
 
 const K = AllyController.getInstance();
 
-class WinSelect extends Win {
+export default class WinSelect extends Win implements IGameWorld {
   private toggleWin = 0;
   private targetHeight = Config.canvas.height / 2;
   private stage = 1;
@@ -43,12 +43,9 @@ class WinSelect extends Win {
   }
 
   next(): void {
-    super.next(() => {
-      import('./win-battle').then(win => {
-        new win.default();
-      });
+    import('./win-battle').then(win => {
+      super.next();
+      new win.default();
     });
   }
 }
-
-export default WinSelect;
