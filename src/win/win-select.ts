@@ -1,12 +1,12 @@
 import Config from '../config/const';
-import keys from '../config/keys';
-import Keyboard from '../util/keyboard';
+import { P1 } from '../config/keys';
+import AllyController from '../util/ally-controller';
 import Win from './win';
 
-const K = Keyboard.getInstance();
+const K = AllyController.getInstance();
 
 class WinSelect extends Win {
-  private taggleWin = 0;
+  private toggleWin = 0;
   private targetHeight = Config.canvas.height / 2;
   private stage = 1;
 
@@ -17,14 +17,14 @@ class WinSelect extends Win {
   }
 
   update(): void {
-    if (this.taggleWin < this.targetHeight) {
-      this.taggleWin += 10;
+    if (this.toggleWin < this.targetHeight) {
+      this.toggleWin += 10;
     } else {
-      if (K.isPulseKey(keys.P1.Up)) {
+      if (K.isPulseKey(P1.up)) {
         this.stage = this.stage < Config.game.maxStage ? this.stage + 1 : Config.game.maxStage;
-      } else if (K.isPulseKey(keys.P1.Down)) {
+      } else if (K.isPulseKey(P1.down)) {
         this.stage = this.stage > Config.game.minStage ? this.stage - 1 : Config.game.minStage;
-      } else if (K.isPulseKey(keys.P1.Start)) {
+      } else if (K.isTapKey(P1.select) || K.isTapKey(P1.start)) {
         this.next();
       }
     }
@@ -33,9 +33,9 @@ class WinSelect extends Win {
     this.ctx.fg.fillStyle = Config.colors.black;
     this.ctx.fg.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
     this.ctx.fg.fillStyle = Config.colors.gray;
-    this.ctx.fg.fillRect(0, 0, Config.canvas.width, this.taggleWin);
-    this.ctx.fg.fillRect(0, Config.canvas.height - this.taggleWin, Config.canvas.width, Config.canvas.height);
-    if (this.taggleWin >= this.targetHeight) {
+    this.ctx.fg.fillRect(0, 0, Config.canvas.width, this.toggleWin);
+    this.ctx.fg.fillRect(0, Config.canvas.height - this.toggleWin, Config.canvas.width, Config.canvas.height);
+    if (this.toggleWin >= this.targetHeight) {
       this.ctx.fg.fillStyle = Config.colors.black;
       this.ctx.fg.fillText('STAGE', 230, 228);
       this.ctx.fg.fillText(`${this.stage}`, 310, 228);

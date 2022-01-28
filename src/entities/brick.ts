@@ -10,16 +10,25 @@
 
 import Entity from './entity';
 import { getBrickRect, getBrickType } from '../util/map-tool';
+import { Resource } from '../loader';
+
+const R = Resource.getResource();
 
 class Brick extends Entity {
-  public type: IEntityType;
+  public type: IEntityType = 'brick';
+  public isCollision: boolean;
+
+  private brickIndex: number;
   private brickType: IBrickType;
   private cCtx: CanvasRenderingContext2D;
 
-  constructor({ world, index, pos }: IBrickOption) {
-    super(world, getBrickRect(pos, index));
-    this.type = 'brick';
+  constructor({ index, pos }: IBrickOption) {
+    super(getBrickRect(pos, index));
+
+    this.brickIndex = index;
     this.brickType = getBrickType(index);
+    this.isCollision = !['grass', 'ice', 'blank'].includes(this.brickType);
+
     if (this.brickType === 'grass') {
       this.cCtx = this.ctx.fg;
     } else {
@@ -27,14 +36,17 @@ class Brick extends Entity {
     }
   }
 
-  update(): void {}
+  update(): void {
+    return;
+  }
 
   die(bullet: IBullet): void {
+    if (this.brickType === 'ice' && bullet.level < 3) return;
     bullet.level;
   }
 
   draw(): void {
-    //
+    this.cCtx.drawImage(R.Image.brick, 32 * this.brickIndex, 0, 32, 32, ...this.rect);
   }
 }
 

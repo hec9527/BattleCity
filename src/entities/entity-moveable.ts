@@ -9,14 +9,12 @@ import Entity from './entity';
 abstract class EntityMoveAble extends Entity {
   protected speed: number;
   protected direction: IDirection;
-  public readonly type: IEntityType = 'entityMoveAble';
 
   constructor(option: IEntityMoveAbleOption) {
     const { rect, camp, direction, speed } = option;
     super(rect, camp);
     this.direction = direction || 0;
     this.speed = speed || 0;
-    this.type = 'entity';
   }
 
   protected abstract move(list: IEntity[]): void;
@@ -44,11 +42,6 @@ abstract class EntityMoveAble extends Entity {
   /** 检测下一帧是否会碰撞到其它实体 */
   protected isCollisionEntityNextFrame(entity: IEntity): boolean {
     return isEntityCollision(this.getNextRect(), entity.rect);
-    // const [x1, y1, w1, h1] = this.getNextRect();
-    // const [x2, y2, w2, h2] = rect;
-    // const dx = x2 - x1;
-    // const dy = y2 - y1;
-    // return -w2 < dx && dx < w1 && -h2 < dy && dy < h1;
   }
 }
 

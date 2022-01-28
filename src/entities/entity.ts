@@ -7,8 +7,8 @@ import Game from '../object/game';
 
 abstract class Entity implements IEntity {
   /** 是否参与碰撞检测 */
-  public readonly isCollision = true;
-  public readonly type: IEntityType = 'entity';
+  public abstract isCollision: boolean;
+  public abstract readonly type: IEntityType;
   protected canvas: IWindowCanvas;
   protected ctx: IWindowCtx;
   protected world: IGameWorld;

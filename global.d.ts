@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference path='src/typings/utile.d.ts'/>
+/// <reference path='src/typings/entity.d.ts'/>
 /// <reference types="vite/client" />
 
 declare module '*.png';
@@ -8,42 +8,13 @@ declare type AnyObject = {
   [K in symbol | string | number]: any;
 };
 
-declare type TupleArray<T extends any, len extends number> = [T, ...T[]] & { length: len };
-
-/** 实体阵营 */
-declare type ICamp = 'ally' | 'enemy' | 'neutral';
-
-declare type IDirection = 0 | 1 | 2 | 3; // 上  右  下 左
-
-declare type IMoveStatus = 0 | 1;
+declare type AnyFunction = (...args: any[]) => any;
 
 declare type IGameMode = 'single' | 'double';
 
-declare type IEntityRect = [number, number, number, number];
-
-declare type IBulletLifeCircle = 'survival' | 'death';
-
-declare type ITankLifeCircle = 'birth' | IBulletLifeCircle;
-
-declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet' | 'entity' | 'entityMoveAble';
-
-declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
+declare type ICtxType = 'fg' | 'bg' | 'main';
 
 declare type IMapData = TupleArray<TupleArray<number, 13>, 13>;
-
-declare type IExplodeStatusStep = 1 | -1;
-
-declare type IExplodeStatus = IDirection;
-
-declare type IBirthStatus = IDirection;
-
-declare type IProtectorStatus = IMoveStatus;
-
-declare type IEnemyType = IDirection;
-
-declare type IRewardStatus = IMoveStatus;
-
-declare type ICtxType = 'fg' | 'bg' | 'main';
 
 declare type IWindowCanvas = {
   [K in ICtxType]: HTMLCanvasElement;
@@ -52,17 +23,6 @@ declare type IWindowCanvas = {
 declare type IWindowCtx = {
   [K in ICtxType]: CanvasRenderingContext2D;
 };
-
-/**
- * 奖励类型
- * - 0 铁锹
- * - 1 五角星
- * - 2 坦克
- * - 3 防护
- * - 4 炸弹
- * - 5 地雷
- * - 6 手枪 */
-declare type IRewardType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 declare type ICanvasCompose = [HTMLCanvasElement, CanvasRenderingContext2D];
 
@@ -75,39 +35,9 @@ declare interface IAllyController {
   isPressKey(key: any): boolean;
 }
 
-declare interface IAnyFunction {
-  (...args: any[]): any;
-}
-
 declare interface ITicker {
   update: () => void;
   isAlive: () => boolean;
-}
-
-/** 实体 */
-declare interface IEntity {
-  rect: IEntityRect;
-  camp: ICamp;
-  type: IEntityType;
-  isCollision: boolean;
-  update: (list: readonly IEntity[]) => void;
-  draw: () => void;
-  die: (...args: any[]) => void;
-}
-
-declare interface IBullet extends IEntity {
-  readonly level: number;
-  move: (...args: any[]) => void;
-}
-
-declare interface IEntityOption {
-  rect: IEntityRect;
-  camp: ICamp;
-}
-
-declare interface IEntityMoveAbleOption extends IEntityOption {
-  direction?: IDirection;
-  speed?: number;
 }
 
 declare interface ITankOption extends IEntityMoveAbleOption {
@@ -115,36 +45,6 @@ declare interface ITankOption extends IEntityMoveAbleOption {
   life?: number;
   level?: number;
   bulletNum?: number;
-}
-
-declare interface ITankEnemyOption {
-  world: IGameWorld;
-  enemyType: IEnemyType;
-}
-
-declare interface ITankAllyOption {
-  world: IGameWorld;
-  isDeputy?: boolean;
-}
-
-declare interface IBulletOption extends Omit<IEntityMoveAbleOption, 'speed'> {
-  direction: IDirection;
-  level?: number;
-  beforeDie: (bullet: IBullet) => void;
-}
-
-declare interface IReward extends IEntity {
-  readonly rewardType: IRewardType;
-}
-
-declare interface IRewardOption {
-  world: IGameWorld;
-}
-
-declare interface IBrickOption {
-  world: IGameWorld;
-  index: number;
-  pos: { x: number; y: number };
 }
 
 /** window  */

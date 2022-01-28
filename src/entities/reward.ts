@@ -5,7 +5,7 @@
 
 import Config from '../config/const';
 import { Resource } from '../loader';
-import { isEntityCollision, randomInt } from '../util';
+import { randomInt, getRewardRect } from '../util';
 import { Ticker } from '../util/ticker';
 import Entity from './entity';
 
@@ -18,14 +18,15 @@ class Reward extends Entity implements IReward {
   private status: IRewardStatus;
   public type: IEntityType;
   public readonly rewardType: IRewardType;
+  public readonly isCollision = true;
 
   // ticker
   private statusTicker?: ITicker;
   private survivalTicker?: ITicker;
 
-  private constructor({ world }: IRewardOption) {
+  private constructor() {
     const rect = getRewardRect();
-    super(world, rect);
+    super(rect);
     this.rewardType = randomInt(0, 6) as IRewardType;
     this.type = 'reward';
     this.status = 0;
@@ -38,9 +39,9 @@ class Reward extends Entity implements IReward {
     console.log(this);
   }
 
-  public static getNewReward(option: IRewardOption): Reward {
+  public static getNewReward(): Reward {
     this.instance?.die();
-    return (this.instance = new Reward(option));
+    return (this.instance = new Reward());
   }
 
   die(): void {
@@ -73,13 +74,3 @@ class Reward extends Entity implements IReward {
 }
 
 export default Reward;
-
-function getRewardRect(): IEntityRect {
-  const x = randomInt(0, 24) * 16;
-  const y = randomInt(0, 24) * 16;
-  const rect: IEntityRect = [x, y, 32, 32];
-  if (isEntityCollision(rect, [192, 384, 32, 32])) {
-    return getRewardRect();
-  }
-  return rect;
-}

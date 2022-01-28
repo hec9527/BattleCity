@@ -88,9 +88,11 @@ export function getBrickType(index: number): IBrickType {
     return 'iron';
   }
   if (index === 11) {
+    /** 草 */
     return 'grass';
   }
   if (index === 12) {
+    /** 冰 */
     return 'ice';
   }
   if ([13, 14].indexOf(index)) {

@@ -16,10 +16,12 @@ abstract class Tank extends EntityMoveAble {
   protected life: number;
   protected level: number;
   protected isStopped = false; // 定身，无法移动和射击
-  protected isProtected = false;
+  protected isProtected = false; // 保护罩
+  protected birthWaitTime = Config.entity.allyTank.birthWait; // 出生等待时间
   protected bulletNum = 1;
   protected bullets: Set<IBullet> = new Set<IBullet>();
-  protected lifeCircle: ITankLifeCircle = 'birth';
+  protected lifeCircle: ITankLifeCircle = 'wait';
+  public isCollision: boolean;
 
   // status
   protected isCanShoot = true;
@@ -30,35 +32,42 @@ abstract class Tank extends EntityMoveAble {
   protected protectorStatus: IProtectorStatus = 0;
 
   // Ticker
-  private stopTicker?: Ticker;
+  private stopTicker?: Ticker; // 定身计时器
   private moveTicker: Ticker; // 特殊的计时器，这个只能在实例中使用和更新，应为实例移动之后才能更新数据
   private birthTicker?: ITicker;
   private protectTicker?: ITicker;
   private explodeTicker?: ITicker;
 
-  constructor({ world, rect, camp, direction, speed, level, life, bulletNum }: ITankOption) {
-    super({ world, rect, camp, direction, speed });
+  constructor({ rect, camp, direction, speed, level, life, bulletNum }: ITankOption) {
+    super({ rect, camp, direction, speed });
     this.direction = direction || 0;
     this.life = life || 1;
     this.level = level || 1;
     this.bulletNum = bulletNum || 1;
+    this.isCollision = false;
 
     // 初始化计时器
-    this.birthTicker = new Ticker(
-      Config.ticker.birthStatus,
-      () => {
-        if (++this.birthStatus > 3) {
-          this.birthStatus = 0;
-        }
-      },
-      true,
-    );
-    this.world.addTicker(this.birthTicker);
     this.world.addTicker(
-      new Ticker(Config.ticker.birth, () => {
-        this.lifeCircle = 'survival';
-        this.world.delTicker(this.birthTicker!);
-        this.birthTicker = undefined;
+      new Ticker(this.birthWaitTime, () => {
+        this.lifeCircle = 'birth';
+        this.isCollision = true;
+        this.birthTicker = new Ticker(
+          Config.ticker.birthStatus,
+          () => {
+            if (++this.birthStatus > 3) {
+              this.birthStatus = 0;
+            }
+          },
+          true,
+        );
+        this.world.addTicker(this.birthTicker);
+        this.world.addTicker(
+          new Ticker(Config.ticker.birth, () => {
+            this.lifeCircle = 'survival';
+            this.world.delTicker(this.birthTicker!);
+            this.birthTicker = undefined;
+          }),
+        );
       }),
     );
     this.moveTicker = new Ticker(
@@ -72,6 +81,7 @@ abstract class Tank extends EntityMoveAble {
 
   /** 改变实体移动方向, 实体的方向用于切图   */
   protected changeDirection(direction: IDirection): void {
+    // eslint-disable-next-line prefer-const
     let [x, y, w, h] = this.rect;
     if (direction % 2) {
       y = Math.round(y / 16) * 16;
@@ -90,7 +100,6 @@ abstract class Tank extends EntityMoveAble {
     this.bullets.add(
       new Bullet({
         rect: getBulletPos(this.direction, x, y),
-        world: this.world,
         camp: this.camp,
         level: this.level,
         direction: this.direction,
@@ -119,7 +128,7 @@ abstract class Tank extends EntityMoveAble {
       throw new Error(`未知的奖励类型 ${rewardType}`);
     }
   }
-
+  protected abstract addLife(): void;
   protected abstract stopAllOppositeCampTank(): void;
   protected abstract killAllOppositeCampTank(): void;
 
@@ -142,8 +151,6 @@ abstract class Tank extends EntityMoveAble {
     );
     this.isProtected = true;
   }
-
-  protected abstract addLife(): void;
 
   protected upGrade(level: number): void {
     this.level += level;
@@ -210,6 +217,7 @@ abstract class Tank extends EntityMoveAble {
 
     // 下一帧碰到边界
     if (this.isCollisionBorderNextFrame()) {
+      // eslint-disable-next-line prefer-const
       let [x, y, w, h] = nextRect;
       if (x < 0) {
         x = 0;
@@ -229,7 +237,7 @@ abstract class Tank extends EntityMoveAble {
     // 检测下一帧是否碰撞到其它实体
     entityList.every(entity => {
       if (entity === this) return true;
-      if (this.isCollisionEntityNextFrame(entity.rect)) {
+      if (this.isCollisionEntityNextFrame(entity)) {
         // 坦克-奖励
         if (isReward(entity)) {
           this.getReward(entity.rewardType);
@@ -264,20 +272,20 @@ abstract class Tank extends EntityMoveAble {
   }
 
   public draw(): void {
+    // eslint-disable-next-line prefer-const
     let [x, y, w, h] = this.rect;
     x += Config.battleField.paddingLeft;
     y += Config.battleField.paddingTop;
 
     // 出生动画 / 死亡动画   坦克自身由各个派生类自己实现
     if (this.lifeCircle === 'birth') {
-      this.ctx.drawImage(R.Image.bonus, 32 * this.birthStatus, 64, 32, 32, x, y, w, h);
+      this.ctx.main.drawImage(R.Image.bonus, 32 * this.birthStatus, 64, 32, 32, x, y, w, h);
     } else if (this.lifeCircle === 'death') {
-      this.ctx.drawImage(R.Image.explode, 64 * this.explodeStatus, 0, 64, 64, x - 16, y - 16, 64, 64);
-    } else {
-      // 绘制保护罩
-      if (this.isProtected) {
-        this.ctx.drawImage(R.Image.tool, 32 + 32 * this.protectorStatus, 0, 32, 32, x, y, w, h);
-      }
+      this.ctx.main.drawImage(R.Image.explode, 64 * this.explodeStatus, 0, 64, 64, x - 16, y - 16, 64, 64);
+    }
+    // 绘制保护罩
+    if (this.isProtected) {
+      this.ctx.main.drawImage(R.Image.tool, 32 + 32 * this.protectorStatus, 0, 32, 32, x, y, w, h);
     }
   }
 }

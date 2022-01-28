@@ -65,18 +65,12 @@ export const Config = {
   },
   entity: {
     allyTank: {
-      birthPos: [
-        [128, 384, 32, 32],
-        [192, 384, 32, 32],
-      ],
+      birthPos: [[128, 384, 32, 32] as const, [192, 384, 32, 32] as const],
       speed: 2, // 正常值
+      birthWait: 500,
     },
     enemyTank: {
-      birthPos: [
-        [0, 0, 32, 32],
-        [192, 0, 32, 32],
-        [384, 0, 32, 32],
-      ],
+      birthPos: [[0, 0, 32, 32] as const, [192, 0, 32, 32] as const, [384, 0, 32, 32] as const],
       // 实例参数
       speed: 1.8,
       speedSlow: 1.2,
@@ -84,6 +78,7 @@ export const Config = {
       // 类参数
       combatAbilityBase: 30, // 战斗值，越高越容易生成高级坦克
       combatUnit: 5, // 作战单位， 同时在场个数
+      birthWait: 1000,
     },
     bullet: {
       speed: 3, // 子弹速度

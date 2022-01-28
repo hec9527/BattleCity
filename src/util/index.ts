@@ -20,11 +20,11 @@ export function $(select: string): HTMLElement | null | NodeList {
  * 获得一个`canvas`和操作它的上下文对象
  * @param {Number} width canvas的宽度
  * @param {Number} height canvas的高度
- * @param {String} selecter id，如果给定则从页面选择canvas，否者生成一个离屏canvas
+ * @param {String} selector id，如果给定则从页面选择canvas，否者生成一个离屏canvas
  * @return {{canvas:HTMLCanvasElement, ctx:CanvasRenderingContext2D}}
  */
-export function getCanvas(width: number, height: number, selecter?: string): ICanvasCompose {
-  const canvas = (selecter ? document.getElementById(selecter) : document.createElement('canvas')) as HTMLCanvasElement;
+export function getCanvas(width: number, height: number, selector?: string): ICanvasCompose {
+  const canvas = (selector ? document.getElementById(selector) : document.createElement('canvas')) as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   canvas.width = width;
   canvas.height = height;
@@ -51,7 +51,6 @@ export function getDistance(rect1: IEntityRect, rect2: IEntityRect): number {
   const [x1, y1] = rect1;
   const [x2, y2] = rect2;
   return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-  // return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 }
 
 /**
@@ -110,6 +109,17 @@ export function dispense(value: number, size = 20): Array<number> {
     }
   }
   return lis;
+}
+
+/** 获取奖励生成位置 */
+export function getRewardRect(): IEntityRect {
+  const x = randomInt(0, 24) * 16;
+  const y = randomInt(0, 24) * 16;
+  const rect: IEntityRect = [x, y, 32, 32];
+  if (isEntityCollision(rect, [192, 384, 32, 32])) {
+    return getRewardRect();
+  }
+  return rect;
 }
 
 /** 确定派生类类型 */

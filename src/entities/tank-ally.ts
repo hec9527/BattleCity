@@ -5,40 +5,38 @@
 import Config from '../config/const';
 import keys from '../config/keys';
 import { Resource } from '../loader';
-import Keyboard from '../util/keyboard';
+import AllyController from '../util/ally-controller';
 import Tank from './tank';
 import Game from '../object/game';
 
 const G = Game.getInstance();
-const K = Keyboard.getInstance();
 const R = Resource.getResource();
-const BIRTH_POS: IEntityRect[] = [
-  [128, 384, 32, 32],
-  [192, 384, 32, 32],
-];
+const K = AllyController.getInstance();
 
-const directionKeys = ['Up', 'Right', 'Down', 'Left'] as const;
+const directionKeys = ['up', 'right', 'down', 'left'] as const;
 
 class AllyTank extends Tank {
   private isDeputy: boolean;
   private keys: typeof keys.P1 | typeof keys.P2;
+  public type: IEntityType = 'allyTank';
+  public isCollision = true;
 
-  constructor({ world, isDeputy = false }: ITankAllyOption) {
-    super({ world, rect: BIRTH_POS[isDeputy ? 1 : 0], direction: 0, camp: 'ally' });
+  constructor({ isDeputy = false }: ITankAllyOption) {
+    super({ rect: [...Config.entity.allyTank.birthPos[isDeputy ? 1 : 0]], direction: 0, camp: 'ally' });
 
     this.speed = Config.entity.allyTank.speed;
     this.keys = isDeputy ? keys.P2 : keys.P1;
     this.isDeputy = isDeputy;
-    this.type = 'allyTank';
+
     // TODO fix
     this.addProtector(10000000);
     // this.addProtector(Config.ticker.protecterShort);
 
-    G.players.getPlayer()[isDeputy ? 1 : 0]?.setTank(this);
+    G.getPlayer()[isDeputy ? 1 : 0]?.setTank(this);
   }
 
   protected addLife(): void {
-    G.players.getPlayer()[this.isDeputy ? 1 : 0]?.addLife();
+    G.getPlayer()[this.isDeputy ? 1 : 0]?.addLife();
   }
 
   protected killAllOppositeCampTank(): void {
@@ -58,7 +56,7 @@ class AllyTank extends Tank {
   public die(explode = false): void {
     if (this.lifeCircle === 'survival' && !this.isProtected) {
       super.die(explode, () => {
-        G.players.getPlayer()[this.isDeputy ? 1 : 0]?.setTank(null);
+        G.getPlayer()[this.isDeputy ? 1 : 0]?.setTank(null);
       });
     }
   }
@@ -66,8 +64,8 @@ class AllyTank extends Tank {
   public update(entityList: readonly IEntity[]): void {
     if (this.lifeCircle !== 'survival' || this.isStopped) return;
 
-    directionKeys.forEach((k, index) => {
-      if (K.isPressedKey(this.keys[k])) {
+    directionKeys.forEach((dir, index) => {
+      if (K.isPressKey(this.keys[dir])) {
         if (this.direction !== index) {
           this.changeDirection(index as IDirection);
         } else {
@@ -76,7 +74,7 @@ class AllyTank extends Tank {
       }
     });
 
-    if (K.isPulseKey(this.keys['Single']) || K.isPulseKey(this.keys['Double'])) {
+    if (K.isTapKey(this.keys['single']) || K.isPulseKey(this.keys['double'])) {
       this.shoot();
     }
   }
@@ -86,7 +84,7 @@ class AllyTank extends Tank {
     if (this.lifeCircle === 'survival') {
       const [x, y, w, h] = this.rect;
 
-      this.ctx.drawImage(
+      this.ctx.main.drawImage(
         R.Image.myTank,
         (Math.min(3, this.level - 1) + (this.isDeputy ? 4 : 0)) * 32,
         this.direction * 64 + this.wheelStatus * 32,

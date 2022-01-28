@@ -14,28 +14,25 @@ type IBirthPosIndex = 0 | 1 | 2;
 
 const G = Game.getInstance();
 const R = Resource.getResource();
-const BIRTH_POS: IEntityRect[] = [
-  [0, 0, 32, 32],
-  [192, 0, 32, 32],
-  [384, 0, 32, 32],
-];
 
 class EnemyTank extends Tank {
   private static birthIndex: IBirthPosIndex = 1;
-  private static isBuildingEnemy = false; // 正在构建敌方坦克
-  private static enemyAll: Array<number>;
+  private static enemyReserve: Array<number>; // 预备队
   private static enemyAlive: Set<EnemyTank> = new Set();
+
+  public isCollision = true;
+  public readonly score: number;
+  public readonly type: IEntityType = 'enemyTank';
+  protected birthWaitTime = Config.entity.enemyTank.birthWait;
 
   // basic info
   private reward: number;
-  private tankType: IEnemyType;
-  public score: number;
 
   // status info
   private isCanChangeDir = true;
 
-  private constructor({ world, enemyType }: ITankEnemyOption) {
-    super({ rect: BIRTH_POS[EnemyTank.birthIndex], direction: 2, world, camp: 'enemy' });
+  private constructor(private tankType: IEnemyType) {
+    super({ rect: [...Config.entity.enemyTank.birthPos[EnemyTank.birthIndex]], direction: 2, camp: 'enemy' });
 
     if (++EnemyTank.birthIndex >= 3) {
       EnemyTank.birthIndex = 0;
@@ -43,17 +40,15 @@ class EnemyTank extends Tank {
 
     this.reward = 0;
     this.speed =
-      enemyType === 3
+      tankType === 3
         ? Config.entity.enemyTank.speedSlow
-        : enemyType === 2
+        : tankType === 2
         ? Config.entity.enemyTank.speedFast
         : Config.entity.enemyTank.speed;
-    // this.score = enemyType ===3?500:enemyType ===2:4
+    // this.score = tankType ===3?500:tankType ===2:4
     this.score = 100;
-    this.type = 'enemyTank';
-    this.life = randomInt(1, enemyType === 3 ? 5 : 1);
-    this.tankType = enemyType;
-    this.world.addTicker(new Ticker(Config.ticker.birth / 3, () => (EnemyTank.isBuildingEnemy = false)));
+    this.life = randomInt(1, tankType === 3 ? 5 : 1);
+    this.tankType = tankType;
     randomInt(0, 10) < 30 && this.addLife();
   }
 
@@ -61,24 +56,20 @@ class EnemyTank extends Tank {
    *  - 回合数越高，高级坦克越多 */
   public static initEnemyCamp(round: number): void {
     const enemyCombatAbility = Config.entity.enemyTank.combatAbilityBase + round;
-    this.enemyAll = dispense(enemyCombatAbility, 20);
+    this.enemyReserve = dispense(enemyCombatAbility, 20);
     this.enemyAlive = new Set();
     this.birthIndex = randomInt(0, 2) as IBirthPosIndex;
   }
-  public static initEnemyTank(option: Omit<ITankEnemyOption, 'enemyType'>): EnemyTank | undefined {
-    if (
-      this.enemyAll.length > 0 &&
-      this.enemyAlive.size < Config.entity.enemyTank.combatUnit &&
-      !this.isBuildingEnemy
-    ) {
-      const enemy = new EnemyTank({ ...option, enemyType: this.enemyAll.pop() as IEnemyType });
+  public static initEnemyTank(): EnemyTank | undefined {
+    if (this.enemyReserve.length > 0 && this.enemyAlive.size < Config.entity.enemyTank.combatUnit) {
+      const enemy = new EnemyTank(1);
       this.enemyAlive.add(enemy);
-      this.isBuildingEnemy = true;
+      EnemyTank.enemyReserve.pop();
       return enemy;
     }
   }
   public static getEnemyRemainNum(): number {
-    return this.enemyAll.length;
+    return this.enemyReserve.length;
   }
 
   public static getEnemyAliveTank(): Set<EnemyTank> {
@@ -94,11 +85,11 @@ class EnemyTank extends Tank {
   }
 
   protected killAllOppositeCampTank(): void {
-    G.players.getPlayer().forEach(p => p?.getTank()?.die(true));
+    G.getPlayer().forEach(p => p?.getTank()?.die(true));
   }
 
   protected stopAllOppositeCampTank(): void {
-    G.players.getPlayer().forEach(p => p?.getTank()?.setStopStatus(true));
+    G.getPlayer().forEach(p => p?.getTank()?.setStopStatus(true));
   }
 
   changeDirection(): void {
@@ -114,7 +105,7 @@ class EnemyTank extends Tank {
     if (this.lifeCircle === 'survival' && !this.isProtected) {
       if (explode) return super.die(true);
       if (this.reward >= 1) {
-        Reward.getNewReward({ world: this.world });
+        Reward.getNewReward();
         this.reward--;
       } else {
         super.die(explode, () => {
@@ -147,7 +138,7 @@ class EnemyTank extends Tank {
         sx = this.reward ? 9 : Math.floor(6 + this.life / 2);
       }
 
-      this.ctx.drawImage(
+      this.ctx.main.drawImage(
         R.Image.enemyTank,
         sx * 32,
         this.direction * 64 + this.wheelStatus * 32,

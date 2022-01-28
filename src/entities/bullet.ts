@@ -4,15 +4,15 @@
 
 import Config from '../config/const';
 import { Resource } from '../loader';
-import { isAllyTank, isBrick, isBullet, isEnemyTank } from '../util';
 import { Ticker } from '../util/ticker';
 import EntityMoveAble from './entity-moveable';
 
 const R = Resource.getResource();
 
 class Bullet extends EntityMoveAble implements IBullet {
-  public readonly level: number;
   public type: IEntityType;
+  public isCollision = true;
+  public readonly level: number;
   protected readonly speed: number;
   private lifeCircle: IBulletLifeCircle = 'survival';
   private dieCallback: (bullet: IBullet) => void;
@@ -23,8 +23,8 @@ class Bullet extends EntityMoveAble implements IBullet {
   // ticker
   private explodeTicker?: ITicker;
 
-  constructor({ world, rect, camp, level, direction, beforeDie }: IBulletOption) {
-    super({ world, rect, camp, direction });
+  constructor({ rect, camp, level, direction, beforeDie }: IBulletOption) {
+    super({ rect, camp, direction });
 
     this.level = level || 1;
     this.speed = this.level > 1 ? Config.entity.bullet.speedFast : Config.entity.bullet.speed;
@@ -43,7 +43,7 @@ class Bullet extends EntityMoveAble implements IBullet {
       this.isCollision = false;
       this.lifeCircle = 'death';
       this.explodeTicker = new Ticker(
-        Config.ticker.explodeStatusbullet,
+        Config.ticker.bulletExplodeStatus,
         () => (this.explodeStatus = this.explodeStatus ? 0 : 1),
         true,
       );
@@ -66,24 +66,30 @@ class Bullet extends EntityMoveAble implements IBullet {
     lis.every(entity => {
       if (entity === this || !entity.isCollision) return true;
       // 子弹-坦克  相同阵营
-      else if ((this.camp === 'enemy' && isEnemyTank(entity)) || (this.camp === 'ally' && isAllyTank(entity))) {
+      if (
+        (this.camp === 'enemy' && entity.type === 'enemyTank') ||
+        (this.camp === 'ally' && entity.type === 'allyTank')
+      ) {
         return true;
       }
 
-      if (this.isCollisionEntityNextFrame(entity.rect)) {
+      if (this.isCollisionEntityNextFrame(entity)) {
         // 子弹-子弹
-        if (isBullet(entity)) {
+        if (entity.type === 'bullet') {
           if (!entity.isCollision) return true;
           entity.die(true);
           this.die(true);
         }
         // 子弹-砖块
-        else if (isBrick(entity)) {
+        else if (entity.type === 'brick') {
           entity.die(this);
           this.die();
         }
         // 子弹-坦克  不同阵营
-        else if ((this.camp === 'enemy' && isAllyTank(entity)) || (this.camp === 'ally' && isEnemyTank(entity))) {
+        else if (
+          (this.camp === 'enemy' && entity.type === 'allyTank') ||
+          (this.camp === 'ally' && entity.type === 'enemyTank')
+        ) {
           if (!entity.isCollision) return true;
           entity.die();
           this.die();
