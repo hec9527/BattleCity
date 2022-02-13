@@ -60,7 +60,6 @@ export default class BrickFragment extends Brick {
     } else if (this.brickType === 'brick') {
       /** 土块，任何等级的子弹都能打碎 */
       if (bullet.level >= 2) {
-        bullet.die();
         return Entity.prototype.die.call(this);
       }
       const [p1, p2, n1, n2] = {
@@ -74,7 +73,6 @@ export default class BrickFragment extends Brick {
       } else {
         this.status[p1] = this.status[p2] = 0;
       }
-      this.world.beforeNextFrame(() => bullet?.die());
 
       if (this.status.reduce((p, c) => p + c) === 0) {
         return Entity.prototype.die.call(this);
@@ -86,7 +84,6 @@ export default class BrickFragment extends Brick {
         /** 铁块，需要4级以上的子弹才能打碎 */
         Entity.prototype.die.call(this);
       }
-      this.world.beforeNextFrame(() => bullet?.die());
     }
   }
 
@@ -95,6 +92,8 @@ export default class BrickFragment extends Brick {
   draw(): void {
     const [x, y, w, h] = this.rect;
     this.cCtx.drawImage(this.sprite, x + PL, y + PT, w, h);
+
+    // TODO 删除
     this.cCtx.drawImage(this.sprite, 0, 0);
   }
 }

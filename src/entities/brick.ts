@@ -26,6 +26,12 @@ const fragmentPosition = [
   { x: 16, y: 16 },
 ];
 
+const dictionary: { [K in IBrickType]?: number } = {
+  iron: brick.iron,
+  brick: brick.brick,
+  grass: brick.grass,
+};
+
 class Brick extends Entity {
   public type: IEntityType = 'brick';
   public isCollision: boolean;
@@ -49,8 +55,7 @@ class Brick extends Entity {
   }
 
   private broken(bullet: IBullet) {
-    this.world.beforeNextFrame(() => bullet?.die());
-    super.die();
+    this.world.beforeNextFrame(() => super.die());
 
     // TODO 修复砖块破碎
     fragmentPosition.forEach((fragment, index) => {
@@ -64,11 +69,7 @@ class Brick extends Entity {
         return;
       }
       const [x, y] = this.rect;
-      const dictionary: { [K in IBrickType]?: number } = {
-        iron: brick.iron,
-        brick: brick.brick,
-        grass: brick.grass,
-      };
+
       import('./brick-fragment').then(({ default: BrickFragment }) => {
         const _brick = new BrickFragment({
           pos: [fragment.x + x, fragment.y + y],
@@ -92,7 +93,9 @@ class Brick extends Entity {
         game.getInstance().setGameOver();
       });
     } else if (this.brickType === 'iron') {
-      this.broken(bullet);
+      if (bullet.level > 3) {
+        this.broken(bullet);
+      }
     }
   }
 
