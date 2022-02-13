@@ -3,8 +3,9 @@
  *  单例模式
  */
 
-import Player from './player';
 import { fixMapBirthPlace, fixMapBossPlace, getRealStage } from '../util/map-tool';
+
+type IPlayer = import('./player').default;
 
 export class Game {
   private static instance: Game;
@@ -17,14 +18,14 @@ export class Game {
   /** 自定义地图 */
   private customMap: IMapData | undefined = undefined;
   /** 玩家 */
-  private players: Player[] = [];
+  private players: IPlayer[] = [];
   /** 游戏地图 */
   private readonly map: IMapData[] = [];
   /** 游戏场景窗口 */
   private win?: IGameWorld;
 
   private constructor() {
-    this.players[0] = new Player();
+    // this.players[0] = new Player();
   }
 
   public static getInstance(): Game {
@@ -47,21 +48,23 @@ export class Game {
     return this.stage;
   }
 
-  public setMode(mode: IGameMode): Game {
+  public setMode(mode: IGameMode): void {
     this.mode = mode;
-    if (this.mode === 'double') {
-      this.players.push(new Player(true));
-      this.players[0].setAlly(this.players[1]);
-      this.players[1].setAlly(this.players[0]);
-    }
-    return this;
+    import('./player').then(({ default: Player }) => {
+      this.players[0] = new Player();
+      if (this.mode === 'double') {
+        this.players.push(new Player(true));
+        this.players[0].setAlly(this.players[1]);
+        this.players[1].setAlly(this.players[0]);
+      }
+    });
   }
 
   public getMode(): IGameMode {
     return this.mode;
   }
 
-  public getPlayer(): Player[] {
+  public getPlayer(): IPlayer[] {
     return this.players;
   }
 
@@ -105,7 +108,7 @@ export class Game {
     this.mode = 'single';
     this.gameOver = false;
     this.customMap = undefined;
-    this.players = [new Player()];
+    this.players = [];
   }
 }
 

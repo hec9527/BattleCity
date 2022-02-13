@@ -29,10 +29,10 @@
   "scripts": {
     "build": "vite build",
     "clear": "rm -rf node_modules build dist coverage",
-    "dev": "vite",
+    "dev": "npm run start",
     "preinstall": "npm run clear",
     "preview": "vite preview",
-    "start": "vite",
+    "start": "vite --host --port 10086",
     "test": "jest --coverage --config ./jest.config.js"
   },
   "devDependencies": {
