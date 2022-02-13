@@ -36,7 +36,7 @@ class WinBattle extends Win {
       row.forEach((_, cIndex) => {
         const index = this.mapData[rIndex][cIndex];
         if (index == 0) return;
-        new Brick({ pos: { x: cIndex * 32, y: rIndex * 32 }, index });
+        new Brick({ pos: [cIndex * 32, rIndex * 32], index });
       });
     });
   }

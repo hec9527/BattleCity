@@ -80,5 +80,5 @@ declare interface IReward extends IEntity {
 
 declare interface IBrickOption {
   index: number;
-  pos: { x: number; y: number };
+  pos: TupleArray<number, 2>;
 }

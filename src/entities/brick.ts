@@ -35,7 +35,7 @@ class Brick extends Entity {
   protected cCtx: CanvasRenderingContext2D;
 
   constructor({ index, pos }: IBrickOption) {
-    super(getBrickRect(pos, index));
+    super([...pos, 32, 32] as IEntityRect);
 
     this.brickIndex = index;
     this.brickType = getBrickType(index);
@@ -71,7 +71,7 @@ class Brick extends Entity {
       };
       import('./brick-fragment').then(({ default: BrickFragment }) => {
         const _brick = new BrickFragment({
-          pos: { x: fragment.x + x, y: fragment.y + y },
+          pos: [fragment.x + x, fragment.y + y],
           index: dictionary[this.brickType] || 0,
         });
         if (isEntityCollision(bullet.rect, _brick.rect)) {
