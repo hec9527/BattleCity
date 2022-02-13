@@ -42,14 +42,13 @@ class WinStart extends Win {
       },
       { once: true },
     );
-    setTimeout(() => K.unlock(), 3800); // 自动滚动后立即解锁按键
   }
 
   update(): void {
     if (this.transformY > 0) {
       this.transformY -= 2;
     } else {
-      if (K.isLocked) return;
+      K.unlock();
       if (K.isTapKey(P1.up)) {
         this.flag === 0 ? (this.flag = 2) : this.flag--;
       } else if (K.isTapKey(P1.down) || K.isTapKey(P1.select)) {
@@ -64,6 +63,7 @@ class WinStart extends Win {
     if (this.transformY > 0) {
       this.ctx.bg.drawImage(this.background, 0, this.transformY);
     } else {
+      this.ctx.bg.drawImage(this.background, 0, 0);
       this.ctx.fg.clearRect(0, 0, Config.canvas.width, Config.canvas.height);
       this.ctx.fg.drawImage(
         R.Image.myTank,
