@@ -20,7 +20,7 @@ class WinBattle extends Win {
   constructor() {
     super();
 
-    EnemyTank.initEnemyCamp(G.getStage());
+    // EnemyTank.initEnemyCamp(G.getStage());
 
     this.mapData = G.getMapData();
     this.backImage = getBattleFiledBackground();

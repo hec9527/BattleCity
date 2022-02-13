@@ -11,7 +11,7 @@ export enum Brick {
   ironBottom = 9,
   ironLeft = 10,
   /** 森林 */
-  forest = 11,
+  grass = 11,
   /** 冰 */
   ice = 12,
   /** 河流1 */

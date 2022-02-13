@@ -14,7 +14,7 @@ abstract class Win implements IGameWorld {
   protected entityList = new Set<IEntity>();
   protected tickerList: TickerList = new TickerList();
   protected readonly game = G;
-  private callbackList = new Set<() => void>();
+  private callbackList = new Set<AnyFunction>();
   public canvas: IWindowCanvas;
   public ctx: IWindowCtx;
 

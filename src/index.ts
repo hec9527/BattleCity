@@ -9,6 +9,8 @@ Loader().then(() => {
   import('./object/game').then(game => {
     import('./win/win-start').then(win => {
       game.default.getInstance().setGameWin(new win.default());
+
+      (window as any).game = game.default.getInstance();
     });
   });
 });

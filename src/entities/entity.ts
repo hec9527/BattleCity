@@ -25,6 +25,8 @@ abstract class Entity implements IEntity {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public die(...args: any[]): void {
+    console.log('die', this);
+
     this.world.delEntity(this);
   }
 }

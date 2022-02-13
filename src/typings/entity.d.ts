@@ -51,6 +51,7 @@ declare interface IEntity {
 declare interface IBullet extends IEntity {
   readonly level: number;
   move: (...args: any[]) => void;
+  getDir: () => IDirection;
 }
 
 declare interface IEntityOption {

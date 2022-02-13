@@ -17,7 +17,7 @@ const R = Resource.getResource();
 
 class EnemyTank extends Tank {
   private static birthIndex: IBirthPosIndex = 1;
-  private static enemyReserve: Array<number>; // 预备队
+  private static enemyReserve: Array<number> = []; // 预备队
   private static enemyAlive: Set<EnemyTank> = new Set();
 
   public isCollision = true;

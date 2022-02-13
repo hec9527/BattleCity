@@ -12,18 +12,27 @@ import Entity from './entity';
 import { getBrickRect, getBrickType } from '../util/map-tool';
 import { Resource } from '../loader';
 import Config from '../config/const';
+import brick from '../config/brick';
+import { isEntityCollision } from '../util';
 
 const R = Resource.getResource();
 const PL = Config.battleField.paddingLeft;
 const PT = Config.battleField.paddingTop;
 
+const fragmentPosition = [
+  { x: 0, y: 0 },
+  { x: 16, y: 0 },
+  { x: 0, y: 16 },
+  { x: 16, y: 16 },
+];
+
 class Brick extends Entity {
   public type: IEntityType = 'brick';
   public isCollision: boolean;
 
-  private brickIndex: number;
-  private brickType: IBrickType;
-  private cCtx: CanvasRenderingContext2D;
+  protected brickIndex: number;
+  protected brickType: IBrickType;
+  protected cCtx: CanvasRenderingContext2D;
 
   constructor({ index, pos }: IBrickOption) {
     super(getBrickRect(pos, index));
@@ -39,13 +48,52 @@ class Brick extends Entity {
     }
   }
 
-  update(): void {
-    return;
+  private broken(bullet: IBullet) {
+    this.world.beforeNextFrame(() => bullet?.die());
+    super.die();
+
+    // TODO 修复砖块破碎
+    fragmentPosition.forEach((fragment, index) => {
+      // prettier-ignore
+      if (
+        ((index === 0 || index === 1) && [brick.brickBottom, brick.ironBottom, brick.ironLeftBottom, brick.ironRightBottom, brick.brickLeftBottom, brick.brickRightBottom].includes(this.brickIndex)) ||
+        (index === 1 && [brick.ironLeft, brick.ironLeftBottom, brick.brickLeft, brick.brickLeftBottom].includes(this.brickIndex)) ||
+        (index === 1 && [brick.ironTop, brick.ironTop].includes(this.brickIndex)) ||
+        (index === 2 &&[brick.ironRight, brick.ironRightBottom, brick.brickRight, brick.brickRightBottom].includes(this.brickIndex))
+      ) {
+        return;
+      }
+      const [x, y] = this.rect;
+      const dictionary: { [K in IBrickType]?: number } = {
+        iron: brick.iron,
+        brick: brick.brick,
+        grass: brick.grass,
+      };
+      import('./brick-fragment').then(({ default: BrickFragment }) => {
+        const _brick = new BrickFragment({
+          pos: { x: fragment.x + x, y: fragment.y + y },
+          index: dictionary[this.brickType] || 0,
+        });
+        if (isEntityCollision(bullet.rect, _brick.rect)) {
+          _brick.die(bullet);
+        }
+      });
+    });
   }
 
+  update(): void {}
+
   die(bullet: IBullet): void {
-    if (this.brickType === 'ice' && bullet.level < 3) return;
-    bullet.level;
+    if (this.brickType === 'brick') {
+      this.broken(bullet);
+    } else if (this.brickType === 'boss') {
+      this.brickIndex = brick.bossBroken;
+      import('../object/game').then(({ default: game }) => {
+        game.getInstance().setGameOver();
+      });
+    } else if (this.brickType === 'iron') {
+      this.broken(bullet);
+    }
   }
 
   draw(): void {

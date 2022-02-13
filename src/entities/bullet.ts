@@ -32,6 +32,10 @@ class Bullet extends EntityMoveAble implements IBullet {
     this.type = 'bullet';
   }
 
+  public getDir(): IDirection {
+    return this.direction;
+  }
+
   /** noAnimation ？子弹爆炸没有动画， 子弹与子弹对撞没有 子弹打中坦克没有 */
   public die(noAnimation = false): void {
     if (this.lifeCircle === 'death') return;
