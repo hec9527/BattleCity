@@ -11,8 +11,11 @@
 import Entity from './entity';
 import { getBrickRect, getBrickType } from '../util/map-tool';
 import { Resource } from '../loader';
+import Config from '../config/const';
 
 const R = Resource.getResource();
+const PL = Config.battleField.paddingLeft;
+const PT = Config.battleField.paddingTop;
 
 class Brick extends Entity {
   public type: IEntityType = 'brick';
@@ -46,7 +49,8 @@ class Brick extends Entity {
   }
 
   draw(): void {
-    this.cCtx.drawImage(R.Image.brick, 32 * this.brickIndex, 0, 32, 32, ...this.rect);
+    const [x, y, w, h] = this.rect;
+    this.cCtx.drawImage(R.Image.brick, 32 * this.brickIndex, 0, 32, 32, x + PL, y + PT, w, h);
   }
 }
 

@@ -65,7 +65,7 @@ export const Config = {
   },
   entity: {
     allyTank: {
-      birthPos: [[144, 384, 32, 32] as const, [208, 384, 32, 32] as const],
+      birthPos: [[128, 384, 32, 32] as const, [240, 384, 32, 32] as const],
       speed: 2, // 正常值
       birthWait: 20,
     },

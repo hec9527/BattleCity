@@ -78,7 +78,6 @@ declare interface IReward extends IEntity {
 }
 
 declare interface IBrickOption {
-  world: IGameWorld;
   index: number;
   pos: { x: number; y: number };
 }

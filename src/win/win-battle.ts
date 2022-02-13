@@ -1,6 +1,7 @@
 import Config from '../config/const';
 import { Resource } from '../loader';
 import Game from '../object/game';
+import Brick from '../entities/brick';
 import AllyTank from '../entities/ally-tank';
 import EnemyTank from '../entities/enemy-tank';
 import { getBattleFiledBackground } from '../util/off-screen-canvas';
@@ -14,16 +15,29 @@ const PL = Config.battleField.paddingLeft + Config.battleField.width + 15;
 class WinBattle extends Win {
   private toggleWin = Config.canvas.height / 2;
   private backImage: HTMLCanvasElement;
+  private mapData: IMapData;
 
   constructor() {
     super();
 
     EnemyTank.initEnemyCamp(G.getStage());
 
+    this.mapData = G.getMapData();
     this.backImage = getBattleFiledBackground();
     this.game.getPlayer().forEach(p => {
       const tank = p.getTank() || p.getNewTank();
       tank?.initBaseBeforeAddToWord();
+    });
+    this.addBrickEntity();
+  }
+
+  private addBrickEntity() {
+    this.mapData.forEach((row, rIndex) => {
+      row.forEach((_, cIndex) => {
+        const index = this.mapData[rIndex][cIndex];
+        if (index == 0) return;
+        new Brick({ pos: { x: cIndex * 32, y: rIndex * 32 }, index });
+      });
     });
   }
 

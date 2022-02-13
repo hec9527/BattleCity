@@ -4,7 +4,7 @@
  */
 
 import { fixMapBirthPlace, fixMapBossPlace, getRealStage } from '../util/map-tool';
-
+import MapData from '../config/maps';
 type IPlayer = import('./player').default;
 
 export class Game {
@@ -20,7 +20,7 @@ export class Game {
   /** 玩家 */
   private players: IPlayer[] = [];
   /** 游戏地图 */
-  private readonly map: IMapData[] = [];
+  private readonly map: IMapData[] = MapData;
   /** 游戏场景窗口 */
   private win?: IGameWorld;
 
