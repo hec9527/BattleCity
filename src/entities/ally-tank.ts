@@ -91,6 +91,11 @@ class AllyTank extends Tank {
     }
     super.draw();
   }
+
+  public initBaseBeforeAddToWord(): void {
+    this.rect = [...Config.entity.allyTank.birthPos[this.isDeputy ? 1 : 0]];
+    this.bullets.clear();
+  }
 }
 
 export default AllyTank;

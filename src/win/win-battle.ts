@@ -21,8 +21,10 @@ class WinBattle extends Win {
     EnemyTank.initEnemyCamp(G.getStage());
 
     this.backImage = getBattleFiledBackground();
-    new AllyTank();
-    new AllyTank(true);
+    this.game.getPlayer().forEach(p => {
+      const tank = p.getTank() || p.getNewTank();
+      tank?.initBaseBeforeAddToWord();
+    });
   }
 
   private drawEnemyFlag() {
