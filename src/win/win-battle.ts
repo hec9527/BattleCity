@@ -7,6 +7,7 @@ import { getBattleFiledBackground } from '../util/off-screen-canvas';
 import Win from './win';
 import brick from '../config/brick';
 import { Ticker } from '../util/ticker';
+import Print from '../util/print';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
@@ -24,6 +25,8 @@ class WinBattle extends Win {
 
   constructor() {
     super();
+
+    Print.info(`stage:${G.getStage()}, mode:${G.getMode()}`);
 
     R.Audio.play('start');
     EnemyTank.initEnemyCamp(G.getStage());

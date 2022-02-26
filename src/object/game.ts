@@ -74,7 +74,7 @@ export class Game {
       map = this.customMap;
       this.customMap = undefined;
     } else {
-      map = this.map[getRealStage(this.stage)];
+      map = this.map[getRealStage(this.stage - 1)];
     }
     return map;
   }

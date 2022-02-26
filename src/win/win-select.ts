@@ -1,9 +1,11 @@
 import Config from '../config/const';
 import { P1 } from '../config/keys';
+import Game from '../object/game';
 import AllyController from '../util/ally-controller';
 import Win from './win';
 
 const K = AllyController.getInstance();
+const G = Game.getInstance();
 
 export default class WinSelect extends Win implements IGameWorld {
   private toggleWin = 0;
@@ -25,6 +27,7 @@ export default class WinSelect extends Win implements IGameWorld {
       } else if (K.isPulseKey(P1.down)) {
         this.stage = this.stage > Config.game.minStage ? this.stage - 1 : Config.game.minStage;
       } else if (K.isTapKey(P1.select) || K.isTapKey(P1.start)) {
+        G.setStage(this.stage);
         this.next();
       }
     }

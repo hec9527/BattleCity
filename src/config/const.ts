@@ -6,7 +6,7 @@
 export const Config = {
   game: {
     /** 最小关卡 */
-    minStage: 0,
+    minStage: 1,
     /** 最大关卡 */
     maxStage: 256,
   },
