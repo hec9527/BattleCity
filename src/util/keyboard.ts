@@ -4,7 +4,7 @@
 
 import KEYS from '../config/keys';
 
-export class Keyboard {
+class Keyboard {
   private static instance: Keyboard;
 
   /** 键盘已经按下的按键 */
@@ -74,4 +74,4 @@ export class Keyboard {
   }
 }
 
-export default Keyboard;
+// export default Keyboard;

@@ -47,9 +47,9 @@ class EnemyTank extends Tank {
         : Config.entity.enemyTank.speed;
     // this.score = tankType ===3?500:tankType ===2:4
     this.score = 100;
-    this.life = randomInt(1, tankType === 3 ? 5 : 1);
+    // this.life = randomInt(1, tankType === 3 ? 5 : 1);
     this.tankType = tankType;
-    this.addLife();
+    // this.addLife();
   }
 
   /** ### 初始化敌方坦克

@@ -1,4 +1,4 @@
-import Brick from '../config/brick';
+import Brick, { bossType, brickType, ironType, riverType } from '../config/brick';
 
 /**
  * 关卡为循环模式，每次超过35后从1开始循环
@@ -81,24 +81,24 @@ export function getBrickRect(pos: IBrickOption['pos'], index: number): IEntityRe
  * @returns 砖块类型
  */
 export function getBrickType(index: number): IBrickType {
-  if ([1, 2, 3, 4, 5, 17, 18].includes(index)) {
+  if (brickType.includes(index)) {
     return 'brick';
   }
-  if ([6, 7, 8, 9, 10, 19, 20].includes(index)) {
+  if (ironType.includes(index)) {
     return 'iron';
   }
-  if (index === 11) {
+  if (index === Brick.grass) {
     /** 草 */
     return 'grass';
   }
-  if (index === 12) {
+  if (index === Brick.ice) {
     /** 冰 */
     return 'ice';
   }
-  if ([13, 14].indexOf(index)) {
+  if (riverType.includes(index)) {
     return 'river';
   }
-  if ([15, 16].indexOf(index)) {
+  if (bossType.includes(index)) {
     return 'boss';
   }
   return 'blank';

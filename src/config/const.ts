@@ -56,6 +56,8 @@ export const Config = {
     bulletExplodeStatus: 3,
     /** 定身时间 */
     stopStatus: 100,
+    /** 战斗结束停留时间 */
+    battleOver: 400,
   },
   colors: {
     black: '#000',

@@ -10,9 +10,10 @@
 
 import Entity from './entity';
 import Config from '../config/const';
-import { getBrickType } from '../util/map-tool';
+import AllyController from '../util/ally-controller';
 import { Resource } from '../loader';
 import { isEntityCollision } from '../util';
+import { getBrickType } from '../util/map-tool';
 import brick, {
   fullBrick,
   missLeftBottomBrick,
@@ -22,6 +23,7 @@ import brick, {
 } from '../config/brick';
 
 const R = Resource.getResource();
+const K = AllyController.getInstance();
 const PL = Config.battleField.paddingLeft;
 const PT = Config.battleField.paddingTop;
 
@@ -98,8 +100,10 @@ class Brick extends Entity {
     if (this.brickType === 'brick') {
       this.broken(bullet);
     } else if (this.brickType === 'boss') {
+      console.log('game over');
       this.brickIndex = brick.bossBroken;
       import('../object/game').then(({ default: game }) => {
+        K.lock();
         game.getInstance().setGameOver();
       });
     } else if (this.brickType === 'iron') {

@@ -41,6 +41,7 @@ export class Sound {
   constructor(private sounds: CacheAudio) {}
 
   private _play(file: Files) {
+    this.sounds[file].volume = 0.1;
     this.sounds[file].play();
     this.sounds[file].onended = () => this.playingList.delete(file);
   }

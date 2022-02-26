@@ -11,8 +11,8 @@ class WinSettle extends Win {
   }
 
   update(): void {
-    this.ctx.fillStyle = '#abf';
-    this.ctx.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
+    this.ctx.bg.fillStyle = '#abf';
+    this.ctx.bg.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
   }
 }
 

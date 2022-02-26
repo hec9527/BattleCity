@@ -6,6 +6,7 @@ import EnemyTank from '../entities/enemy-tank';
 import { getBattleFiledBackground } from '../util/off-screen-canvas';
 import Win from './win';
 import brick from '../config/brick';
+import { Ticker } from '../util/ticker';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
@@ -14,13 +15,26 @@ const PL = Config.battleField.paddingLeft + Config.battleField.width + 15;
 
 class WinBattle extends Win {
   private toggleWin = Config.canvas.height / 2;
+  private toggleOver = Config.canvas.height - 20;
   private backImage: HTMLCanvasElement;
   private mapData: IMapData;
+  private gameOverTextLeft: number;
+
+  private battleOverTicker: Ticker | undefined;
 
   constructor() {
     super();
 
-    // EnemyTank.initEnemyCamp(G.getStage());
+    R.Audio.play('start');
+    EnemyTank.initEnemyCamp(G.getStage());
+
+    this.ctx.fg.font = 'bolder 20px prestart';
+    // this.ctx.fg.textAlign = 'center';
+    this.ctx.fg.fillStyle = Config.colors.red;
+    const width = this.ctx.fg.measureText('GAME OVER').width;
+    console.log(Config.canvas.width, width);
+
+    this.gameOverTextLeft = (Config.canvas.width - width) / 2;
 
     this.mapData = G.getMapData();
     this.backImage = getBattleFiledBackground();
@@ -61,15 +75,42 @@ class WinBattle extends Win {
     }
   }
 
+  over(type: 'victory' | 'defeated'): void {
+    this.battleOverTicker = new Ticker(Config.ticker.battleOver, () => {
+      this.battleOverTicker && this.delTicker(this.battleOverTicker);
+      this.battleOverTicker = undefined;
+      // 添加一个 win-over 结算画面?
+      import(type === 'defeated' ? './win-start' : './win-settle').then(({ default: Win }) => {
+        super.next(true, () => new Win());
+      });
+    });
+    this.addTicker(this.battleOverTicker);
+  }
+
   update(): void {
     if (this.toggleWin > 0) {
       this.toggleWin -= 5;
     }
 
-    // 尝试生成新的敌人
-    EnemyTank.initEnemyTank();
+    if (G.getGameOver()) {
+      if (this.toggleOver >= Config.canvas.height / 2) {
+        this.toggleOver -= 2;
+      }
+      if (!this.battleOverTicker) {
+        this.over('defeated');
+      }
+    }
 
     this.entityList.forEach(entity => entity.update(Array.from(this.entityList)));
+
+    if (EnemyTank.getEnemyRemainNum() > 0) {
+      // 尝试生成新的敌人
+      EnemyTank.initEnemyTank();
+    } else {
+      if (EnemyTank.getEnemyAliveTank().size <= 0) {
+        this.over('victory');
+      }
+    }
   }
 
   draw(): void {
@@ -86,6 +127,11 @@ class WinBattle extends Win {
       this.ctx.fg.fillStyle = Config.colors.gray;
       this.ctx.fg.fillRect(0, 0, Config.canvas.width, this.toggleWin);
       this.ctx.fg.fillRect(0, Config.canvas.height - this.toggleWin, Config.canvas.width, this.toggleWin);
+    }
+
+    if (G.getGameOver()) {
+      this.ctx.fg.fillStyle = Config.colors.red;
+      this.ctx.fg.fillText('GAME OVER', this.gameOverTextLeft, this.toggleOver);
     }
   }
 }

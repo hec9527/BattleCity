@@ -63,7 +63,7 @@ export default class AllyController implements IAllyController {
    * 检测按键是否被按下，只响应一次
    */
   public isTapKey(key: Keys): boolean {
-    if (this.isPressKey(key)) {
+    if (!this.blocked && this.isPressKey(key)) {
       this.blockedKeys.add(key);
       return true;
     }
@@ -85,6 +85,6 @@ export default class AllyController implements IAllyController {
    * 检测按键是否被按下，可以连续响应
    */
   public isPressKey(key: Keys): boolean {
-    return !this.blockedKeys.has(key) && this.pressedKeys.has(key);
+    return !this.blocked && !this.blockedKeys.has(key) && this.pressedKeys.has(key);
   }
 }

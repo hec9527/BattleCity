@@ -82,4 +82,32 @@ export const missRightBottomBrick = [
   Brick.ironLeftBottom,
 ];
 
+/** 砖块类型---土砖 */
+export const brickType = [
+  Brick.brick,
+  Brick.brickTop,
+  Brick.brickRight,
+  Brick.brickBottom,
+  Brick.brickLeft,
+  Brick.brickLeftBottom,
+  Brick.brickRightBottom,
+];
+
+/** 砖块类型--铁块 */
+export const ironType = [
+  Brick.iron,
+  Brick.ironTop,
+  Brick.ironRight,
+  Brick.ironBottom,
+  Brick.ironLeft,
+  Brick.ironLeftBottom,
+  Brick.ironRightBottom,
+];
+
+/** 砖块类型--河流 */
+export const riverType = [Brick.river1, Brick.river2];
+
+/** 砖块类型--boss */
+export const bossType = [Brick.boss, Brick.bossBroken];
+
 export default Brick;

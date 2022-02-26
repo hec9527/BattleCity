@@ -24,6 +24,7 @@ class WinStart extends Win {
     Log.info('开始界面，init...');
     // 屏蔽第一次按键点击
     K.lock();
+    G.init();
 
     // init cache background
     this.background = getWinStartBackground();
