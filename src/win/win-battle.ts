@@ -2,10 +2,10 @@ import Config from '../config/const';
 import { Resource } from '../loader';
 import Game from '../object/game';
 import Brick from '../entities/brick';
-import AllyTank from '../entities/ally-tank';
 import EnemyTank from '../entities/enemy-tank';
 import { getBattleFiledBackground } from '../util/off-screen-canvas';
 import Win from './win';
+import brick from '../config/brick';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
@@ -35,7 +35,7 @@ class WinBattle extends Win {
     this.mapData.forEach((row, rIndex) => {
       row.forEach((_, cIndex) => {
         const index = this.mapData[rIndex][cIndex];
-        if (index == 0) return;
+        if (index == brick.blank) return;
         new Brick({ pos: [cIndex * 32, rIndex * 32], index });
       });
     });

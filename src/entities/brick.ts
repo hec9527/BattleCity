@@ -9,11 +9,17 @@
  */
 
 import Entity from './entity';
-import { getBrickRect, getBrickType } from '../util/map-tool';
-import { Resource } from '../loader';
 import Config from '../config/const';
-import brick from '../config/brick';
+import { getBrickType } from '../util/map-tool';
+import { Resource } from '../loader';
 import { isEntityCollision } from '../util';
+import brick, {
+  fullBrick,
+  missLeftBottomBrick,
+  missLeftTopBrick,
+  missRightBottomBrick,
+  missRightTopBrick,
+} from '../config/brick';
 
 const R = Resource.getResource();
 const PL = Config.battleField.paddingLeft;
@@ -47,6 +53,10 @@ class Brick extends Entity {
     this.brickType = getBrickType(index);
     this.isCollision = !['grass', 'ice', 'blank'].includes(this.brickType);
 
+    if (!fullBrick.includes(index)) {
+      this.broken();
+    }
+
     if (this.brickType === 'grass') {
       this.cCtx = this.ctx.fg;
     } else {
@@ -54,30 +64,30 @@ class Brick extends Entity {
     }
   }
 
-  private broken(bullet: IBullet) {
+  private broken(bullet?: IBullet) {
     this.world.beforeNextFrame(() => super.die());
 
-    // TODO 修复砖块破碎
     fragmentPosition.forEach((fragment, index) => {
       // prettier-ignore
       if (
-        ((index === 0 || index === 1) && [brick.brickBottom, brick.ironBottom, brick.ironLeftBottom, brick.ironRightBottom, brick.brickLeftBottom, brick.brickRightBottom].includes(this.brickIndex)) ||
-        (index === 1 && [brick.ironLeft, brick.ironLeftBottom, brick.brickLeft, brick.brickLeftBottom].includes(this.brickIndex)) ||
-        (index === 1 && [brick.ironTop, brick.ironTop].includes(this.brickIndex)) ||
-        (index === 2 &&[brick.ironRight, brick.ironRightBottom, brick.brickRight, brick.brickRightBottom].includes(this.brickIndex))
+        (index === 0 && missLeftTopBrick.includes(this.brickIndex)) ||
+        (index === 1 && missRightTopBrick.includes(this.brickIndex)) ||
+        (index === 2 && missLeftBottomBrick.includes(this.brickIndex)) ||
+        (index === 3 && missRightBottomBrick.includes(this.brickIndex))
       ) {
         return;
       }
       const [x, y] = this.rect;
+      if (bullet) {
+        const rect: IEntityRect = [fragment.x + x, fragment.y + y, 16, 16];
+        if (isEntityCollision(bullet?.rect, rect)) return;
+      }
 
       import('./brick-fragment').then(({ default: BrickFragment }) => {
-        const _brick = new BrickFragment({
+        new BrickFragment({
           pos: [fragment.x + x, fragment.y + y],
           index: dictionary[this.brickType] || 0,
         });
-        if (isEntityCollision(bullet.rect, _brick.rect)) {
-          _brick.die(bullet);
-        }
       });
     });
   }
