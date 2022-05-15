@@ -80,16 +80,19 @@ class Brick extends Entity {
         return;
       }
       const [x, y] = this.rect;
-      if (bullet) {
+      if (bullet && bullet.level >= 3) {
         const rect: IEntityRect = [fragment.x + x, fragment.y + y, 16, 16];
-        if (isEntityCollision(bullet?.rect, rect)) return;
+        if (isEntityCollision(bullet.rect, rect)) return;
       }
 
       import('./brick-fragment').then(({ default: BrickFragment }) => {
-        new BrickFragment({
+        const brickFragment = new BrickFragment({
           pos: [fragment.x + x, fragment.y + y],
           index: dictionary[this.brickType] || 0,
         });
+        if (bullet && isEntityCollision(bullet.rect, brickFragment.rect)) {
+          brickFragment.die(bullet);
+        }
       });
     });
   }

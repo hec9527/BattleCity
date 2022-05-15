@@ -114,7 +114,7 @@ class WinBattle extends Win {
       EnemyTank.initEnemyTank();
     } else {
       if (EnemyTank.getEnemyAliveTank().size <= 0) {
-        this.over('victory');
+        // this.over('victory');
       }
     }
   }

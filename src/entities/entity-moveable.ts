@@ -20,7 +20,7 @@ abstract class EntityMoveAble extends Entity {
   protected abstract move(list: IEntity[]): void;
 
   /** 获取实体移动之后的rect */
-  protected getNextRect(): IEntityRect {
+  public getNextRect(): IEntityRect {
     // eslint-disable-next-line prefer-const
     let [x, y, w, h] = this.rect;
     const directions = {

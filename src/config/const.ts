@@ -29,7 +29,7 @@ export const Config = {
   },
   ticker: {
     /** 射击间隔时间 */
-    shoot: 15,
+    shoot: 10,
     /** 改变移动状态 */
     moveStatus: 6,
     moveStatusFast: 3,

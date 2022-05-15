@@ -39,6 +39,9 @@ class AllyTank extends Tank {
       this.speed = inheritTank.speed;
       this.level = inheritTank.life;
     }
+
+    this.level = 2;
+    this.bulletNum = 2;
   }
 
   protected addLife(): void {

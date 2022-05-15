@@ -86,8 +86,9 @@ class Bullet extends EntityMoveAble implements IBullet {
         }
         // 子弹-砖块
         else if (entity.type === 'brick') {
+          this.rect = this.getNextRect();
           entity.die(this);
-          this.world.beforeNextFrame(() => this.die());
+          this.die();
         }
         // 子弹-坦克  不同阵营
         else if (
