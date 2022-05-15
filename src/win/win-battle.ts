@@ -111,8 +111,6 @@ class WinBattle extends Win {
       }
     }
 
-    this.entityList.forEach(entity => entity.update(Array.from(this.entityList)));
-
     if (EnemyTank.getEnemyRemainNum() > 0) {
       // 尝试生成新的敌人
       EnemyTank.initEnemyTank();
@@ -121,6 +119,14 @@ class WinBattle extends Win {
         // this.over('victory');
       }
     }
+
+    this.game.getPlayer().forEach(p => {
+      if (!p.getTank()) {
+        p.getNewTank();
+      }
+    });
+
+    this.entityList.forEach(entity => entity.update(Array.from(this.entityList)));
   }
 
   draw(): void {

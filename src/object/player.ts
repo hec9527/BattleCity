@@ -27,7 +27,7 @@ export default class Player {
   }
 
   public getNewTank(): AllyTank | null {
-    if (this.life < 0) return null;
+    if (this.life <= 0) return null;
     this.life--;
     this.tank = new AllyTank(this.deputy);
     return this.tank;

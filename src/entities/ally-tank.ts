@@ -26,7 +26,7 @@ class AllyTank extends Tank {
     this.keys = isDeputy ? keys.P2 : keys.P1;
 
     // TODO fix
-    this.addProtector(10000000);
+    // this.addProtector(10000000);
     // this.addProtector(Config.ticker.protectorShort);
 
     G.getPlayer()[isDeputy ? 1 : 0]?.setTank(this);
