@@ -28,7 +28,9 @@ class Reward extends Entity implements IReward {
   private constructor() {
     const rect = getRewardRect();
     super(rect);
-    this.rewardType = randomInt(0, 6) as IRewardType;
+    // TODO 测试奖励生成以及获取
+    // this.rewardType = randomInt(0, 6) as IRewardType;
+    this.rewardType = 1;
     this.type = 'reward';
     this.status = 0;
 

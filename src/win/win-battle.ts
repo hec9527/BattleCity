@@ -9,6 +9,7 @@ import brick from '../config/brick';
 import { Ticker } from '../util/ticker';
 import Print from '../util/print';
 import AllyTank from '../entities/ally-tank';
+import Reward from '../entities/reward';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
@@ -31,7 +32,8 @@ class WinBattle extends Win {
 
     R.Audio.play('start');
 
-    EnemyTank.initEnemyCamp(G.getStage());
+    // TODO
+    // EnemyTank.initEnemyCamp(G.getStage());
 
     this.ctx.fg.font = 'bolder 20px prestart';
     this.ctx.fg.fillStyle = Config.colors.red;
@@ -48,6 +50,9 @@ class WinBattle extends Win {
       }
     });
     this.addBrickEntity();
+    window.addEventListener('dblclick', () => {
+      Reward.getNewReward();
+    });
   }
 
   private addBrickEntity() {

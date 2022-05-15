@@ -80,7 +80,7 @@ export default class BrickFragment extends Brick {
         this.clipSprite();
       }
     } else if (this.brickType === 'iron') {
-      if (bullet.level >= 4) {
+      if (bullet.level > 4) {
         /** 铁块，需要4级以上的子弹才能打碎 */
         Entity.prototype.die.call(this);
       }

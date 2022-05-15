@@ -80,10 +80,6 @@ class Brick extends Entity {
         return;
       }
       const [x, y] = this.rect;
-      if (bullet && bullet.level >= 3) {
-        const rect: IEntityRect = [fragment.x + x, fragment.y + y, 16, 16];
-        if (isEntityCollision(bullet.rect, rect)) return;
-      }
 
       import('./brick-fragment').then(({ default: BrickFragment }) => {
         const brickFragment = new BrickFragment({
@@ -106,11 +102,12 @@ class Brick extends Entity {
       console.log('game over');
       this.brickIndex = brick.bossBroken;
       import('../object/game').then(({ default: game }) => {
-        K.lock();
-        game.getInstance().setGameOver();
+        // TODO
+        // K.lock();
+        // game.getInstance().setGameOver();
       });
     } else if (this.brickType === 'iron') {
-      if (bullet.level > 3) {
+      if (bullet.level > 4) {
         this.broken(bullet);
       }
     }

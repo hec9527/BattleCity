@@ -39,8 +39,9 @@ class AllyTank extends Tank {
       this.level = inheritTank.life;
     }
 
-    this.level = 2;
-    this.bulletNum = 2;
+    // todo
+    this.level = 3;
+    // this.bulletNum = 2;
   }
 
   protected addLife(): void {
@@ -100,10 +101,6 @@ class AllyTank extends Tank {
       );
     }
     super.draw();
-  }
-
-  public setWorld(world: IGameWorld): void {
-    this.world = world;
   }
 }
 

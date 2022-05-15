@@ -46,9 +46,9 @@ class EnemyTank extends Tank {
         : Config.entity.enemyTank.speed;
     // this.score = tankType ===3?500:tankType ===2:4
     this.score = 100;
-    // this.life = randomInt(1, tankType === 3 ? 5 : 1);
+    this.life = randomInt(1, tankType === 3 ? 5 : 1);
     this.tankType = tankType;
-    // this.addLife();
+    this.addLife();
   }
 
   /** ### 初始化敌方坦克
@@ -115,8 +115,7 @@ class EnemyTank extends Tank {
   }
 
   addLife(): void {
-    this.reward += randomInt(3, 5);
-    // this.reward += randomInt(1, 3);
+    this.reward = Math.sqrt(randomInt(1, 17));
   }
 
   public update(entityList: readonly IEntity[]): void {
@@ -132,9 +131,9 @@ class EnemyTank extends Tank {
       let sx;
 
       if (this.tankType < 3) {
-        sx = this.tankType * 2 + (this.reward ? 1 : 0);
+        sx = this.tankType * 2 + (this.reward > 1 ? 1 : 0);
       } else {
-        sx = this.reward ? 9 : Math.floor(6 + this.life / 2);
+        sx = this.reward > 1 ? 9 : Math.floor(6 + this.life / 2);
       }
 
       this.ctx.main.drawImage(

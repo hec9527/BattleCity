@@ -158,13 +158,11 @@ abstract class Tank extends EntityMoveAble {
 
   protected upGrade(level: number): void {
     this.level += level;
-    if (this.level > 4) {
-      if (this.life <= 1) {
-        this.life++;
-      }
-      if (isAllyTank(this)) {
-        this.bulletNum = 2;
-      }
+    if (this.level > 4 && this.life <= 1) {
+      this.life++;
+    }
+    if (this.level >= 3) {
+      this.bulletNum = 2;
     }
   }
 
