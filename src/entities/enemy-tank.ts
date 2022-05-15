@@ -20,7 +20,6 @@ class EnemyTank extends Tank {
   private static enemyReserve: Array<number> = []; // 预备队
   private static enemyAlive: Set<EnemyTank> = new Set();
 
-  public isCollision = true;
   public readonly score: number;
   public readonly type: IEntityType = 'enemyTank';
   protected birthWaitTime = Config.entity.enemyTank.birthWait;

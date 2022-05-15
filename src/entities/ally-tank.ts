@@ -18,7 +18,6 @@ const directionKeys = ['up', 'right', 'down', 'left'] as const;
 class AllyTank extends Tank {
   private keys: typeof keys.P1 | typeof keys.P2;
   public type: IEntityType = 'allyTank';
-  public isCollision = true;
 
   constructor(private isDeputy: boolean = false, inheritTank?: AllyTank) {
     super({ rect: [...Config.entity.allyTank.birthPos[isDeputy ? 1 : 0]], direction: 0, camp: 'ally' });

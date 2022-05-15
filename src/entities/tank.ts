@@ -54,7 +54,6 @@ abstract class Tank extends EntityMoveAble {
     this.world.addTicker(
       new Ticker(this.birthWaitTime, () => {
         this.lifeCircle = 'birth';
-        this.isCollision = true;
         this.birthTicker = new Ticker(
           Config.ticker.birthStatus,
           () => {
@@ -67,9 +66,10 @@ abstract class Tank extends EntityMoveAble {
         this.world.addTicker(this.birthTicker);
         this.world.addTicker(
           new Ticker(Config.ticker.birth, () => {
-            this.lifeCircle = 'survival';
             this.world.delTicker(this.birthTicker!);
+            this.lifeCircle = 'survival';
             this.birthTicker = undefined;
+            this.isCollision = true;
           }),
         );
       }),

@@ -92,8 +92,5 @@ export default class BrickFragment extends Brick {
   draw(): void {
     const [x, y, w, h] = this.rect;
     this.cCtx.drawImage(this.sprite, x + PL, y + PT, w, h);
-
-    // TODO 删除
-    this.cCtx.drawImage(this.sprite, 0, 0);
   }
 }
