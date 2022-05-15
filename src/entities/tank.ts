@@ -245,7 +245,6 @@ abstract class Tank extends EntityMoveAble {
         if (isReward(entity)) {
           this.getReward(entity.rewardType);
           entity.die();
-          console.log('reward die');
           return true;
         }
         // 坦克-坦克

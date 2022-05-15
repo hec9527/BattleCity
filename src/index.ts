@@ -9,7 +9,7 @@ Loader().then(() => {
   import('./object/game').then(game => {
     // import('./win/win-settle').then(win => {
     // import('./win/win-start').then(win => {
-    import('./win/win-battle').then(win => {
+    import('./win/win-select').then(win => {
       const G = game.default.getInstance();
       G.setMode('single');
       G.setStage(1);
