@@ -8,9 +8,11 @@ Loader().then(() => {
   Printer.info('资源加载完毕');
   import('./object/game').then(game => {
     // import('./win/win-settle').then(win => {
-    import('./win/win-start').then(win => {
+    // import('./win/win-start').then(win => {
+    import('./win/win-battle').then(win => {
       const G = game.default.getInstance();
-      G.setMode('double');
+      G.setMode('single');
+      G.setStage(1);
       G.setGameWin(new win.default());
       (window as any).game = G;
     });

@@ -33,7 +33,7 @@ class WinBattle extends Win {
     R.Audio.play('start');
 
     // TODO
-    // EnemyTank.initEnemyCamp(G.getStage());
+    EnemyTank.initEnemyCamp(G.getStage());
 
     this.ctx.fg.font = 'bolder 20px prestart';
     this.ctx.fg.fillStyle = Config.colors.red;
