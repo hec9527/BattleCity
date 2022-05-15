@@ -33,7 +33,7 @@ abstract class Tank extends EntityMoveAble {
 
   // Ticker
   private stopTicker?: Ticker; // 定身计时器
-  private moveTicker: Ticker; // 特殊的计时器，这个只能在实例中使用和更新，应为实例移动之后才能更新数据
+  private moveTicker?: Ticker; // 特殊的计时器，这个只能在实例中使用和更新，应为实例移动之后才能更新数据
   private birthTicker?: ITicker;
   private protectTicker?: ITicker;
   private explodeTicker?: ITicker;
@@ -46,6 +46,10 @@ abstract class Tank extends EntityMoveAble {
     this.bulletNum = bulletNum || 1;
     this.isCollision = false;
 
+    this.initTicker();
+  }
+
+  protected initTicker(): void {
     // 初始化计时器
     this.world.addTicker(
       new Ticker(this.birthWaitTime, () => {
@@ -171,6 +175,7 @@ abstract class Tank extends EntityMoveAble {
     this.stopTicker = new Ticker(Config.ticker.stopStatus, () => {
       this.world.delTicker(this.stopTicker!);
       this.stopTicker = undefined;
+      this.isStopped = false;
     });
     this.world.addTicker(this.stopTicker);
     this.isStopped = stop;
@@ -212,7 +217,7 @@ abstract class Tank extends EntityMoveAble {
   }
 
   protected move(entityList: readonly IEntity[]): void {
-    let move = true; // 这以帧是否移动
+    let move = true; // 这一帧是否可以移动
     const nextRect = this.getNextRect();
 
     // 下一帧碰到边界
@@ -267,7 +272,7 @@ abstract class Tank extends EntityMoveAble {
     });
     if (move) {
       this.rect = nextRect;
-      this.moveTicker.update();
+      this.moveTicker?.update();
     }
   }
 

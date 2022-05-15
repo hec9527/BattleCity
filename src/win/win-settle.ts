@@ -7,9 +7,6 @@ import { Ticker } from '../util/ticker';
 const G = Game.getInstance();
 const R = Resource.getResource();
 
-// TODO 删除
-G.setMode('double');
-
 class WinSettle extends Win {
   private settleOverTicker: Ticker | undefined;
 
@@ -20,14 +17,14 @@ class WinSettle extends Win {
 
   update(): void {
     if (!this.settleOverTicker) {
-      this.settleOverTicker = new Ticker(Config.ticker.battleOver, () => {
-        this.settleOverTicker && this.delTicker(this.settleOverTicker);
+      this.settleOverTicker = new Ticker(Config.ticker.battleOver / 5, () => {
         this.settleOverTicker = undefined;
         import('./win-battle').then(({ default: Win }) => {
           G.nextStage();
           this.next(true, () => new Win());
         });
       });
+      this.addTicker(this.settleOverTicker);
     }
   }
 

@@ -50,8 +50,8 @@ abstract class Win implements IGameWorld {
     this.tickerList.addTick(ticker);
   }
 
-  public delTicker(ticker: ITicker): void {
-    this.tickerList.delTick(ticker);
+  public delTicker(ticker?: ITicker): void {
+    ticker && this.tickerList.delTick(ticker);
   }
 
   public beforeNextFrame(callback: () => void): void {
@@ -74,7 +74,8 @@ abstract class Win implements IGameWorld {
   protected next(clear = false, callback?: (...args: any[]) => any): void {
     this.animation = () => {
       clear && this.clearAll();
-      callback?.();
+      this.tickerList.clearTick();
+      callback && setTimeout(callback, 0);
     };
   }
 

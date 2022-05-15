@@ -33,7 +33,7 @@ export class Ticker implements ITicker {
 
   constructor(
     /** 计时器经过的循环次数，非循环模式下，计时器销毁 */
-    private tickout: number,
+    private tickOut: number,
     /** 计时器经过指定次循环之后，执行的回调 */
     private callback: () => void,
     /** 是否使用循环模式，在循环模式下计时器不会被销毁，每次计时的结束都是新一轮计时的开始 */
@@ -41,7 +41,7 @@ export class Ticker implements ITicker {
   ) {}
 
   public update(): void {
-    if (++this.tick >= this.tickout) {
+    if (++this.tick >= this.tickOut) {
       this.callback();
       if (this.cycle) {
         this.tick = 0;

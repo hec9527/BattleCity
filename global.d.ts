@@ -55,7 +55,7 @@ declare interface IGameWorld {
   addEntity: (entity: IEntity) => void;
   delEntity: (entity: IEntity) => void;
   addTicker: (ticker: ITicker) => void;
-  delTicker: (ticker: ITicker) => void;
+  delTicker: (ticker?: ITicker) => void;
   /** 下一帧之前的回调 */
   beforeNextFrame: (callback: () => void) => void;
 }

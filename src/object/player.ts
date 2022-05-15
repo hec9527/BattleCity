@@ -1,5 +1,7 @@
 import AllyTank from '../entities/ally-tank';
+import { Resource } from '../loader';
 
+const R = Resource.getResource();
 export default class Player {
   private ally: Player | null;
   private tank: AllyTank | null;
@@ -32,7 +34,7 @@ export default class Player {
   }
 
   public getTank(): AllyTank | null {
-    return this.tank || this.getNewTank();
+    return this.tank;
   }
 
   public setTank(tank: AllyTank | null): Player {
@@ -41,6 +43,7 @@ export default class Player {
   }
 
   public addLife(): Player {
+    R.Audio.play('life');
     ++this.life;
     return this;
   }

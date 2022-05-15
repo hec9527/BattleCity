@@ -9,9 +9,10 @@ Loader().then(() => {
   import('./object/game').then(game => {
     // import('./win/win-settle').then(win => {
     import('./win/win-start').then(win => {
-      game.default.getInstance().setGameWin(new win.default());
-
-      (window as any).game = game.default.getInstance();
+      const G = game.default.getInstance();
+      G.setMode('double');
+      G.setGameWin(new win.default());
+      (window as any).game = G;
     });
   });
 });

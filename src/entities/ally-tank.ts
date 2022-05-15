@@ -20,7 +20,7 @@ class AllyTank extends Tank {
   public type: IEntityType = 'allyTank';
   public isCollision = true;
 
-  constructor(private isDeputy: boolean = false) {
+  constructor(private isDeputy: boolean = false, inheritTank?: AllyTank) {
     super({ rect: [...Config.entity.allyTank.birthPos[isDeputy ? 1 : 0]], direction: 0, camp: 'ally' });
 
     this.speed = Config.entity.allyTank.speed;
@@ -31,6 +31,14 @@ class AllyTank extends Tank {
     // this.addProtector(Config.ticker.protectorShort);
 
     G.getPlayer()[isDeputy ? 1 : 0]?.setTank(this);
+
+    // inherit
+    if (inheritTank) {
+      this.level = inheritTank.level;
+      this.bulletNum = inheritTank.bulletNum;
+      this.speed = inheritTank.speed;
+      this.level = inheritTank.life;
+    }
   }
 
   protected addLife(): void {
@@ -92,9 +100,8 @@ class AllyTank extends Tank {
     super.draw();
   }
 
-  public initBaseBeforeAddToWord(): void {
-    this.rect = [...Config.entity.allyTank.birthPos[this.isDeputy ? 1 : 0]];
-    this.bullets.clear();
+  public setWorld(world: IGameWorld): void {
+    this.world = world;
   }
 }
 

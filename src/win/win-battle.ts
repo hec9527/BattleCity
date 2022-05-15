@@ -8,6 +8,7 @@ import Win from './win';
 import brick from '../config/brick';
 import { Ticker } from '../util/ticker';
 import Print from '../util/print';
+import AllyTank from '../entities/ally-tank';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
@@ -29,21 +30,23 @@ class WinBattle extends Win {
     Print.info(`stage:${G.getStage()}, mode:${G.getMode()}`);
 
     R.Audio.play('start');
-    EnemyTank.initEnemyCamp(G.getStage());
+
+    // TODO
+    // EnemyTank.initEnemyCamp(G.getStage());
 
     this.ctx.fg.font = 'bolder 20px prestart';
-    // this.ctx.fg.textAlign = 'center';
     this.ctx.fg.fillStyle = Config.colors.red;
-    const width = this.ctx.fg.measureText('GAME OVER').width;
-    console.log(Config.canvas.width, width);
-
-    this.gameOverTextLeft = (Config.canvas.width - width) / 2;
+    this.gameOverTextLeft = (Config.canvas.width - this.ctx.fg.measureText('GAME OVER').width) / 2;
 
     this.mapData = G.getMapData();
     this.backImage = getBattleFiledBackground();
-    this.game.getPlayer().forEach(p => {
-      const tank = p.getTank() || p.getNewTank();
-      tank?.initBaseBeforeAddToWord();
+    this.game.getPlayer().forEach((p, i) => {
+      let tank = p.getTank();
+      if (tank) {
+        this.addEntity(new AllyTank(i === 1, tank));
+      } else {
+        tank = p.getNewTank();
+      }
     });
     this.addBrickEntity();
   }
@@ -79,7 +82,7 @@ class WinBattle extends Win {
   }
 
   over(type: 'victory' | 'defeated'): void {
-    this.battleOverTicker = new Ticker(Config.ticker.battleOver, () => {
+    this.battleOverTicker = new Ticker(Config.ticker.battleOver * 5, () => {
       this.battleOverTicker && this.delTicker(this.battleOverTicker);
       this.battleOverTicker = undefined;
       // 添加一个 win-over 结算画面?
