@@ -55,7 +55,7 @@ export const Config = {
     /** 子弹爆炸时间 */
     bulletExplodeStatus: 3,
     /** 定身时间 */
-    stopStatus: 100,
+    stopStatus: 600,
     /** 战斗结束停留时间 */
     battleOver: 400,
   },

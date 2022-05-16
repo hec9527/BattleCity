@@ -11,7 +11,7 @@ Loader().then(() => {
     // import('./win/win-start').then(win => {
     import('./win/win-select').then(win => {
       const G = game.default.getInstance();
-      G.setMode('single');
+      G.setMode('double');
       G.setStage(1);
       G.setGameWin(new win.default());
       (window as any).game = G;

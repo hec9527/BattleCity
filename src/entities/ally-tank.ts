@@ -26,7 +26,7 @@ class AllyTank extends Tank {
     this.keys = isDeputy ? keys.P2 : keys.P1;
 
     // TODO fix
-    // this.addProtector(10000000);
+    !isDeputy && this.addProtector(10000000);
     // this.addProtector(Config.ticker.protectorShort);
 
     G.getPlayer()[isDeputy ? 1 : 0]?.setTank(this);
@@ -57,8 +57,7 @@ class AllyTank extends Tank {
 
   protected stopAllOppositeCampTank(): void {
     import('./enemy-tank').then(res => {
-      const EnemyTank = res.default;
-      EnemyTank.getEnemyAliveTank().forEach(e => e.setStopStatus(true));
+      res.default.stop();
     });
   }
 
@@ -71,7 +70,7 @@ class AllyTank extends Tank {
   }
 
   public update(entityList: readonly IEntity[]): void {
-    if (this.lifeCircle !== 'survival' || this.isStopped) return;
+    if (this.lifeCircle !== 'survival' || AllyTank.isStopped) return;
 
     directionKeys.forEach((dir, index) => {
       if (K.isPressKey(this.keys[dir])) {

@@ -8,14 +8,18 @@ import { getBulletPos, getDistance, isAllyTank, isBrick, isEnemyTank, isReward }
 import { Ticker } from '../util/ticker';
 import Config from '../config/const';
 import { Resource } from '../loader';
+import Game from '../object/game';
 
 const R = Resource.getResource();
+const G = Game.getInstance();
 
 abstract class Tank extends EntityMoveAble {
+  protected static isStopped = false; // 地雷，不能移动和射击
+  protected static stopTicker?: Ticker;
+
   // basic info
   protected life: number;
   protected level: number;
-  protected isStopped = false; // 定身，无法移动和射击
   protected isProtected = false; // 保护罩
   protected birthWaitTime = Config.entity.allyTank.birthWait; // 出生等待时间
   protected bulletNum = 1;
@@ -32,7 +36,6 @@ abstract class Tank extends EntityMoveAble {
   protected protectorStatus: IProtectorStatus = 0;
 
   // Ticker
-  private stopTicker?: Ticker; // 定身计时器
   private moveTicker?: Ticker; // 特殊的计时器，这个只能在实例中使用和更新，应为实例移动之后才能更新数据
   private birthTicker?: ITicker;
   private protectTicker?: ITicker;
@@ -47,6 +50,21 @@ abstract class Tank extends EntityMoveAble {
     this.isCollision = false;
 
     this.initTicker();
+  }
+
+  /** 暂停相关阵营坦克行动 */
+  protected static stop(): void {
+    const world = G.getGameWin();
+    if (this.stopTicker) {
+      world.delTicker(this.stopTicker);
+    }
+    this.stopTicker = new Ticker(Config.ticker.stopStatus, () => {
+      world.delTicker(this.stopTicker!);
+      this.stopTicker = undefined;
+      this.isStopped = false;
+    });
+    world.addTicker(this.stopTicker);
+    this.isStopped = true;
   }
 
   protected initTicker(): void {
@@ -164,19 +182,6 @@ abstract class Tank extends EntityMoveAble {
     if (this.level >= 3) {
       this.bulletNum = 2;
     }
-  }
-
-  public setStopStatus(stop: boolean): void {
-    if (this.stopTicker) {
-      this.world.delTicker(this.stopTicker);
-    }
-    this.stopTicker = new Ticker(Config.ticker.stopStatus, () => {
-      this.world.delTicker(this.stopTicker!);
-      this.stopTicker = undefined;
-      this.isStopped = false;
-    });
-    this.world.addTicker(this.stopTicker);
-    this.isStopped = stop;
   }
 
   /**- 正在执行出生动画或者受保护的个体暂时免疫死亡

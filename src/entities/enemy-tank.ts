@@ -92,7 +92,9 @@ class EnemyTank extends Tank {
   }
 
   protected stopAllOppositeCampTank(): void {
-    // G.getGameWin().addTicker(())
+    import('./ally-tank').then(res => {
+      res.default.stop();
+    });
   }
 
   changeDirection(): void {
@@ -124,7 +126,7 @@ class EnemyTank extends Tank {
   }
 
   public update(entityList: readonly IEntity[]): void {
-    if (this.lifeCircle !== 'survival' || this.isStopped) return;
+    if (this.lifeCircle !== 'survival' || EnemyTank.isStopped) return;
     this.move(entityList);
     randomInt(0, 100) < 5 && this.shoot();
     randomInt(0, 1000) < 5 && this.changeDirection();
