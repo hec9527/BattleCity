@@ -60,6 +60,7 @@ class EnemyTank extends Tank {
     this.enemyAlive = new Set();
     this.birthIndex = randomInt(0, 2) as IBirthPosIndex;
   }
+
   public static initEnemyTank(): EnemyTank | undefined {
     if (this.enemyReserve.length > 0 && this.enemyAlive.size < Config.entity.enemyTank.combatUnit) {
       const enemy = new EnemyTank(1);
@@ -68,6 +69,7 @@ class EnemyTank extends Tank {
       return enemy;
     }
   }
+
   public static getEnemyRemainNum(): number {
     return this.enemyReserve.length;
   }
@@ -78,8 +80,9 @@ class EnemyTank extends Tank {
 
   /** 消灭敌方所有坦克 */
   public static killAllEnemy(): void {
-    Array.from(this.enemyAlive).forEach(entity => entity.die(true));
+    this.enemyAlive.forEach(entity => entity.die(true));
   }
+
   public static killEnemy(enemyTank: EnemyTank): void {
     this.enemyAlive.delete(enemyTank);
   }
@@ -103,14 +106,15 @@ class EnemyTank extends Tank {
   die(explode = false): void {
     if (this.lifeCircle === 'death') return;
     if (this.lifeCircle === 'survival' && !this.isProtected) {
-      if (explode) return super.die(true);
+      if (explode) {
+        this.bullets.forEach(b => b.die(true));
+        return super.die(true, () => EnemyTank.killEnemy(this));
+      }
       if (this.reward >= 1) {
         Reward.getNewReward();
         this.reward--;
       } else {
-        super.die(explode, () => {
-          EnemyTank.killEnemy(this);
-        });
+        super.die(explode, () => EnemyTank.killEnemy(this));
       }
     }
   }
