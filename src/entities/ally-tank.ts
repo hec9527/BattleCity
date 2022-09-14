@@ -48,6 +48,10 @@ class AllyTank extends Tank {
     G.getPlayer()[this.isDeputy ? 1 : 0]?.addLife();
   }
 
+  protected getSpade(): void {
+    //
+  }
+
   protected killAllOppositeCampTank(): void {
     import('./enemy-tank').then(res => {
       const EnemyTank = res.default;

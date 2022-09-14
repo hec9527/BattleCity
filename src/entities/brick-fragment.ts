@@ -28,22 +28,26 @@ const PT = Config.battleField.paddingTop;
  */
 
 export default class BrickFragment extends Brick {
-  private status: TupleArray<number, 4>;
-  private sprite: HTMLCanvasElement;
-  private sCtx: CanvasRenderingContext2D;
+  protected status: TupleArray<number, 4>;
+  private sprite!: HTMLCanvasElement;
+  private sCtx!: CanvasRenderingContext2D;
 
   constructor(props: IBrickOption) {
     super(props);
     this.status = [1, 1, 1, 1];
     this.rect[2] = this.rect[3] = 16;
 
+    this.getImage();
+  }
+
+  protected getImage(): void {
     const [canvas, ctx] = getCanvas(16, 16);
     ctx.drawImage(R.Image.brick, this.brickIndex * 32, 0, 16, 16, 0, 0, 16, 16);
     this.sprite = canvas;
     this.sCtx = ctx;
   }
 
-  private clipSprite() {
+  protected clipSprite(): void {
     this.status.forEach((s, i) => {
       if (s === 0) {
         const x = [1, 3].includes(i) ? 8 : 0;

@@ -10,6 +10,7 @@ import { Ticker } from '../util/ticker';
 import Print from '../util/print';
 import AllyTank from '../entities/ally-tank';
 import Reward from '../entities/reward';
+import BrickWall from '../entities/brick-wall';
 
 const G = Game.getInstance();
 const R = Resource.getResource();
@@ -33,7 +34,7 @@ class WinBattle extends Win {
     R.Audio.play('start');
 
     // TODO
-    EnemyTank.initEnemyCamp(G.getStage());
+    EnemyTank.initEnemyCamp();
 
     this.ctx.fg.font = 'bolder 20px prestart';
     this.ctx.fg.fillStyle = Config.colors.red;
@@ -56,11 +57,14 @@ class WinBattle extends Win {
   }
 
   private addBrickEntity() {
-    this.mapData.forEach((row, rIndex) => {
-      row.forEach((_, cIndex) => {
-        const index = this.mapData[rIndex][cIndex];
+    this.mapData.forEach((row, y) => {
+      row.forEach((_, x) => {
+        const index = this.mapData[y][x];
         if (index == brick.blank) return;
-        new Brick({ pos: [cIndex * 32, rIndex * 32], index });
+        if (Config.wall.find(([_x, _y]) => _x === y && _y === x)) {
+          return new BrickWall({ pos: [x * 32, y * 32], index });
+        }
+        new Brick({ pos: [x * 32, y * 32], index });
       });
     });
   }

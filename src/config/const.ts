@@ -58,6 +58,12 @@ export const Config = {
     stopStatus: 600,
     /** 战斗结束停留时间 */
     battleOver: 400,
+    /** 围墙建造后保持时间 */
+    wallBuildKeep: 600,
+    /** 围墙建造后闪烁时间 */
+    wallBlink: 300,
+    /** 围墙建造后闪烁间隔 */
+    wallBlinkDuration: 15,
   },
   colors: {
     black: '#000',
@@ -87,6 +93,13 @@ export const Config = {
       speedFast: 4.5, // 升级后的子弹
     },
   },
+  wall: [
+    [11, 5],
+    [11, 6],
+    [11, 7],
+    [12, 5],
+    [12, 7],
+  ],
 };
 
 export default Config;

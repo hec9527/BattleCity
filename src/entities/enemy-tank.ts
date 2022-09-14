@@ -54,8 +54,8 @@ class EnemyTank extends Tank {
 
   /** ### 初始化敌方坦克
    *  - 回合数越高，高级坦克越多 */
-  public static initEnemyCamp(round: number): void {
-    const enemyCombatAbility = Config.entity.enemyTank.combatAbilityBase + round;
+  public static initEnemyCamp(): void {
+    const enemyCombatAbility = Config.entity.enemyTank.combatAbilityBase + G.getStage();
     this.enemyReserve = dispense(enemyCombatAbility, 20);
     this.enemyAlive = new Set();
     this.birthIndex = randomInt(0, 2) as IBirthPosIndex;
@@ -121,7 +121,11 @@ class EnemyTank extends Tank {
     }
   }
 
-  addLife(): void {
+  protected getSpade(): void {
+    //
+  }
+
+  protected addLife(): void {
     this.reward = Math.sqrt(randomInt(1, 17)) | 0;
   }
 

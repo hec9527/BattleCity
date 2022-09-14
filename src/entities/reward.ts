@@ -31,7 +31,7 @@ class Reward extends Entity implements IReward {
     // TODO 测试奖励生成以及获取
     // this.rewardType = randomInt(0, 6) as IRewardType;
     this.rect = [12 * 32, 0, 32, 32];
-    this.rewardType = 5 as IRewardType;
+    this.rewardType = 1 as IRewardType;
     this.type = 'reward';
     this.status = 0;
 

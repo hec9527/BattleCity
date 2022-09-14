@@ -135,7 +135,7 @@ abstract class Tank extends EntityMoveAble {
   protected getReward(rewardType: IRewardType): void {
     // TODO 完成奖励类型的处理
     const rewards = {
-      0: () => {}, // 🛠 铁锹
+      0: () => this.getSpade(), // 🛠 铁锹
       1: () => this.upGrade(1), // ⭐️  五角星  等级+1
       2: () => this.addLife(), // 🚂 坦克
       3: () => this.addProtector(), // 🛡 保护套
@@ -150,6 +150,8 @@ abstract class Tank extends EntityMoveAble {
       throw new Error(`未知的奖励类型 ${rewardType}`);
     }
   }
+
+  protected abstract getSpade(): void;
   protected abstract addLife(): void;
   protected abstract stopAllOppositeCampTank(): void;
   protected abstract killAllOppositeCampTank(): void;
