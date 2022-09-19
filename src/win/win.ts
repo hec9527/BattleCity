@@ -2,9 +2,9 @@
  * 窗体类
  */
 
-import { TickerList } from '../util/ticker';
+import { TickerList } from '../ticker';
 import { getCanvas } from '../util';
-import Config from '../config/const';
+import Config from '../config';
 import Game from '../object/game';
 
 let lastTick = 0;

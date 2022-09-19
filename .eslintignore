@@ -3,6 +3,4 @@ node_modules/
 public/
 svg/
 build/
-
-# 暂时屏蔽test文件夹
-test/*
+test/

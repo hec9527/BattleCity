@@ -1,8 +1,8 @@
 import Win from './win';
 import Game from '../object/game';
-import Config from '../config/const';
+import Config from '../config';
+import Ticker from '../ticker';
 import { Resource } from '../loader';
-import { Ticker } from '../util/ticker';
 
 const G = Game.getInstance();
 const R = Resource.getResource();

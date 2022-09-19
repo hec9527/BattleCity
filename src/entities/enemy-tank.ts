@@ -1,162 +1,46 @@
-/**
- * 敌方坦克类
- */
-
 import Tank from './tank';
-import { dispense, randomInt } from '../util/index';
-import Config from '../config/const';
-import { Ticker } from '../util/ticker';
+import Config from '../config';
+import Ticker from '../ticker';
+import { EnemyType } from '../config/enum';
 import { Resource } from '../loader';
-import Reward from './reward';
-import Game from '../object/game';
 
-type IBirthPosIndex = 0 | 1 | 2;
-
-const G = Game.getInstance();
 const R = Resource.getResource();
 
-class EnemyTank extends Tank {
-  private static birthIndex: IBirthPosIndex = 1;
-  private static enemyReserve: Array<number> = []; // 预备队
-  private static enemyAlive: Set<EnemyTank> = new Set();
+class EnemyTank extends Tank implements IEnemyTank {
+  protected readonly type: IEntityType = 'enemyTank';
+  protected rect: IEntityRect;
+  protected flashTank = false;
+  protected isCollision = true;
 
-  public readonly score: number;
-  public readonly type: IEntityType = 'enemyTank';
-  protected birthWaitTime = Config.entity.enemyTank.birthWait;
+  private award = 0;
+  private enemyType: EnemyType;
 
-  // basic info
-  private reward: number;
-
-  // status info
-  private isCanChangeDir = true;
-
-  private constructor(private tankType: IEnemyType) {
-    super({ rect: [...Config.entity.enemyTank.birthPos[EnemyTank.birthIndex]], direction: 2, camp: 'enemy' });
-
-    if (++EnemyTank.birthIndex >= 3) {
-      EnemyTank.birthIndex = 0;
-    }
-
-    this.reward = 0;
-    this.speed =
-      tankType === 3
-        ? Config.entity.enemyTank.speedSlow
-        : tankType === 2
-        ? Config.entity.enemyTank.speedFast
-        : Config.entity.enemyTank.speed;
-    // this.score = tankType ===3?500:tankType ===2:4
-    this.score = 100;
-    this.life = randomInt(1, tankType === 3 ? 3 : 1);
-    this.tankType = tankType;
-
-    randomInt(1, 10) <= 5 && this.addLife();
+  private constructor(rect: IEntityRect, type: EnemyType) {
+    super();
+    this.rect = rect;
+    this.enemyType = type;
   }
 
-  /** ### 初始化敌方坦克
-   *  - 回合数越高，高级坦克越多 */
-  public static initEnemyCamp(): void {
-    const enemyCombatAbility = Config.entity.enemyTank.combatAbilityBase + G.getStage();
-    this.enemyReserve = dispense(enemyCombatAbility, 20);
-    this.enemyAlive = new Set();
-    this.birthIndex = randomInt(0, 2) as IBirthPosIndex;
-  }
-
-  public static initEnemyTank(): EnemyTank | undefined {
-    if (this.enemyReserve.length > 0 && this.enemyAlive.size < Config.entity.enemyTank.combatUnit) {
-      const enemy = new EnemyTank(1);
-      this.enemyAlive.add(enemy);
-      EnemyTank.enemyReserve.pop();
-      return enemy;
+  public getScore() {
+    switch (this.enemyType) {
+      case EnemyType.normal:
+        return 100;
+      case EnemyType.enhance:
+        return 200;
+      case EnemyType.fast:
+        return 300;
+      case EnemyType.armor:
+        return 400;
+      default:
+        console.warn(`unregistered enemy type: ${this.enemyType}`);
+        return 400;
     }
   }
 
-  public static getEnemyRemainNum(): number {
-    return this.enemyReserve.length;
-  }
+  public update(): void {}
 
-  public static getEnemyAliveTank(): Set<EnemyTank> {
-    return this.enemyAlive;
-  }
-
-  /** 消灭敌方所有坦克 */
-  public static killAllEnemy(): void {
-    this.enemyAlive.forEach(entity => entity.die(true));
-  }
-
-  public static killEnemy(enemyTank: EnemyTank): void {
-    this.enemyAlive.delete(enemyTank);
-  }
-
-  protected killAllOppositeCampTank(): void {
-    G.getPlayer().forEach(p => p?.getTank()?.die(true));
-  }
-
-  protected stopAllOppositeCampTank(): void {
-    import('./ally-tank').then(res => {
-      res.default.stop();
-    });
-  }
-
-  changeDirection(): void {
-    if (!this.isCanChangeDir) return;
-    this.isCanChangeDir = false;
-    this.world.addTicker(new Ticker(Config.ticker.changeDirection, () => (this.isCanChangeDir = true)));
-    const direction: IDirection = randomInt(0, 3) as IDirection;
-    super.changeDirection(direction);
-  }
-
-  die(explode = false): void {
-    if (this.lifeCircle === 'death') return;
-    if (this.lifeCircle === 'survival' && !this.isProtected) {
-      if (explode) {
-        this.bullets.forEach(b => b.die(true));
-        return super.die(true, () => EnemyTank.killEnemy(this));
-      }
-      if (this.reward >= 1) {
-        Reward.getNewReward();
-        this.reward--;
-      } else {
-        super.die(explode, () => EnemyTank.killEnemy(this));
-      }
-    }
-  }
-
-  protected getSpade(): void {
-    //
-  }
-
-  protected addLife(): void {
-    this.reward = Math.sqrt(randomInt(1, 17)) | 0;
-  }
-
-  public update(entityList: readonly IEntity[]): void {
-    if (this.lifeCircle !== 'survival' || EnemyTank.isStopped) return;
-    this.move(entityList);
-    randomInt(0, 100) < 5 && this.shoot();
-    randomInt(0, 1000) < 5 && this.changeDirection();
-  }
-
-  public draw(): void {
-    if (this.lifeCircle === 'survival') {
-      const [, , w, h] = this.rect;
-      let sx;
-
-      if (this.tankType < 3) {
-        sx = this.tankType * 2 + (this.reward >= 1 ? 1 : 0);
-      } else {
-        sx = this.reward >= 1 ? 9 : Math.floor(6 + this.life - 1);
-      }
-
-      this.ctx.main.drawImage(
-        R.Image.enemyTank,
-        sx * 32,
-        this.direction * 64 + this.wheelStatus * 32,
-        w,
-        h,
-        ...this.rect,
-      );
-    }
-    super.draw();
+  public draw(ctx: CanvasRenderingContext2D): void {
+    super.draw(ctx);
   }
 }
 

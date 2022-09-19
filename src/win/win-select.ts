@@ -1,4 +1,4 @@
-import Config from '../config/const';
+import Config from '../config';
 import { P1 } from '../config/keys';
 import Game from '../object/game';
 import AllyController from '../util/ally-controller';

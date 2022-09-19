@@ -1,57 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <title>Battle City</title>
-  </head>
 
-  <body>
-    <div id="container">
-      <div id="video-container">
-        <!-- 绘制背景 -->
-        <canvas id="background" width="516" height="456"></canvas>
-        <!-- 绘制游戏主体 -->
-        <canvas id="game" width="416" height="416"></canvas>
-        <!-- 绘制前景 -->
-        <canvas id="foreground" width="516" height="456"></canvas>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <title>Battle City</title>
+</head>
+
+<body>
+  <div id="container">
+    <div id="video-container">
+      <canvas id="game" width="416" height="416"></canvas>
+    </div>
+    <div id="tips-container">
+      <div id="operate-tips">
+        <h2>游戏操作</h2>
+        <div class="operate-group">
+          <h3>玩家一</h3>
+          <div>
+            <div class="opt-btn">左<div>A</div>
+            </div>
+            <div class="opt-btn">上<div>W</div>
+            </div>
+            <div class="opt-btn">下<div>S</div>
+            </div>
+            <div class="opt-btn">右<div>D</div>
+            </div>
+            <div class="opt-btn">单发<div>J</div>
+            </div>
+            <div class="opt-btn">连发<div>K</div>
+            </div>
+            <div class="opt-btn">选择<div>U</div>
+            </div>
+            <div class="opt-btn">开始<div>B</div>
+            </div>
+          </div>
+        </div>
+        <div class="operate-group">
+          <h3>玩家二</h3>
+          <div>
+            <div class="opt-btn">左<div>←</div>
+            </div>
+            <div class="opt-btn">上<div>↑</div>
+            </div>
+            <div class="opt-btn">下<div>↓</div>
+            </div>
+            <div class="opt-btn">右<div>→</div>
+            </div>
+            <div class="opt-btn">单发<div>;</div>
+            </div>
+            <div class="opt-btn">连发<div>'</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="tips-container">
-        <div id="operate-tips">
-          <h2>游戏操作</h2>
-          <div class="operate-group">
-            <h3>玩家一</h3>
-            <div>
-              <div class="opt-btn">左<div>A</div></div>
-              <div class="opt-btn">上<div>W</div></div>
-              <div class="opt-btn">下<div>S</div></div>
-              <div class="opt-btn">右<div>D</div></div>
-              <div class="opt-btn">单发<div>J</div></div>
-              <div class="opt-btn">连发<div>K</div></div>
-              <div class="opt-btn">选择<div>U</div></div>
-              <div class="opt-btn">开始<div>B</div></div>
-            </div>
-          </div>
-          <div class="operate-group">
-            <h3>玩家二</h3>
-            <div>
-              <div class="opt-btn">左<div>←</div></div>
-              <div class="opt-btn">上<div>↑</div></div>
-              <div class="opt-btn">下<div>↓</div></div>
-              <div class="opt-btn">右<div>→</div></div>
-              <div class="opt-btn">单发<div>;</div></div>
-              <div class="opt-btn">连发<div>'</div></div>
-            </div>
-          </div>
-        </div>
-        <div id="copy-right">
-          DISIN BY HEC9527
-        </div>
+      <div id="copy-right">
+        DISIN BY HEC9527
       </div>
     </div>
+  </div>
 
-    <script src="/src/index.ts" type="module"></script>
-  </body>
+  <script src="/src/index.ts" type="module"></script>
+</body>
+
 </html>

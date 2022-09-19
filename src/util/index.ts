@@ -1,7 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const regHTMLTag = /^<([a-z]+)>$/;
 
-/** DOM 选择器  mini query */
+export function removeFromArr(list: any[], item: any): void {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i] === item) {
+      list.slice(i, 1);
+      return;
+    }
+  }
+}
+
 export function $(select: string): HTMLElement | null | NodeList {
   if (/^#/.test(select)) {
     return document.getElementById(select.substring(1));

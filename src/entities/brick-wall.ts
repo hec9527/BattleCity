@@ -1,8 +1,8 @@
 import brick from '../config/brick';
 import BrickFragment from './brick-fragment';
-import Config from '../config/const';
+import Config from '../config';
 import { Resource } from '../loader';
-import { Ticker } from '../util/ticker';
+import { Ticker } from '../ticker';
 
 const R = Resource.getResource();
 const PL = Config.battleField.paddingLeft;

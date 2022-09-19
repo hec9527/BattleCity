@@ -1,4 +1,4 @@
-import Config from '../config/const';
+import Config from '../config';
 import { Resource } from '../loader';
 import Game from '../object/game';
 import Brick from '../entities/brick';
@@ -6,7 +6,7 @@ import EnemyTank from '../entities/enemy-tank';
 import { getBattleFiledBackground } from '../util/off-screen-canvas';
 import Win from './win';
 import brick from '../config/brick';
-import { Ticker } from '../util/ticker';
+import { Ticker } from '../ticker';
 import Print from '../util/print';
 import AllyTank from '../entities/ally-tank';
 import Reward from '../entities/reward';

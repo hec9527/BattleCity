@@ -1,8 +1,3 @@
-/**
- * 相关常量
- * @author hec9527
- */
-
 export const Config = {
   game: {
     /** 最小关卡 */
@@ -17,9 +12,7 @@ export const Config = {
   canvas: {
     width: 516,
     height: 456,
-    canvasId: 'game',
-    foregroundId: 'foreground',
-    backgroundId: 'background',
+    id: 'game',
   },
   battleField: {
     width: 416,
@@ -31,9 +24,9 @@ export const Config = {
     /** 射击间隔时间 */
     shoot: 10,
     /** 改变移动状态 */
-    moveStatus: 6,
-    moveStatusFast: 3,
-    moveStatusSlow: 20,
+    trackStatus: 6,
+    trackStatusFast: 3,
+    trackStatusSlow: 20,
     // moveStatus
     /** 出身动画时间 */
     birth: 100,
@@ -43,8 +36,9 @@ export const Config = {
     protectorShort: 300,
     protectorStatus: 3,
     /** 奖励持续时间 */
-    reward: 600,
-    rewardStatus: 15,
+    award: 600,
+    awardBlink: 200,
+    awardBlinkFrequency: 15,
     /** 转向间隔 */
     changeDirection: 5,
     /** 爆炸持续时间 */
@@ -64,6 +58,11 @@ export const Config = {
     wallBlink: 300,
     /** 围墙建造后闪烁间隔 */
     wallBlinkDuration: 15,
+  },
+  speed: {
+    slow: 1.8,
+    normal: 2,
+    fast: 2.5,
   },
   colors: {
     black: '#000',
@@ -102,4 +101,4 @@ export const Config = {
   ],
 };
 
-export default Config;
+export default { ...Config };

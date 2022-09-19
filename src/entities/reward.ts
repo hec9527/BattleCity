@@ -1,74 +1,82 @@
-/**
- * 奖励类
- * 奖励类因为全局只有一个所以需要设计成单例模式
- */
-
-import Config from '../config/const';
-import { Resource } from '../loader';
-import { randomInt, getRewardRect } from '../util';
-import { Ticker } from '../util/ticker';
+import Tank from './tank';
+import EVENT from '../event';
+import Config from '../config';
+import Ticker from '../ticker';
 import Entity from './entity';
+import { Resource } from '../loader';
+import { randomInt, isEntityCollision } from '../util';
 
 const R = Resource.getResource();
-const PL = Config.battleField.paddingLeft;
-const PT = Config.battleField.paddingTop;
+const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
-class Reward extends Entity implements IReward {
-  private static instance: Reward | undefined = undefined;
-
-  private status: IRewardStatus;
-  public type: IEntityType;
-  public readonly rewardType: IRewardType;
+class Award extends Entity implements IAward {
+  private static instance: Award | undefined = undefined;
+  protected rect: IEntityRect;
+  protected type: IEntityType = 'reward';
+  public readonly awardType: IRewardType;
   public readonly isCollision = true;
 
-  // ticker
-  private statusTicker?: ITicker;
-  private survivalTicker?: ITicker;
+  // status
+  private status: 0 | 1 = 1;
+  private surviveTicker: ITicker;
+  private blinkTicker: ITicker | null = null;
 
   private constructor() {
-    const rect = getRewardRect();
-    super(rect);
-    // TODO 测试奖励生成以及获取
-    // this.rewardType = randomInt(0, 6) as IRewardType;
-    this.rect = [12 * 32, 0, 32, 32];
-    this.rewardType = 1 as IRewardType;
+    super();
+    this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
+
+    this.awardType = randomInt(0, 6) as IRewardType;
+    this.rect = Award.getRandomRect();
     this.type = 'reward';
-    this.status = 0;
 
-    // 奖励存在时间
-    this.statusTicker = new Ticker(Config.ticker.rewardStatus, () => (this.status = this.status ? 0 : 1), true);
-    this.survivalTicker = new Ticker(Config.ticker.reward, () => this.die());
-    this.world.addTicker(this.survivalTicker);
-    this.world.addTicker(this.statusTicker);
-    console.log(this);
+    this.surviveTicker = new Ticker(Config.ticker.award - Config.ticker.awardBlink, () => {
+      this.blinkTicker = new Ticker(Config.ticker.awardBlinkFrequency, () => {
+        this.status = this.status === 0 ? 1 : 0;
+      });
+      this.surviveTicker = new Ticker(Config.ticker.awardBlink, () => {
+        this.destroy();
+      });
+    });
   }
 
-  public static getNewReward(): Reward {
-    if (Reward.instance) {
-      Reward.instance.die();
+  private static getRandomRect(): IEntityRect {
+    const x = randomInt(0, 24) * 16;
+    const y = randomInt(0, 24) * 16;
+    const rect: IEntityRect = [x, y, 32, 32];
+    if (isEntityCollision(rect, [192, 384, 32, 32])) {
+      return this.getRandomRect();
     }
-    Reward.instance = new Reward();
-    return Reward.instance;
+    return rect;
   }
 
-  die(): void {
-    if (this.survivalTicker?.isAlive) {
-      this.world.delTicker(this.statusTicker!);
-      this.world.delTicker(this.survivalTicker);
-      this.statusTicker = undefined;
-      this.survivalTicker = undefined;
+  protected destroy(): void {
+    if (this.isDestroyed) return;
+    this.eventManager.fireEvent<IAwardEvent>({ type: EVENT.AWARD.DESTROYED, award: this });
+    super.destroy();
+  }
+
+  public getAwardType(): IRewardType {
+    return this.awardType;
+  }
+
+  public static getNewReward(): Award {
+    if (Award.instance) {
+      Award.instance.destroy();
     }
-    Reward.instance = undefined;
-    super.die();
+    Award.instance = new Award();
+    return Award.instance;
   }
 
-  update(): void {}
+  public update(): void {
+    this.surviveTicker.update();
+    this.blinkTicker?.update();
+  }
 
-  draw(): void {
-    if (this.status === 0) return;
-    this.ctx.fg.drawImage(
+  public draw(ctx: CanvasRenderingContext2D): void {
+    if (!this.status) return;
+    ctx.drawImage(
       R.Image.bonus,
-      this.rewardType * 32,
+      this.awardType * 32,
       0,
       32,
       32,
@@ -78,6 +86,12 @@ class Reward extends Entity implements IReward {
       this.rect[3],
     );
   }
+
+  public notify(event: INotifyEvent<ICollisionEvent>): void {
+    if (event.type === EVENT.COLLISION.ENTITY && event.entity === this && event.initiator instanceof Tank) {
+      this.destroy();
+    }
+  }
 }
 
-export default Reward;
+export default Award;

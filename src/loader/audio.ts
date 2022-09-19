@@ -6,7 +6,7 @@
 import Printer from '../util/print';
 
 /** 音乐文件列表 */
-import config from '../config/const';
+import config from '../config';
 
 const files = config.resource.audios;
 

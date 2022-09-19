@@ -23,25 +23,19 @@
     "email": "hec9527@foxmail.com"
   },
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "build": "vite build",
-    "clear": "rm -rf node_modules build dist coverage",
     "dev": "npm run start",
-    "preinstall": "npm run clear",
-    "preview": "vite preview",
-    "start": "vite --host --port 10086",
-    "test": "jest --coverage --config ./jest.config.js"
+    "start": "vite --host --port 10086"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.15",
     "@types/node": "^14.14.5",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "eslint": "^7.12.0",
-    "jest": "^26.1.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
     "less": "^4.1.2",
     "prettier": "^2.5.1",
     "prettier-plugin-packagejson": "2.2.15",
@@ -50,7 +44,6 @@
     "stylelint-config-rational-order": "^0.1.2",
     "stylelint-config-standard": "24.0.0",
     "stylelint-order": "5.0.0",
-    "ts-jest": "^26.4.4",
     "typescript": "^4.2.4",
     "vite": "^2.7.13"
   }

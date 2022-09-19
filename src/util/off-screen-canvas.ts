@@ -1,4 +1,4 @@
-import Config from '../config/const';
+import Config from '../config';
 import { getCanvas } from './index';
 import { Resource } from '../loader';
 import Game from '../object/game';

@@ -9,7 +9,7 @@
  */
 
 import Entity from './entity';
-import Config from '../config/const';
+import Config from '../config';
 import { Resource } from '../loader';
 import { isEntityCollision } from '../util';
 import { getBrickType } from '../util/map-tool';

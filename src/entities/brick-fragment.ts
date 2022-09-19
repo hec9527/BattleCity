@@ -1,6 +1,6 @@
 import Brick from './brick';
 import Entity from './entity';
-import Config from '../config/const';
+import Config from '../config';
 import { Resource } from '../loader';
 import { getCanvas } from '../util';
 

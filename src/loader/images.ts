@@ -4,7 +4,7 @@
  */
 
 import Printer from '../util/print';
-import Config from '../config/const';
+import Config from '../config';
 
 const files = Config.resource.images;
 

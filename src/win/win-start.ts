@@ -1,7 +1,7 @@
 import { getWinStartBackground } from '../util/off-screen-canvas';
 import AllyController from '../util/ally-controller';
-import { Ticker } from '../util/ticker';
-import Config from '../config/const';
+import Ticker from '../ticker';
+import Config from '../config';
 import { P1 } from '../config/keys';
 import { Resource } from '../loader';
 import Game from '../object/game';

@@ -1,8 +1,3 @@
-/**
- * 资源加载类
- * 先在页面中加载资源防止后面使用的时候出现资源未加载的情况
- */
-
 import { loadImages, CacheImg } from './images';
 import { loadAudio, Sound } from './audio';
 
