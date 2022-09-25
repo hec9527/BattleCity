@@ -11,26 +11,26 @@ class MenuWin implements IGameWin, ISubScriber {
   private status: 'slide' | 'select' = 'slide';
   private scrollY = Config.canvas.height;
   private speed = 5;
-  private cursor = new MenuCursor();
+  private MenuCursor = new MenuCursor();
 
   constructor(winManager: IWindowManager) {
     this.winManager = winManager;
-    this.eventManager.addSubscriber(this, Object.values(EVENT.CONTROL.P1));
+    this.eventManager.addSubscriber(this, [EVENT.KEYBOARD.PRESS]);
   }
 
   private updateScrollY(): void {
     this.scrollY -= this.speed;
-    this.cursor.setScrollY(this.scrollY);
+    this.MenuCursor.setScrollY(this.scrollY);
     if (this.scrollY <= 0) {
       this.scrollY = 0;
       this.status = 'select';
-      this.cursor.setScrollY(0);
+      this.MenuCursor.setScrollY(0);
     }
   }
 
   private nextWin(): void {
     this.eventManager.removeAllSubscribers();
-    const index = this.cursor.getMenuIndex();
+    const index = this.MenuCursor.getMenuIndex();
     switch (index) {
       case 0:
         this.winManager.setGameMode('single');
@@ -52,7 +52,7 @@ class MenuWin implements IGameWin, ISubScriber {
     if (this.status === 'slide') {
       this.updateScrollY();
     }
-    this.cursor.update();
+    this.MenuCursor.update();
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
@@ -64,26 +64,21 @@ class MenuWin implements IGameWin, ISubScriber {
     ctx.drawImage(R.Image.UI, 0, 0, 376, 136, 68, this.scrollY + 80, 376, 136);
     ctx.fillText('© 2022 PRESENT', 146, this.scrollY + 400);
     ctx.fillText('ALL RIGHTS RESERVED', 106, this.scrollY + 425);
-    this.cursor.draw(ctx);
+    this.MenuCursor.draw(ctx);
     ctx.fillStyle = 'red';
     ctx.fillText('HEC9257', 202, this.scrollY + 375);
     ctx.restore();
   }
 
-  public notify(event: INotifyEvent<Record<string, unknown>>): void {
-    console.log(event.type);
-
-    if (this.status === 'slide' && Object.values(EVENT.CONTROL.P1).includes(event.type)) {
+  public notify(event: IControllerEvent): void {
+    if (this.status === 'slide' && Object.values(EVENT.CONTROL.P1).includes(event.key)) {
       this.status = 'select';
       this.scrollY = 0;
-      this.cursor.setScrollY(0);
+      this.MenuCursor.setScrollY(0);
       return;
     }
-    if (
-      event.type === EVENT.CONTROL.P1.A ||
-      event.type === EVENT.CONTROL.P1.B ||
-      event.type === EVENT.CONTROL.P1.START
-    ) {
+
+    if (event.key === EVENT.CONTROL.P1.A || event.key === EVENT.CONTROL.P1.B || event.key === EVENT.CONTROL.P1.START) {
       this.nextWin();
     }
   }

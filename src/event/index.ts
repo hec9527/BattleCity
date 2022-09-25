@@ -29,6 +29,11 @@ const COLLISION = {
   ENTITY: 'COLLISION_ENTITY',
 };
 
+const KEYBOARD = {
+  PRESS: 'KEY_PRESS',
+  RELEASE: 'KEY_RELEASE',
+};
+
 const CONTROL = {
   P1: {
     UP: 'P1_UP',
@@ -58,6 +63,7 @@ const GAME = {
 
 export default {
   EM,
+  KEYBOARD,
   AWARD,
   ENTITY,
   TANK,

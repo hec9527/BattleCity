@@ -22,7 +22,7 @@ class WindowManager implements IWindowManager {
     this.ctx = ctx;
 
     // this.toMenuWin();
-    this.toStageWin();
+    this.toConstructWin();
   }
 
   public setStage(stage: number): void {

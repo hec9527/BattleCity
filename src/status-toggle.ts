@@ -13,6 +13,11 @@ class StatusToggle<T extends any = number> {
     this.loop = loop;
   }
 
+  public refresh(): void {
+    this.toggleTick = 0;
+    this.currentIndex = 0;
+  }
+
   public update(): void {
     if (this.finished) return;
     this.toggleTick++;

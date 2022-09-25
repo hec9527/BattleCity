@@ -23,6 +23,7 @@ export const Config = {
   ticker: {
     stageChange: 2,
     cursorMove: 3,
+    cursorBlink: 15,
     /** 射击间隔时间 */
     shoot: 10,
     /** 改变移动状态 */

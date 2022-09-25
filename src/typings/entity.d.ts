@@ -29,7 +29,7 @@ declare interface IEntity {
   getZIndex(): number;
   getCollision(): boolean;
   getEntityType(): IEntityType;
-  update(list: readonly IEntity[]): void;
+  update(): void;
   draw(ctx: CanvasRenderingContext2D): void;
 }
 

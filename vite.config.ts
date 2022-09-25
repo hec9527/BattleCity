@@ -6,4 +6,9 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 10086,
   },
+  build: {
+    outDir: 'dist/',
+    assetsInlineLimit: 10240,
+    emptyOutDir: true,
+  },
 });

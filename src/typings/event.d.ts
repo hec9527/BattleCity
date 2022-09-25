@@ -37,5 +37,6 @@ declare interface IAwardEvent extends INotifyEvent {
 }
 
 declare interface IControllerEvent extends INotifyEvent {
+  type: 'KEY_PRESS' | 'KEY_RELEASE';
   key: string;
 }

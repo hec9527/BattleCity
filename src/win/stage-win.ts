@@ -33,7 +33,7 @@ class StageWin implements IGameWin, ISubScriber {
       },
     });
 
-    this.eventManager.addSubscriber(this, [UP, DOWN, A, B, START]);
+    this.eventManager.addSubscriber(this, [EVENT.KEYBOARD.PRESS]);
   }
 
   private nextWin(): void {
@@ -77,11 +77,11 @@ class StageWin implements IGameWin, ISubScriber {
     }
   }
 
-  notify(event: INotifyEvent<Record<string, unknown>>): void {
+  notify(event: IControllerEvent): void {
     if (this.status === 'closing') return;
     if (this.stageChangeTick && !this.stageChangeTick.isFinished()) return;
 
-    switch (event.type) {
+    switch (event.key) {
       case UP:
         this.nextStage();
         break;

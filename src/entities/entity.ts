@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+import Config from '../config';
 import EVENT from '../event';
 
 abstract class Entity implements IEntity, ISubScriber {
@@ -12,14 +13,16 @@ abstract class Entity implements IEntity, ISubScriber {
   protected direction: IDirection = 0;
   protected isDestroyed = false;
   protected palsy = false; // timing stop
-  protected stop = false; // move stop
+  protected stop = true; // move stop
   protected speed = 0;
+  protected moveFrequency = 1;
 
   private pause = false;
   private lastDirection: IDirection = 0;
+  private moveTick = 0;
 
   constructor() {
-    this.eventManager.addSubscriber(this, [EVENT.GAME.PAUSE]);
+    this.eventManager.addSubscriber(this, [EVENT.GAME.PAUSE, EVENT.COLLISION.BORDER]);
     this.eventManager.fireEvent({ type: EVENT.ENTITY.CREATED, entity: this });
   }
 
@@ -47,9 +50,29 @@ abstract class Entity implements IEntity, ISubScriber {
   }
 
   private move(): void {
+    if (this.speed === 0 || ++this.moveTick < this.moveFrequency) return;
+    this.moveTick = 0;
     this.rect = this.getNextFrameRect();
     this.postMove();
     this.eventManager.fireEvent({ type: EVENT.ENTITY.MOVE, entity: this });
+  }
+
+  private resolveCollisionBorder(): void {
+    let [x, y, w, h] = this.rect;
+    const { width, height } = Config.battleField;
+
+    if (x + w > width) {
+      x = width - w;
+    } else if (x < 0) {
+      x = 0;
+    }
+
+    if (y + h > height) {
+      y = height - h;
+    } else if (y < 0) {
+      y = 0;
+    }
+    this.rect = [x, y, w, h];
   }
 
   public update(): void {
@@ -61,6 +84,7 @@ abstract class Entity implements IEntity, ISubScriber {
       this.move();
     } else {
       this.turnDirection();
+      this.moveTick = this.moveFrequency - 1;
     }
   }
 
@@ -116,9 +140,11 @@ abstract class Entity implements IEntity, ISubScriber {
     return this.zIndex;
   }
 
-  public notify(event: INotifyEvent<Record<string, unknown>>): void {
+  public notify(event: INotifyEvent<ICollisionEvent>): void {
     if (event.type === EVENT.GAME.PAUSE) {
       this.pause = !this.pause;
+    } else if (event.type === EVENT.COLLISION.BORDER && event.initiator === this) {
+      this.resolveCollisionBorder();
     }
   }
 }

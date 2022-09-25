@@ -11,6 +11,14 @@ class EntityContainer implements ISubScriber {
     this.collisionDetecter = new CollisionDetecter(this.entities);
   }
 
+  public update(): void {
+    this.entities.forEach(entity => entity.update());
+  }
+
+  public draw(ctx: CanvasRenderingContext2D): void {
+    this.entities.forEach(entity => entity.draw(ctx));
+  }
+
   public addEntity(entity: IEntity) {
     this.entities.add(entity);
   }

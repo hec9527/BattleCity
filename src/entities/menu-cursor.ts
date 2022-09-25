@@ -6,7 +6,7 @@ import EVENT from '../event';
 import Ticker from '../ticker';
 
 const R = Resource.getResource();
-const { UP, DOWN } = EVENT.CONTROL.P1;
+const { UP, DOWN, SELECT } = EVENT.CONTROL.P1;
 
 export default class MenuCursor extends Entity implements ISubScriber {
   protected isCollision = false;
@@ -14,14 +14,14 @@ export default class MenuCursor extends Entity implements ISubScriber {
   protected rect: IEntityRect = [0, 0, 32, 32];
 
   private scrollY = 0;
-  private trackStatus = new StatusToggle([0, 1], Config.ticker.trackStatusFast, true);
+  private trackStatus = new StatusToggle([0, 1], Config.ticker.trackStatus, true);
   private cursorTicker: ITicker | null = null;
   private menuIndex = 0;
   private menuItems = ['1 PLAYER', '2 PLAYERS', 'CONSTRUCTION'];
 
   constructor() {
     super();
-    this.eventManager.addSubscriber(this, [UP, DOWN]);
+    this.eventManager.addSubscriber(this, [EVENT.KEYBOARD.PRESS]);
   }
 
   private preMenuItem(): void {
@@ -63,14 +63,16 @@ export default class MenuCursor extends Entity implements ISubScriber {
       );
   }
 
-  public notify(event: INotifyEvent<Record<string, unknown>>): void {
+  public notify(event: IControllerEvent): void {
     if (this.cursorTicker && !this.cursorTicker.isFinished()) return;
     this.cursorTicker = new Ticker(Config.ticker.cursorMove);
-    switch (event.type) {
+
+    switch (event.key) {
       case UP:
         this.preMenuItem();
         break;
       case DOWN:
+      case SELECT:
         this.nextMenuItem();
         break;
       default:
