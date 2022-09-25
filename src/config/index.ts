@@ -21,6 +21,7 @@ export const Config = {
     paddingLeft: 35,
   },
   ticker: {
+    stageChange: 2,
     cursorMove: 3,
     /** 射击间隔时间 */
     shoot: 10,

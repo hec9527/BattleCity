@@ -20,7 +20,8 @@ declare interface ITicker {
 }
 
 declare interface ITask {
-  update(): void;
+  update?(): void;
+  execute?(): void;
 }
 
 declare type IMapData = TupleArray<TupleArray<number, 13>, 13>;

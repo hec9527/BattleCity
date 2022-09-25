@@ -12,4 +12,6 @@ interface IWindowManager extends IGameWin {
   toSettleWin(): void;
   setGameMode(mode: IGameMode): void;
   getGameMode(): IGameMode;
+  setStage(stage: number): void;
+  getStage(): number;
 }
