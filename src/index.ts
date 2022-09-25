@@ -12,12 +12,13 @@ Loader().then(() => {
     const windowManager = new win.default();
 
     function gameLoop() {
-      requestAnimationFrame(gameLoop);
+      // requestAnimationFrame(gameLoop);
       keyboard.emitControl();
       windowManager.update();
       windowManager.draw();
     }
 
-    gameLoop();
+    // gameLoop();
+    setInterval(gameLoop, 1000 / 60);
   });
 });

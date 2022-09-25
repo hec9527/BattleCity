@@ -19,6 +19,8 @@ const mapper: { [K in string]: string } = {
   l: EVENT.CONTROL.P2.B,
 };
 
+const preventKey = ['arrowup', 'arrowleft', 'arrowdown', 'arrowright'];
+
 /**
  * keyboard Control
  */
@@ -29,10 +31,13 @@ class Keyboard implements IController {
   constructor() {
     document.addEventListener('keydown', e => {
       this.pressedKey.add(e.key.toLocaleLowerCase());
-      e.preventDefault();
+      if (preventKey.includes(e.key.toLocaleLowerCase())) {
+        e.preventDefault();
+      }
     });
     document.addEventListener('keyup', e => {
       this.pressedKey.delete(e.key.toLocaleLowerCase());
+      e.preventDefault();
     });
   }
 

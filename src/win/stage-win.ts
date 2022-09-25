@@ -73,7 +73,7 @@ class StageWin implements IGameWin, ISubScriber {
       ctx.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
       ctx.fillStyle = Config.colors.black;
       ctx.font = '16px prestart';
-      ctx.fillText(`STAGE  ${this.stage}`, 230, 228);
+      ctx.fillText(`STAGE  ${this.stage}`, 190, 228);
     }
   }
 

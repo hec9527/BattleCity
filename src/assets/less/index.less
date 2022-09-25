@@ -40,16 +40,28 @@ body {
   background: #abf7;
   border-radius: 16px;
   box-shadow: 2px 2px 20px 4px #6664;
-  backdrop-filter: blur(30px);
+  /** backdrop-filter: blur(30px); // 导致页面卡顿 */
 
-  &::before {
-    position: absolute;
+  &::before,
+  &::after {
     z-index: -1;
+    content: '';
+    position: absolute;
     display: block;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  &::after {
     background-image: url('/glass-texture.png');
-    content: '';
+  }
+
+  &::before {
+    filter: blur(10px);
+    background-position: center;
+    background-image: url(../img/bilibili.jpg);
   }
 
   #video-container {
@@ -99,7 +111,7 @@ body {
 
   .operate-group {
     color: #5d6999d3;
-    font-family: prestart, 'prestart2p', 'Heiti SC', 'Myriad Pro', 'San Francisco';
+    font-family: prestart, 'prestart2p', 'Myriad Pro', 'San Francisco';
 
     > div {
       display: grid;
@@ -136,7 +148,7 @@ body {
     bottom: 15px;
     color: #abf;
     font-size: 12px;
-    font-family: prestart, prestart2p, 'Heiti SC', 'Myriad Pro', 'San Francisco';
+    font-family: prestart, prestart2p, 'Myriad Pro', 'San Francisco';
     transform: scale(0.85);
     transform-origin: right bottom;
     text-shadow: 1px 1px 3px #fff, -1px -1px 1px #666;
