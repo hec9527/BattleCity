@@ -5,17 +5,9 @@ export const enum Direction {
   left,
 }
 
-export const enum EnemyType {
+export declare const enum EnemyType {
   normal = 1,
   enhance,
   fast,
   armor,
-}
-
-export const enum Control {
-  up,
-  right,
-  down,
-  left,
-  shoot,
 }

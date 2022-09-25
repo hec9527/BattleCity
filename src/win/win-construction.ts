@@ -1,6 +1,6 @@
 import Win from './win';
 import keys from '../config/keys';
-import Keyboard from '../util/keyboard';
+import Keyboard from '../object/keyboard';
 import { getConstructionBackground } from '../util/off-screen-canvas';
 import { Resource } from '../loader';
 import Config from '../config';

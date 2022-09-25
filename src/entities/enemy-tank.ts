@@ -1,7 +1,6 @@
 import Tank from './tank';
+import EVENT from '../event';
 import Config from '../config';
-import Ticker from '../ticker';
-import { EnemyType } from '../config/enum';
 import { Resource } from '../loader';
 
 const R = Resource.getResource();
@@ -13,23 +12,61 @@ class EnemyTank extends Tank implements IEnemyTank {
   protected isCollision = true;
 
   private award = 0;
-  private enemyType: EnemyType;
+  private armor = 0;
+  private enemyType: IEnemyType;
 
-  private constructor(rect: IEntityRect, type: EnemyType) {
+  private constructor(rect: IEntityRect, type: IEnemyType) {
     super();
     this.rect = rect;
     this.enemyType = type;
+
+    this.initSpeed();
+  }
+
+  protected hit(): void {
+    if (this.protected) return;
+    if (this.armor >= 1) {
+      this.armor--;
+      this.eventManager.fireEvent<ITankEvent>({ type: EVENT.TANK.AWARD_TANK_HIT, tank: this });
+      return;
+    }
+    super.hit();
+  }
+
+  private initSpeed(): void {
+    const { normal, slow, fast } = Config.speed;
+    switch (this.enemyType) {
+      case 0:
+      case 1:
+        this.speed = normal;
+        break;
+      case 2:
+        this.speed = fast;
+        break;
+      case 3:
+      default:
+        this.speed = slow;
+        break;
+    }
+  }
+
+  public setAward(award: number): void {
+    this.award = award;
+  }
+
+  public setArmor(armor: number): void {
+    this.armor = armor;
   }
 
   public getScore() {
     switch (this.enemyType) {
-      case EnemyType.normal:
+      case 0: // normal
         return 100;
-      case EnemyType.enhance:
+      case 1: // enhance
         return 200;
-      case EnemyType.fast:
+      case 2: // fast
         return 300;
-      case EnemyType.armor:
+      case 3: // armor
         return 400;
       default:
         console.warn(`unregistered enemy type: ${this.enemyType}`);
@@ -37,9 +74,25 @@ class EnemyTank extends Tank implements IEnemyTank {
     }
   }
 
-  public update(): void {}
+  public getEnemyType(): IEnemyType {
+    return this.enemyType;
+  }
 
   public draw(ctx: CanvasRenderingContext2D): void {
+    if (this.isDestroyed) return;
+
+    const [x, y, w, h] = this.rect;
+    ctx.drawImage(
+      R.Image.enemyTank,
+      this.enemyType * 32,
+      (this.direction * 2 + this.trackStatus) * 32,
+      32,
+      32,
+      x,
+      y,
+      w,
+      h,
+    );
     super.draw(ctx);
   }
 }

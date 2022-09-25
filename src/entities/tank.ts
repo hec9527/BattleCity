@@ -15,11 +15,10 @@ abstract class Tank extends Entity implements ITank {
   protected protected = false; // 保护罩
   protected bulletLimit = 1;
   protected bullets: Set<IEntity> = new Set<IEntity>();
-  protected abstract flashTank: boolean;
 
   private canShoot = true;
-  private trackStatus = 0;
   private protectorStatus = 1;
+  protected trackStatus = 0;
 
   // ticker
   private shootTicker: ITicker | null = null;
@@ -97,17 +96,14 @@ abstract class Tank extends Entity implements ITank {
     } else if (this.camp === 'enemy') {
       this.eventManager.fireEvent({ type: EVENT.TANK.ENEMY_TANK_DESTROYED, tank: this });
     }
-
-    if (this.flashTank) {
-      this.eventManager.fireEvent({ type: EVENT.TANK.FLASH_TANK_DESTROYED, tank: this });
-    }
   }
 
   protected hit(): void {
-    if (this.protected) return;
-
     this.life--;
-    this.level--;
+    if (this.level > 1) {
+      this.level--;
+    }
+
     if (this.life <= 0) {
       this.destroy();
     }

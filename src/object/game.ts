@@ -1,8 +1,3 @@
-/**
- * 游戏对象，保存游戏运行时变化的数据
- *  单例模式
- */
-
 import { fixMapBirthPlace, fixMapBossPlace, getRealStage } from '../util/map-tool';
 import MapData from '../config/maps';
 type IPlayer = import('./player').default;

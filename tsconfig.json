@@ -15,5 +15,5 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["./src", "global.d.ts"]
+  "include": ["./src", "global.d.ts", "./src/config/enum.ts"]
 }

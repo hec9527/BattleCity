@@ -1,10 +1,3 @@
-declare enum Direction {
-  top = 0,
-  right,
-  down,
-  left,
-}
-
 declare type ICamp = 'ally' | 'enemy' | 'neutral';
 
 declare type IDirection = 0 | 1 | 2 | 3; // 上  右  下 左
@@ -16,6 +9,8 @@ declare type IEntityRect = [number, number, number, number];
 declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet';
 
 declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
+
+declare type IEnemyType = 0 | 1 | 2 | 3;
 
 /**
  * 奖励类型
@@ -44,6 +39,14 @@ declare interface ITank extends IEntity {
 
 declare interface IEnemyTank extends ITank {
   getScore(): number;
+  getEnemyType(): IEnemyType;
+  setArmor(armor: number): void;
+  setAward(award: number): void;
+}
+
+declare interface IAllyTank extends ITank {
+  getPlayer(): IPlayer;
+  setPlayer(player: IPlayer): void;
 }
 
 declare interface IBullet extends IEntity {

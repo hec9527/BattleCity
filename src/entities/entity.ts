@@ -1,12 +1,11 @@
 /* eslint-disable prefer-const */
 import EVENT from '../event';
-import EventManger from '../event/event-manager';
 
 abstract class Entity implements IEntity, ISubScriber {
   protected abstract readonly type: IEntityType;
   // 是否参与碰撞检测
   protected abstract isCollision: boolean;
-  protected readonly eventManager = EventManger;
+  protected readonly eventManager = EVENT.EM;
   protected readonly zIndex = 0;
   protected abstract rect: IEntityRect;
   protected camp: ICamp = 'neutral';
