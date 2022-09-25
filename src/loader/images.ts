@@ -23,7 +23,7 @@ export async function loadImages(): Promise<CacheImg> {
         resolve();
         cache[str] = img;
       };
-      img.src = `/src/assets/img/${str}.png`;
+      img.src = `/img/${str}.png`;
     });
   };
 

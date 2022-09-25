@@ -25,7 +25,7 @@ export function loadAudio(): Promise<Sound> {
         resolve();
         cache[str] = audio;
       };
-      audio.src = `/src/assets/audio/${str}.mp3`;
+      audio.src = `/audio/${str}.mp3`;
     });
   };
 

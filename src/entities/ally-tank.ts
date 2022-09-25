@@ -1,9 +1,5 @@
 import Tank from './tank';
-import Game from '../object/game';
-import { Resource } from '../loader';
-
-const G = Game.getInstance();
-const R = Resource.getResource();
+import { R } from '../loader';
 
 class AllyTank extends Tank implements IAllyTank {
   protected type: IEntityType = 'allyTank';

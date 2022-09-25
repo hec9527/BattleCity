@@ -1,9 +1,7 @@
 import EVENT from '../event';
 import { Config } from '../config';
-import { Resource } from '../loader';
+import { R } from '../loader';
 import MenuCursor from '../entities/menu-cursor';
-
-const R = Resource.getResource();
 
 class MenuWin implements IGameWin, ISubScriber {
   private eventManager = EVENT.EM;

@@ -1,9 +1,8 @@
-import { Resource } from '../loader';
+import { R } from '../loader';
 import Entity from './entity';
 import EVENT from '../event';
 import Config from '../config';
 
-const R = Resource.getResource();
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
 class Bullet extends Entity implements IBullet {
@@ -18,7 +17,7 @@ class Bullet extends Entity implements IBullet {
     this.rect = [1, 2, 3, 4];
   }
 
-  public getDir(): Direction {
+  public getDir(): IDirection {
     return this.direction;
   }
 

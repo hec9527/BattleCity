@@ -2,10 +2,9 @@ import Entity from './entity';
 import Config from '../config';
 import EVENT from '../event';
 import Bullet from './bullet';
-import { Resource } from '../loader';
+import { R } from '../loader';
 import Ticker, { BlinkTicker } from '../ticker';
 
-const R = Resource.getResource();
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
 abstract class Tank extends Entity implements ITank {

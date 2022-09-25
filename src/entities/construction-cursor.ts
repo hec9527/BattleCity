@@ -2,11 +2,10 @@ import EVENT from '../event';
 import Config from '../config';
 import Entity from './entity';
 import StatusToggle from '../status-toggle';
-import { Resource } from '../loader';
+import { R } from '../loader';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 const { UP, DOWN, LEFT, RIGHT } = EVENT.CONTROL.P1;
-const R = Resource.getResource();
 
 export default class ConstructionCursor extends Entity {
   protected type: IEntityType = 'allyTank';

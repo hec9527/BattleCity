@@ -1,11 +1,10 @@
-import { Resource } from '../loader';
+import { R } from '../loader';
 import StatusToggle from '../status-toggle';
 import { Config } from '../config';
 import Entity from './entity';
 import EVENT from '../event';
 import Ticker from '../ticker';
 
-const R = Resource.getResource();
 const { UP, DOWN, SELECT } = EVENT.CONTROL.P1;
 
 export default class MenuCursor extends Entity implements ISubScriber {

@@ -1,7 +1,7 @@
 import Loader from './loader/';
 import Printer from './util/print';
 import Keyboard from './object/keyboard';
-import '/src/assets/less/index.less';
+import './less/index.less';
 
 // Printer.copyright();
 

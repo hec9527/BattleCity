@@ -6,6 +6,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 10086,
   },
+  publicDir: './src/assets',
   build: {
     outDir: 'dist/',
     assetsInlineLimit: 10240,

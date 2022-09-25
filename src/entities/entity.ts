@@ -140,7 +140,7 @@ abstract class Entity implements IEntity, ISubScriber {
     return this.zIndex;
   }
 
-  public notify(event: INotifyEvent<ICollisionEvent>): void {
+  public notify(event: INotifyEvent): void {
     if (event.type === EVENT.GAME.PAUSE) {
       this.pause = !this.pause;
     } else if (event.type === EVENT.COLLISION.BORDER && event.initiator === this) {
