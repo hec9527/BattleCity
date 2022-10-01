@@ -14,9 +14,10 @@ const birthPlace = {
 export default class AllyCamp implements ISubScriber {
   private eventManager = EVENT.EM;
   private createTask: ITicker[] = [];
+  private defeat = false;
 
   constructor() {
-    this.eventManager.addSubscriber(this, [EVENT.TANK.ALLY_TANK_DESTROYED]);
+    this.eventManager.addSubscriber(this, [EVENT.TANK.ALLY_TANK_DESTROYED, EVENT.BASE.DESTROY]);
   }
 
   public create(player: IPlayer) {
@@ -24,7 +25,7 @@ export default class AllyCamp implements ISubScriber {
     const rect = birthPlace[role];
     new BirthAnimation(rect, () => {
       const tank = new AllyTank(rect, player);
-      new AllyController(tank);
+      !this.defeat && new AllyController(tank);
     });
   }
 
@@ -39,6 +40,9 @@ export default class AllyCamp implements ISubScriber {
           this.create((event.tank as IAllyTank).getPlayer());
         }),
       );
+    }
+    if (event.type === EVENT.BASE.DESTROY) {
+      this.defeat = true;
     }
   }
 }

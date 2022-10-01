@@ -30,6 +30,10 @@ declare interface ITankEvent extends INotifyEvent {
   tank: IEntity;
 }
 
+declare interface IBaseEvent extends INotifyEvent {
+  base: IEntity;
+}
+
 declare interface IBulletEvent extends INotifyEvent {
   bullet: IBullet;
 }

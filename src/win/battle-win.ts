@@ -38,6 +38,8 @@ class BattleWin implements IGameWin, ISubScriber {
     });
 
     BrickConstructor.buildFromMapData(Map.getMap(state.getStage()));
+    BrickConstructor.buildBrickWall();
+    BrickConstructor.buildBase();
   }
 
   private nextWin(): void {
@@ -66,6 +68,9 @@ class BattleWin implements IGameWin, ISubScriber {
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
     if (event.type === EVENT.TANK.ALLY_TANK_DESTROYED || event.type === EVENT.TANK.LAST_ENEMY_TANK_DESTROYED) {
       this.nextWinTick = new Ticker(config.ticker.battleOver);
+    }
+    if (event.type === EVENT.BASE.DESTROY) {
+      //
     }
   }
 }

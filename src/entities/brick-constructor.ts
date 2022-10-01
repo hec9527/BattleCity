@@ -7,6 +7,8 @@ import {
   missRightBottomBrick,
   missRightTopBrick,
 } from '../config/brick';
+import BrickWall from './brick-wall';
+import Base from './base';
 
 const fragmentPosition = [
   { x: 0, y: 0 },
@@ -41,12 +43,30 @@ export default class BrickConstructor {
     });
   }
 
+  public static buildBrickWall(): void {
+    new BrickWall([176, 368, 16, 16]);
+    new BrickWall([192, 368, 16, 16]);
+    new BrickWall([208, 368, 16, 16]);
+    new BrickWall([224, 368, 16, 16]);
+
+    new BrickWall([176, 384, 16, 16]);
+    new BrickWall([224, 384, 16, 16]);
+
+    new BrickWall([176, 400, 16, 16]);
+    new BrickWall([224, 400, 16, 16]);
+  }
+
+  public static buildBase(): void {
+    new Base();
+  }
+
   public static buildFromMapData(map: IMapData): void {
     for (const row in map) {
       for (const col in map[row]) {
         const brickIndex = map[row][col];
         if (brickIndex !== 0) {
-          BrickConstructor.newBrick(brickIndex, [Number(col) * 32, Number(row) * 32, 32, 32]);
+          const rect = [Number(col) * 32, Number(row) * 32, 32, 32] as IEntityRect;
+          BrickConstructor.newBrick(brickIndex, rect);
         }
       }
     }

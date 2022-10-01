@@ -134,13 +134,19 @@ abstract class Tank extends EntityMoveable implements ITank {
 
     if (isCollisionEvent(event) && event.type === EVENT.COLLISION.ENTITY) {
       if (event.initiator === this) {
-        if (['allyTank', 'base', 'brick', 'brickWall', 'enemyTank'].includes(event.entity.getEntityType())) {
-          this.resolveCollisionEntity(event.entity);
-        }
-
-        if (event.entity.getEntityType() === 'bullet' && event.entity.getCamp() !== this.getCamp()) {
-          // if (event.entity.getEntityType() === 'bullet') {
-          this.hit();
+        switch (event.entity.getEntityType()) {
+          case 'allyTank':
+          case 'enemyTank':
+          case 'base':
+          case 'brick':
+            if (!event.entity.getCollision()) return;
+            this.resolveCollisionEntity(event.entity);
+            break;
+          case 'bullet':
+            if (event.entity.getCamp() !== this.camp) {
+              this.hit();
+            }
+            break;
         }
       } else if (
         event.entity === this &&

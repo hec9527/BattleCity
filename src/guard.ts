@@ -12,6 +12,9 @@ export function isEntityEvent(event: INotifyEvent): event is IEntityEvent {
 export function isTankEvent(event: INotifyEvent): event is ITankEvent {
   return !!event.tank;
 }
+export function isBaseEvent(event: INotifyEvent): event is IBaseEvent {
+  return !!event.base;
+}
 export function isBulletEvent(event: INotifyEvent): event is IBulletEvent {
   return !!event.bullet;
 }

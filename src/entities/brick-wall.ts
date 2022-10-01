@@ -1,107 +1,99 @@
+import EVENT from '../event';
+import config from '../config';
 import brick from '../config/brick';
 import BrickFragment from './brick-fragment';
-import Config from '../config';
-import { Resource } from '../loader';
-import { Ticker } from '../ticker';
+import DelayStatusToggle from '../delay-status-toggle';
 
-const R = Resource.getResource();
-const PL = Config.battleField.paddingLeft;
-const PT = Config.battleField.paddingTop;
+import { isCollisionEvent } from '../guard';
 
-type PK<T extends any, U extends T> = T extends U ? T : never;
+class BrickWall extends BrickFragment implements ISubScriber {
+  protected brickType: IBrickType = 'brickWall';
 
-/**
- * 围墙...
- */
-class BrickWall extends BrickFragment {
-  private isDead = false;
-  private buildTicker?: ITicker;
-  private blinkTicker?: ITicker;
-  private _brickIndex: number;
-  private _ironIndex: number;
+  private wallType: 'brick' | 'iron' = 'brick';
+  private lastStatus = brick.brick;
 
-  constructor({ index, pos }: IBrickOption) {
-    super({ pos, index });
+  private buildTicker = new DelayStatusToggle(
+    config.ticker.wallBuildKeep,
+    [brick.iron, brick.brick],
+    config.ticker.wallBlinkStatus,
+    15,
+  );
 
-    this._brickIndex = index;
-    if ([brick.brickLeft, brick.brickRight].includes(index)) {
-      this._ironIndex = index + 5;
-    } else {
-      this._ironIndex = index + 2;
+  constructor(rect: IEntityRect) {
+    super(rect, 1);
+
+    // this.rebuild();
+    this.buildTicker.setFinished(true);
+  }
+
+  private build(type: 'brick' | 'iron'): void {
+    this.isDestroyed = false;
+    this.isCollision = true;
+    this.status = [1, 1, 1, 1];
+    this.brickIndex = brick[type];
+    this.wallType = type;
+    this.getFragmentIndex();
+    this.getImage();
+  }
+
+  private rebuild(): void {
+    this.lastStatus = brick.brick;
+    this.buildTicker.refresh();
+  }
+
+  public update(): void {
+    if (!this.buildTicker.isFinished()) {
+      this.buildTicker.update();
+      const status = this.buildTicker.getStatus();
+      if (status !== this.lastStatus) {
+        this.lastStatus = status;
+        this.build(status === brick.iron ? 'iron' : 'brick');
+      }
     }
   }
 
-  update(): void {}
-
-  private _rebuild(type: PK<IBrickType, 'iron' | 'brick'> = 'iron') {
-    this.status = [1, 1, 1, 1];
-    this.isDead = false;
-    this.isCollision = true;
-    this.brickType = type;
-    this.brickIndex = type === 'iron' ? this._ironIndex : this._brickIndex;
-  }
-
-  private _die() {
-    this.isDead = true;
+  public destroy(): void {
+    this.isDestroyed = true;
     this.isCollision = false;
   }
 
-  public rebuild(type: PK<IBrickType, 'iron' | 'brick' | 'blank'> = 'iron'): void {
-    if (type === 'blank') {
-      return this._die();
-    }
-    this._rebuild(type);
-    this.buildTicker = new Ticker(Config.ticker.wallBuildKeep, () => {
-      this.world.delTicker(this.buildTicker);
-      this.blinkTicker = new Ticker(
-        Config.ticker.wallBlinkDuration,
-        () => this._rebuild(this.brickType === 'iron' ? 'brick' : 'iron'),
-        true,
-      );
-      this.buildTicker = new Ticker(Config.ticker.wallBlink, () => {
-        this.world.delTicker(this.blinkTicker);
-        this.world.delTicker(this.buildTicker);
-        this._rebuild('brick');
-      });
-      this.world.addTicker(this.blinkTicker);
-      this.world.addTicker(this.buildTicker);
-    });
-    this.world.addTicker(this.buildTicker);
-  }
+  public hit(bullet: IBullet): void {
+    if (this.wallType === 'brick') {
+      if (bullet.getType() === 'normal') {
+        this.reduce(bullet);
 
-  die(bullet: IBullet): void {
-    if (this.brickType === 'ice') {
-      if (bullet.level <= 4) {
-        return;
+        if (this.status.reduce((p, c) => p + c) === 0) {
+          return this.destroy();
+        }
       } else {
-        this._die();
-      }
-    } else if (this.brickType === 'brick') {
-      const [p1, p2, n1, n2] = {
-        0: [2, 3, 0, 1],
-        1: [0, 2, 1, 3],
-        2: [0, 1, 2, 3],
-        3: [1, 3, 2, 0],
-      }[bullet.getDir()];
-      if (this.status[p1] === 0 && this.status[p2] === 0) {
-        this.status[n1] = this.status[n2] = 0;
-      } else {
-        this.status[p1] = this.status[p2] = 0;
-      }
-      if (this.status.reduce((p, c) => p + c) === 0) {
-        this._die();
-      } else {
-        this.clipSprite();
+        this.destroy();
       }
     } else {
-      throw new Error(`非法的砖块类型: ${this.brickType}`);
+      if (bullet.getType() === 'enhance') {
+        this.destroy();
+      }
     }
   }
 
-  draw(): void {
-    if (this.isDead) return;
-    const [x, y, w, h] = this.rect;
-    this.cCtx.drawImage(R.Image.brick, 32 * this.brickIndex, 0, 32, 32, x + PL, y + PT, w, h);
+  public draw(ctx: CanvasRenderingContext2D): void {
+    if (!this.isDestroyed) {
+      super.draw(ctx);
+    }
+  }
+
+  public notify(event: INotifyEvent<Record<string, unknown>>): void {
+    if (
+      isCollisionEvent(event) &&
+      event.type === EVENT.COLLISION.ENTITY &&
+      event.entity === this &&
+      event.initiator.getEntityType() === 'bullet'
+    ) {
+      this.hit(event.initiator as IBullet);
+    } else if (event.type === EVENT.BRICK.BUILD_WALL) {
+      this.rebuild();
+    } else if (event.type === EVENT.BRICK.DESTROY_WALL) {
+      this.destroy();
+    }
   }
 }
 

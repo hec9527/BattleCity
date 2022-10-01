@@ -91,8 +91,10 @@ class Bullet extends EntityMoveable implements IBullet {
               }
               break;
             case 'bullet':
-            case 'base':
               this.destroy(false);
+              break;
+            case 'base':
+              this.destroy();
               break;
             case 'brick':
               if ((['brick', 'brickWall', 'iron'] as IBrickType[]).includes((entity as IBrick).getBrickType())) {

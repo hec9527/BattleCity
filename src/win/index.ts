@@ -21,9 +21,9 @@ class WindowManager implements IWindowManager {
     const [, ctx] = getCanvas(Config.canvas.width, Config.canvas.height, Config.canvas.id);
     this.ctx = ctx;
 
-    // this.toMenuWin();
+    this.toMenuWin();
     // this.toStageWin();
-    this.toBattleWin();
+    // this.toBattleWin();
     // this.toConstructWin();
   }
 

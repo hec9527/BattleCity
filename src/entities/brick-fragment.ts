@@ -39,12 +39,13 @@ export default class BrickFragment extends Entity implements IBrick, ISubScriber
   protected isCollision = true;
   protected type: IEntityType = 'brick';
   protected rect: IEntityRect;
-  private status: TupleArray<number, 4>;
+  protected brickType: IBrickType;
+
+  protected status: TupleArray<number, 4>;
   private ctx!: CanvasRenderingContext2D;
   private sprite!: HTMLCanvasElement;
-  private fragmentIndex: number;
-  private brickIndex: number;
-  private brickType: IBrickType;
+  protected fragmentIndex!: number;
+  protected brickIndex: number;
 
   constructor(rect: IEntityRect, index: number) {
     super();
@@ -53,7 +54,7 @@ export default class BrickFragment extends Entity implements IBrick, ISubScriber
     this.brickIndex = index;
     this.status = [1, 1, 1, 1];
     this.brickType = getBrickType(index);
-    this.fragmentIndex = dictionary[getBrickType(index)] || 0;
+    this.getFragmentIndex();
     this.getImage();
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
   }
@@ -66,9 +67,14 @@ export default class BrickFragment extends Entity implements IBrick, ISubScriber
     return this.brickType;
   }
 
+  protected getFragmentIndex(): void {
+    this.fragmentIndex = dictionary[getBrickType(this.brickIndex)] || 0;
+  }
+
   protected getImage(): void {
-    const [canvas, ctx] = getCanvas(16, 16);
-    ctx.drawImage(R.Image.brick, this.fragmentIndex * 32, 0, 16, 16, 0, 0, 16, 16);
+    const [, , w, h] = this.rect;
+    const [canvas, ctx] = getCanvas(w, h);
+    ctx.drawImage(R.Image.brick, this.fragmentIndex * 32, 0, w, h, 0, 0, w, h);
     this.sprite = canvas;
     this.ctx = ctx;
   }
@@ -83,6 +89,22 @@ export default class BrickFragment extends Entity implements IBrick, ISubScriber
     });
   }
 
+  protected reduce(bullet: IBullet): void {
+    const [p1, p2, n1, n2] = {
+      0: [2, 3, 0, 1],
+      1: [0, 2, 1, 3],
+      2: [0, 1, 2, 3],
+      3: [1, 3, 2, 0],
+    }[bullet.getDirection()];
+    if (this.status[p1] === 0 && this.status[p2] === 0) {
+      this.status[n1] = this.status[n2] = 0;
+    } else {
+      this.status[p1] = this.status[p2] = 0;
+    }
+
+    this.clipSprite();
+  }
+
   public destroy(bullet: IBullet): void {
     if ((['grass', 'river', 'ice', 'blank'] as IBrickType[]).includes(this.brickType)) return;
 
@@ -91,22 +113,9 @@ export default class BrickFragment extends Entity implements IBrick, ISubScriber
       if (bullet.getType() === 'enhance') {
         return super.destroy(bullet);
       }
-      const [p1, p2, n1, n2] = {
-        0: [2, 3, 0, 1],
-        1: [0, 2, 1, 3],
-        2: [0, 1, 2, 3],
-        3: [1, 3, 2, 0],
-      }[bullet.getDirection()];
-      if (this.status[p1] === 0 && this.status[p2] === 0) {
-        this.status[n1] = this.status[n2] = 0;
-      } else {
-        this.status[p1] = this.status[p2] = 0;
-      }
-
+      this.reduce(bullet);
       if (this.status.reduce((p, c) => p + c) === 0) {
         return super.destroy(bullet);
-      } else {
-        this.clipSprite();
       }
     } else if (this.brickType === 'iron' && bullet.getType() === 'enhance') {
       return super.destroy(bullet);

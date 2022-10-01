@@ -6,6 +6,7 @@ export default class AllyController implements ISubScriber {
   private tank: IAllyTank;
   private role: 'P1' | 'P2';
   private pause = false;
+  private defeat = false;
   private hasShoot = false;
 
   constructor(tank: IAllyTank) {
@@ -16,6 +17,7 @@ export default class AllyController implements ISubScriber {
       EVENT.KEYBOARD.RELEASE,
       EVENT.GAME.PAUSE,
       EVENT.TANK.ALLY_TANK_DESTROYED,
+      EVENT.BASE.DESTROY,
     ]);
   }
 
@@ -72,6 +74,15 @@ export default class AllyController implements ISubScriber {
   }
 
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
+    if (this.defeat) return;
+
+    if (event.type === EVENT.BASE.DESTROY) {
+      this.defeat = true;
+      this.tank.setStop(true);
+      this.tank.setShooting(false);
+      return;
+    }
+
     if (event.type === EVENT.GAME.PAUSE) {
       this.pause = !this.pause;
       return;

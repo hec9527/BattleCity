@@ -54,7 +54,7 @@ const Config = {
     /** 围墙建造后闪烁时间 */
     wallBlink: 300,
     /** 围墙建造后闪烁间隔 */
-    wallBlinkDuration: 15,
+    wallBlinkStatus: 30,
   },
   speed: {
     slowest: 1.1,
@@ -86,7 +86,7 @@ const Config = {
     [11, 7],
     [12, 5],
     [12, 7],
-  ],
+  ] as [number, number][],
   base: [12 * 32, 6 * 32],
 };
 

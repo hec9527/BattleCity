@@ -16,6 +16,15 @@ const TANK = {
   LAST_ENEMY_TANK_DESTROYED: 'LAST_ENEMY_TANK_DESTROYED',
 };
 
+const BASE = {
+  DESTROY: 'BASE_DESTROY',
+};
+
+const BRICK = {
+  BUILD_WALL: 'BUILD_BRICK_WALL',
+  DESTROY_WALL: 'DESTROY_BRICK_WALL',
+};
+
 const PLAYER = {
   P1_OUT_OF_LIFE: 'P1_OUT_OF_LIFE',
   P2_OUT_OF_LIFE: 'P1_OUT_OF_LIFE',
@@ -74,6 +83,8 @@ const GAME = {
 
 export default {
   EM,
+  BASE,
+  BRICK,
   KEYBOARD,
   PLAYER,
   AWARD,

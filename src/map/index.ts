@@ -7,17 +7,27 @@ const birthPlace: IPlace = {
   12: [4, 8],
 };
 
+const brickWall = [
+  [11, 5],
+  [11, 6],
+  [11, 7],
+  [12, 5],
+  [12, 6],
+  [12, 7],
+] as [number, number][];
+
 class MapManager {
   private mapData = data;
   private customMap: IMapData | null = null;
 
   private static clearBrickWall(map: IMapData): void {
-    map[11][5] = 18;
-    map[11][6] = 4;
-    map[11][7] = 17;
-    map[12][5] = 3;
-    map[12][6] = 15;
-    map[12][7] = 5;
+    // map[11][5] = 18;
+    // map[11][6] = 4;
+    // map[11][7] = 17;
+    // map[12][5] = 3;
+    // map[12][6] = 15;
+    // map[12][7] = 5;
+    brickWall.forEach(([row, col]) => (map[row][col] = 0));
   }
 
   private static clearBirthPlace(map: IMapData): void {
