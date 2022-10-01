@@ -4,9 +4,21 @@ declare type IDirection = 0 | 1 | 2 | 3; // 上  右  下 左
 
 declare type IPriority = 0 | 1 | 2 | 3;
 
+declare type IPoint = [number, number];
+
 declare type IEntityRect = [number, number, number, number];
 
-declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet' | 'cursor';
+declare type IEntityType =
+  | 'brick'
+  | 'enemyTank'
+  | 'allyTank'
+  | 'award'
+  | 'bullet'
+  | 'cursor'
+  | 'curtain'
+  | 'brickWall'
+  | 'base'
+  | 'spriteAnimation';
 
 declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
 
@@ -23,20 +35,26 @@ declare type IBulletType = 'normal' | 'faster' | 'enhance';
  * - 4 炸弹
  * - 5 地雷
  * - 6 手枪 */
-declare type IRewardType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+declare type IAwardType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 declare interface IEntity {
   getCamp(): ICamp;
   getRect(): IEntityRect;
+  getCenter(): IPoint;
   getZIndex(): number;
   getCollision(): boolean;
   getEntityType(): IEntityType;
   getDirection(): IDirection;
+  setDirection(direction: IDirection): void;
   update(): void;
   draw(ctx: CanvasRenderingContext2D): void;
 }
 
-declare interface ITank extends IEntity {
+declare interface IEntityMoveable extends IEntity {
+  getLastRect(): IEntityRect;
+}
+
+declare interface ITank extends IEntityMoveable {
   shoot(): void;
 }
 
@@ -52,13 +70,13 @@ declare interface IAllyTank extends ITank {
   setPlayer(player: IPlayer): void;
 }
 
-declare interface IBullet extends IEntity {
+declare interface IBullet extends IEntityMoveable {
   getTank(): IEntity;
   getType(): IBulletType;
 }
 
 declare interface IAward extends IEntity {
-  getAwardType(): IRewardType;
+  getAwardType(): IAwardType;
 }
 
 declare interface IBrick extends IEntity {

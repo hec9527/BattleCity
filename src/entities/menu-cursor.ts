@@ -1,6 +1,6 @@
 import { R } from '../loader';
 import StatusToggle from '../status-toggle';
-import { Config } from '../config';
+import Config from '../config';
 import Entity from './entity';
 import EVENT from '../event';
 import Ticker from '../ticker';

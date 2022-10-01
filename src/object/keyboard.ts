@@ -32,7 +32,6 @@ class Keyboard implements IController {
   constructor() {
     document.addEventListener('keydown', e => {
       const key = e.key.toLocaleLowerCase();
-      if (this.keys[key]) return;
       this.keys[key] = true;
       this.events.push({ type: 'KEY_PRESS', key: mapper[key] });
       if (preventKey.includes(key)) {

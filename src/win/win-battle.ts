@@ -9,7 +9,7 @@ import brick from '../config/brick';
 import { Ticker } from '../ticker';
 import Print from '../util/print';
 import AllyTank from '../entities/ally-tank';
-import Reward from '../entities/reward';
+import Award from '../entities/award';
 import BrickWall from '../entities/brick-wall';
 
 const G = Game.getInstance();
@@ -52,7 +52,7 @@ class WinBattle extends Win {
     });
     this.addBrickEntity();
     window.addEventListener('dblclick', () => {
-      Reward.getNewReward();
+      Award.getNewAward();
     });
   }
 

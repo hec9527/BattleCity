@@ -1,14 +1,15 @@
 import EVENT from '../event';
 import Config from '../config';
-import Entity from './entity';
 import StatusToggle from '../status-toggle';
+import EntityMoveable from './entity-moveable';
+
 import { R } from '../loader';
 import { isControlEvent } from '../guard';
 
 const { UP, DOWN, LEFT, RIGHT, A, B } = EVENT.CONTROL.P1;
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
-export default class ConstructionCursor extends Entity {
+export default class ConstructionCursor extends EntityMoveable {
   protected type: IEntityType = 'cursor';
   protected rect: IEntityRect = [0, 0, 32, 32];
   protected isCollision = false;

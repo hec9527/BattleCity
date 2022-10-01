@@ -22,7 +22,9 @@ class WindowManager implements IWindowManager {
     this.ctx = ctx;
 
     // this.toMenuWin();
-    this.toConstructWin();
+    // this.toStageWin();
+    this.toBattleWin();
+    // this.toConstructWin();
   }
 
   public setStage(stage: number): void {
@@ -43,7 +45,8 @@ class WindowManager implements IWindowManager {
 
   public toBattleWin(): void {
     this.eventManager.removeAllSubscribers();
-    this.gameWin = new BattleWin(this);
+    this.gameWin = new BattleWin(this, this.state);
+    console.log(this.gameWin);
   }
 
   public toConstructWin(): void {

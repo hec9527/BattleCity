@@ -41,6 +41,10 @@ class MapManager {
     console.log(this.customMap);
   }
 
+  public getTemplateMap(): IMapData {
+    return template;
+  }
+
   public getCustomMap(): IMapData | null {
     return this.customMap;
   }

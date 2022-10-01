@@ -1,11 +1,11 @@
 import { R } from '../loader';
-import Entity from './entity';
 import EVENT from '../event';
 import Config from '../config';
+import EntityMoveable from './entity-moveable';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
-class Bullet extends Entity implements IBullet {
+class Bullet extends EntityMoveable implements IBullet {
   protected readonly isCollision = true;
   protected rect: IEntityRect;
   protected type: IEntityType = 'bullet';

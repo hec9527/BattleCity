@@ -1,7 +1,9 @@
-import { Config } from '../config';
-import TaskManager from '../task';
 import EVENT from '../event';
 import Ticker from '../ticker';
+import Config from '../config';
+import Curtain from '../entities/curtain';
+import EntityContainer from '../entities/entity-container';
+import { R } from '../loader';
 
 const { UP, DOWN, A, B, START } = EVENT.CONTROL.P1;
 
@@ -11,62 +13,45 @@ class StageWin implements IGameWin, ISubScriber {
   private stage = 1;
   private minStage = 1;
   private maxStage = 50;
-  private curtainH = 0;
-  private speed = 15;
-  private status: 'closing' | 'select' = 'closing';
-  private taskManager = new TaskManager();
-  private stageChangeTick: ITicker | null = null;
+  private entityContainer = new EntityContainer();
+  private startDelayTicker: ITicker | null = null;
 
   constructor(winManager: IWindowManager) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const self = this;
     this.winManager = winManager;
-
-    this.taskManager.addTask({
-      update: function () {
-        if (self.curtainH < Config.canvas.height / 2) {
-          self.curtainH += self.speed;
-        } else {
-          self.status = 'select';
-          self.taskManager.removeTask(this);
-        }
-      },
-    });
-
     this.eventManager.addSubscriber(this, [EVENT.KEYBOARD.PRESS]);
+    new Curtain('close', true);
   }
 
   private nextWin(): void {
-    this.winManager.setStage(this.stage);
-    this.winManager.toBattleWin();
+    if (this.startDelayTicker) return;
+
+    R.Audio.play('start');
+    this.startDelayTicker = new Ticker(Config.ticker.startDelay, () => {
+      this.winManager.setStage(this.stage);
+      this.winManager.toBattleWin();
+    });
   }
 
   private nextStage(): void {
-    this.stageChangeTick = new Ticker(Config.ticker.stageChange);
     if (++this.stage > this.maxStage) {
       this.stage = this.maxStage;
     }
   }
 
   private preStage(): void {
-    this.stageChangeTick = new Ticker(Config.ticker.stageChange);
     if (--this.stage < this.minStage) {
       this.stage = this.minStage;
     }
   }
 
   public update(): void {
-    this.taskManager.update();
-    this.stageChangeTick?.update();
+    this.entityContainer.update();
+    this.startDelayTicker?.update();
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
-    if (this.status === 'closing') {
-      ctx.fillStyle = Config.colors.black;
-      ctx.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
-      ctx.fillStyle = Config.colors.gray;
-      ctx.fillRect(0, 0, Config.canvas.width, this.curtainH);
-      ctx.fillRect(0, Config.canvas.height - this.curtainH, Config.canvas.width, this.curtainH);
+    if (this.entityContainer.getAllEntity().length > 0) {
+      this.entityContainer.draw(ctx);
     } else {
       ctx.fillStyle = Config.colors.gray;
       ctx.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
@@ -77,8 +62,7 @@ class StageWin implements IGameWin, ISubScriber {
   }
 
   notify(event: IControllerEvent): void {
-    if (this.status === 'closing') return;
-    if (this.stageChangeTick && !this.stageChangeTick.isFinished()) return;
+    if (this.entityContainer.getAllEntity().length > 0) return;
 
     switch (event.key) {
       case UP:

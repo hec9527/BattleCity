@@ -3,6 +3,8 @@ import EVENT from '../event';
 import Config from '../config';
 import { R } from '../loader';
 
+const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
+
 class EnemyTank extends Tank implements IEnemyTank {
   protected readonly type: IEntityType = 'enemyTank';
   protected rect: IEntityRect;
@@ -13,10 +15,12 @@ class EnemyTank extends Tank implements IEnemyTank {
   private armor = 0;
   private enemyType: IEnemyType;
 
-  private constructor(rect: IEntityRect, type: IEnemyType) {
+  constructor(rect: IEntityRect, type: IEnemyType) {
     super();
     this.rect = rect;
     this.enemyType = type;
+    this.direction = 2;
+    this.stop = false;
 
     this.initSpeed();
   }
@@ -86,8 +90,8 @@ class EnemyTank extends Tank implements IEnemyTank {
       (this.direction * 2 + this.trackStatus) * 32,
       32,
       32,
-      x,
-      y,
+      x + PL,
+      y + PT,
       w,
       h,
     );

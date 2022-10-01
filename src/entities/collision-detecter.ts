@@ -41,9 +41,7 @@ class CollisionDetecter {
   }
 
   public detect(initiator: IEntity) {
-    if (this.detectBorder(initiator)) {
-      return;
-    }
+    this.detectBorder(initiator);
     this.detectEntity(initiator);
   }
 }

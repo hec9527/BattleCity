@@ -2,7 +2,7 @@ import Player from '../object/player';
 
 class GameState implements IGameState {
   private mode: IGameMode = 'single';
-  private stage = 0;
+  private stage = 1;
   private player: IPlayer[] = [];
 
   public getMode() {
@@ -19,6 +19,10 @@ class GameState implements IGameState {
 
   public getStage(): number {
     return this.stage;
+  }
+
+  public getLoopStage(): number {
+    return (this.stage % 35) + 1;
   }
 
   public setStage(stage: number): void {

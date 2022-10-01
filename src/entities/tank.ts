@@ -1,23 +1,25 @@
-import Entity from './entity';
+/* eslint-disable prefer-const */
 import Config from '../config';
 import EVENT from '../event';
-import Bullet from './bullet';
-import { R } from '../loader';
 import Ticker, { BlinkTicker } from '../ticker';
+import EntityMoveable from './entity-moveable';
+
+import { R } from '../loader';
+import { isCollisionEvent } from '../guard';
+import { isEntityCollision } from '../util';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
-abstract class Tank extends Entity implements ITank {
-  // basic info
+abstract class Tank extends EntityMoveable implements ITank {
   protected life = 1;
   protected level = 1;
   protected protected = false; // 保护罩
   protected bulletLimit = 1;
   protected bullets: Set<IEntity> = new Set<IEntity>();
+  protected trackStatus = 0;
 
   private canShoot = true;
   private protectorStatus = 1;
-  protected trackStatus = 0;
 
   // ticker
   private shootTicker: ITicker | null = null;
@@ -115,14 +117,60 @@ abstract class Tank extends Entity implements ITank {
     }
   }
 
+  private resolveCollisionEntity(entity: IEntity): void {
+    let [x, y, w, h] = this.rect;
+    const [rx, ry, rw, rh] = entity.getRect();
+
+    switch (this.direction) {
+      case 0:
+        y = ry + rh;
+        break;
+      case 1:
+        x = rx - w;
+        break;
+      case 2:
+        y = ry - h;
+        break;
+      case 3:
+        x = rx + rw;
+        break;
+      default:
+        break;
+    }
+    this.rect = [x, y, w, h];
+  }
+
   public notify(event: INotifyEvent<ICollisionEvent>): void {
-    if (
-      event.type === EVENT.COLLISION.ENTITY &&
-      event.initiator instanceof Bullet &&
-      event.initiator.getCamp() !== this.getCamp() &&
-      event.entity === this
-    ) {
-      this.hit();
+    super.notify(event);
+
+    if (isCollisionEvent(event) && event.type === EVENT.COLLISION.ENTITY) {
+      if (event.initiator === this) {
+        // if (event.entity.getCollision() && event.entity.getEntityType() !== 'award') {
+        if (['allyTank', 'base', 'brick', 'brickWall', 'enemyTank'].includes(event.entity.getEntityType())) {
+          // const [x, y] = this.getCenter();
+          // const [rx, ry] = event.entity.getCenter();
+          // let [nx, ny, w, h] = this.getNextFrameRect();
+          // nx = nx + w / 2;
+          // ny = ny + h / 2;
+          // const distance = Math.sqrt((x - rx) ** 2 + (y - ry) ** 2);
+          // const nextDistance = Math.sqrt((nx - rx) ** 2 + (ny - ry) ** 2);
+          // if (distance < nextDistance && isEntityCollision(this.getLastRect(), event.entity.getRect())) {
+          //   this.rect = this.getNextFrameRect();
+          // } else {
+          // }
+          this.resolveCollisionEntity(event.entity);
+        }
+
+        if (event.entity.getEntityType() === 'bullet' && event.entity.getCamp() !== this.getCamp()) {
+          this.hit();
+        }
+      } else if (
+        event.entity === this &&
+        event.initiator.getEntityType() === 'bullet' &&
+        event.initiator.getCamp() !== this.getCamp()
+      ) {
+        this.hit();
+      }
     }
   }
 }

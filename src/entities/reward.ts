@@ -12,8 +12,8 @@ const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 class Award extends Entity implements IAward {
   private static instance: Award | undefined = undefined;
   protected rect: IEntityRect;
-  protected type: IEntityType = 'reward';
-  public readonly awardType: IRewardType;
+  protected type: IEntityType = 'award';
+  public readonly awardType: IAwardType;
   public readonly isCollision = true;
 
   // status
@@ -25,9 +25,9 @@ class Award extends Entity implements IAward {
     super();
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
 
-    this.awardType = randomInt(0, 6) as IRewardType;
+    this.awardType = randomInt(0, 6) as IAwardType;
     this.rect = Award.getRandomRect();
-    this.type = 'reward';
+    this.type = 'award';
 
     this.surviveTicker = new Ticker(Config.ticker.award - Config.ticker.awardBlink, () => {
       this.blinkTicker = new Ticker(Config.ticker.awardBlinkFrequency, () => {
@@ -55,11 +55,11 @@ class Award extends Entity implements IAward {
     super.destroy();
   }
 
-  public getAwardType(): IRewardType {
+  public getAwardType(): IAwardType {
     return this.awardType;
   }
 
-  public static getNewReward(): Award {
+  public static getNewAward(): Award {
     if (Award.instance) {
       Award.instance.destroy();
     }

@@ -129,12 +129,12 @@ export function dispense(value: number, size = 20): Array<number> {
 }
 
 /** 获取奖励生成位置 */
-export function getRewardRect(): IEntityRect {
+export function getAwardRect(): IEntityRect {
   const x = randomInt(0, 24) * 16;
   const y = randomInt(0, 24) * 16;
   const rect: IEntityRect = [x, y, 32, 32];
   if (isEntityCollision(rect, [192, 384, 32, 32])) {
-    return getRewardRect();
+    return getAwardRect();
   }
   return rect;
 }

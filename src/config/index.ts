@@ -1,4 +1,4 @@
-export const Config = {
+const Config = {
   game: {
     /** 最小关卡 */
     minStage: 1,
@@ -21,6 +21,7 @@ export const Config = {
     paddingLeft: 35,
   },
   ticker: {
+    startDelay: 60,
     stageChange: 2,
     cursorMove: 3,
     cursorBlink: 15,
@@ -32,7 +33,7 @@ export const Config = {
     trackStatusSlow: 20,
     // moveStatus
     /** 出身动画时间 */
-    birth: 100,
+    birth: 70,
     birthStatus: 5,
     /** 保护罩 10s 600帧 */
     protector: 600,
@@ -63,9 +64,9 @@ export const Config = {
     wallBlinkDuration: 15,
   },
   speed: {
-    slow: 1.8,
-    normal: 2,
-    fast: 2.5,
+    slow: 1.5,
+    normal: 1.8,
+    fast: 2.2,
   },
   colors: {
     black: '#000',
@@ -74,26 +75,9 @@ export const Config = {
     white_100: '#f5f5f5',
   },
   entity: {
-    allyTank: {
-      birthPos: [[128, 384, 32, 32] as const, [256, 384, 32, 32] as const],
-      speed: 2, // 正常值
-      birthWait: 20,
-    },
-    enemyTank: {
-      birthPos: [[0, 0, 32, 32] as const, [192, 0, 32, 32] as const, [384, 0, 32, 32] as const],
-      // 实例参数
-      speed: 1.8,
-      speedSlow: 1.2,
-      speedFast: 2.5,
-      // 类参数
-      combatAbilityBase: 30, // 战斗值，越高越容易生成高级坦克
-      combatUnit: 5, // 作战单位， 同时在场个数
-      birthWait: 30,
-    },
-    bullet: {
-      speed: 3, // 子弹速度
-      speedFast: 4.5, // 升级后的子弹
-    },
+    createAllyInterval: 50,
+    createEnemyInterval: 80,
+    maxEnemyAlive: 5,
   },
   wall: [
     [11, 5],
@@ -102,6 +86,7 @@ export const Config = {
     [12, 5],
     [12, 7],
   ],
+  base: [12 * 32, 6 * 32],
 };
 
 export default { ...Config };

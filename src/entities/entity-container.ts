@@ -34,17 +34,6 @@ class EntityContainer implements ISubScriber {
   public addEntity(entity: IEntity) {
     this.entities.push(entity);
     this.sortEntityByZIndex();
-    // console.table(this.entities, [
-    //   'zIndex',
-    //   'brickIndex',
-    //   'fragmentIndex',
-    //   'brickType',
-    //   'camp',
-    //   'direction',
-    //   'isCollision',
-    //   'rect',
-    //   'status',
-    // ]);
   }
 
   public removeEntity(entity: IEntity) {

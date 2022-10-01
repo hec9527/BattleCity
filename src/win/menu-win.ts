@@ -1,5 +1,5 @@
 import EVENT from '../event';
-import { Config } from '../config';
+import Config from '../config';
 import { R } from '../loader';
 import MenuCursor from '../entities/menu-cursor';
 
