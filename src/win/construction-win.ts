@@ -20,8 +20,7 @@ class ConstructionWin implements IGameWin, ISubScriber {
     this.winManager = winManager;
     this.eventManager.addSubscriber(this, [EVENT.CONSTRUCT.BUILD, EVENT.KEYBOARD.PRESS]);
 
-    // const map = Map.getCustomMap();
-    const map = Map.getMap(1);
+    const map = Map.getCustomMap();
     if (map) {
       BrickConstructor.buildFromMapData(map);
     }

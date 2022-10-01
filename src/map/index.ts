@@ -1,4 +1,4 @@
-import { data } from './data';
+import { data, template } from './data';
 
 type IPlace = { [K in number]: number[] };
 
@@ -22,7 +22,7 @@ class MapManager {
 
   private static clearBirthPlace(map: IMapData): void {
     for (const row in birthPlace) {
-      for (const cow in birthPlace[row]) {
+      for (const cow of birthPlace[row]) {
         map[row][cow] = 0;
       }
     }
@@ -36,9 +36,9 @@ class MapManager {
 
   public setCustomMap(map: IMapData): void {
     this.customMap = map;
-    // const s = map.map(m => m.join(',')).join('], [');
-    // console.log(`[[${s}]]`);
-    // console.log(this.customMap);
+    const s = map.map(m => m.join(',')).join('], [');
+    console.log(`[[${s}]]`);
+    console.log(this.customMap);
   }
 
   public getCustomMap(): IMapData | null {
@@ -52,7 +52,7 @@ class MapManager {
       this.customMap = null;
     } else {
       const _stage = stage % 35 || 35;
-      map = this.mapData[_stage - 1] || this.mapData[0];
+      map = this.mapData[_stage - 1] || template;
     }
     return MapManager.fixMapData(map);
   }
