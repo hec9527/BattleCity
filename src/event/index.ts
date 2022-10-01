@@ -27,6 +27,7 @@ const CONSTRUCT = {
 };
 
 const BULLET = {
+  CREATE: 'BULLET_CREATE',
   DESTROYED: 'BULLET_DESTROYED',
 };
 

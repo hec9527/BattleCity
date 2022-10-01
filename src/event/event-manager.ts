@@ -1,4 +1,5 @@
 import { removeFromArr } from '../util';
+import EVENT from '../event';
 
 type ISubscriberList = {
   [K in string]: ISubScriber[];
@@ -28,25 +29,9 @@ class EventManager implements IEventManager {
     this.subscribers = {};
   }
 
-  fireEvent(event: INotifyEvent): void {
-    const subscriber = this.subscribers[event.type];
-    for (const i in subscriber) {
-      subscriber[i].notify(event);
-    }
+  fireEvent<T extends INotifyEvent>(event: T): void {
+    [...(this.subscribers[event.type] || [])].forEach(entity => entity.notify(event));
   }
 }
 
-class _EventManager {
-  private static instance: IEventManager;
-
-  private constructor() {}
-
-  public static getInstance() {
-    if (!this.instance) {
-      this.instance = new EventManager();
-    }
-    return this.instance;
-  }
-}
-
-export default _EventManager.getInstance();
+export default new EventManager();

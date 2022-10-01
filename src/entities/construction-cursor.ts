@@ -25,7 +25,7 @@ export default class ConstructionCursor extends EntityMoveable {
   private currentBrickIndex = 0;
   private buildSpace = false;
   private moved = false;
-  private blinkTicker = new StatusToggle([0, 1], Config.ticker.cursorBlink, true);
+  private blinkTicker = new StatusToggle([0, 1], Config.ticker.cursorBlink);
 
   constructor() {
     super();

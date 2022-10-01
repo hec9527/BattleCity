@@ -20,22 +20,29 @@ export default class EnemyController implements ISubScriber {
   }
 
   private changeDirection(force = false): void {
-    if (++this.changeDirectionTicker <= this.changeDirectionInterval) return;
+    if (this.changeDirectionTicker < this.changeDirectionInterval) return;
+    if (!force && Math.random() < 0.995) return;
+
     this.changeDirectionTicker = 0;
-    if (!force && Math.random() < 0.8) return;
 
     const [bx, by] = config.base;
     const [x, y] = this.tank.getRect();
-    let direction: IDirection = 2;
+    let direction = this.tank.getDirection();
 
-    if (y < by) {
-      direction = this.getRandomDirection(2);
-    } else {
-      if (x < bx) {
-        direction = this.getRandomDirection(1);
+    const getDirection = () => {
+      if (y < by) {
+        direction = this.getRandomDirection(2);
       } else {
-        direction = this.getRandomDirection(3);
+        if (x < bx) {
+          direction = this.getRandomDirection(1);
+        } else {
+          direction = this.getRandomDirection(3);
+        }
       }
+    };
+
+    while (direction === this.tank.getLastDirection() || direction === this.tank.getDirection()) {
+      getDirection();
     }
     this.tank.setDirection(direction);
   }
@@ -46,12 +53,29 @@ export default class EnemyController implements ISubScriber {
 
   public update(): void {
     this.tank.shoot();
+    this.changeDirectionTicker++;
     this.changeDirection();
   }
 
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
     if (isCollisionEvent(event) && event.initiator === this.tank) {
-      this.changeDirection(true);
+      if (event.type === EVENT.COLLISION.BORDER) {
+        this.changeDirection(true);
+        return;
+      }
+
+      switch (event.entity.getEntityType()) {
+        case 'allyTank':
+        case 'enemyTank':
+        case 'brick':
+          this.changeDirection(true);
+          break;
+        case 'base':
+          if (!event.entity.getDestroyed()) {
+            this.changeDirection(true);
+          }
+          break;
+      }
     }
   }
 }

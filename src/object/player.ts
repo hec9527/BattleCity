@@ -1,20 +1,20 @@
 import AllyTank from '../entities/ally-tank';
 import EVENT from '../event';
 
-export type ControlType = keyof typeof EVENT.CONTROL;
+export type RoleType = keyof typeof EVENT.CONTROL;
 
 export default class Player implements IPlayer {
   private life = 3;
   private score = 0;
   private tank: ITank | null = null;
-  private control: ControlType;
+  private roleType: RoleType;
 
-  constructor(key: ControlType) {
-    this.control = key;
+  constructor(key: RoleType = 'P1') {
+    this.roleType = key;
   }
 
-  public getControl(): ControlType {
-    return this.control;
+  public getRoleType(): RoleType {
+    return this.roleType;
   }
 
   public getScore(): number {

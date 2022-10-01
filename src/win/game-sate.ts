@@ -3,7 +3,7 @@ import Player from '../object/player';
 class GameState implements IGameState {
   private mode: IGameMode = 'single';
   private stage = 1;
-  private player: IPlayer[] = [];
+  private players: IPlayer[] = [];
 
   public getMode() {
     return this.mode;
@@ -11,10 +11,14 @@ class GameState implements IGameState {
 
   public setMode(mode: IGameMode): void {
     this.mode = mode;
-    this.player = [new Player('P1')];
+    this.players = [new Player('P1')];
     if (mode === 'double') {
-      this.player.push(new Player('P2'));
+      this.players.push(new Player('P2'));
     }
+  }
+
+  public getPlayers(): IPlayer[] {
+    return this.players;
   }
 
   public getStage(): number {

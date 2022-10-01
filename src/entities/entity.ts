@@ -22,15 +22,16 @@ abstract class Entity implements IEntity, ISubScriber {
     this.eventManager.removeSubscriber(this);
   }
 
-  // below methods should be overwrite be subclass
-  protected preDestroy(): void {}
-  protected postDestroy(): void {}
   protected postMove(): void {}
 
   public notify(event: INotifyEvent<Record<string, unknown>>): void {}
 
   public abstract update(): void;
   public abstract draw(ctx: CanvasRenderingContext2D): void;
+
+  public getDestroyed(): boolean {
+    return this.isDestroyed;
+  }
 
   public getCenter(): IPoint {
     const [x, y, w, h] = this.rect;

@@ -3,7 +3,7 @@ const regHTMLTag = /^<([a-z]+)>$/;
 export function removeFromArr(list: any[], item: any): void {
   for (let i = 0; i < list.length; i++) {
     if (list[i] === item) {
-      list.slice(i, 1);
+      list.splice(i, 1);
       return;
     }
   }
@@ -30,12 +30,12 @@ export function $(select: string): HTMLElement | null | NodeList {
  * @param {String} selector id，如果给定则从页面选择canvas，否者生成一个离屏canvas
  * @return {{canvas:HTMLCanvasElement, ctx:CanvasRenderingContext2D}}
  */
-export function getCanvas(width: number, height: number, selector?: string): ICanvasCompose {
+export function getCanvas(width: number, height: number, selector?: string) {
   const canvas = (selector ? document.getElementById(selector) : document.createElement('canvas')) as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   canvas.width = width;
   canvas.height = height;
-  return [canvas, ctx];
+  return [canvas, ctx] as const;
 }
 
 /**
@@ -72,19 +72,6 @@ export function getType(obj: unknown): 'Number' | 'String' | 'Object' | 'NaN' | 
 }
 
 /**
- * 获取坦克射击之后的子弹的位置
- */
-export function getBulletPos(direction: IDirection, x: number, y: number): IEntityRect {
-  ({
-    0: () => (x += 12),
-    1: () => ((x += 24), (y += 12)),
-    2: () => ((x += 12), (y += 24)),
-    3: () => (y += 12),
-  }[direction]());
-  return [x, y, 8, 8];
-}
-
-/**
  *
  * @returns [t, r, b, l]
  */
@@ -101,7 +88,7 @@ export function isEntityCollision(rect1: IEntityRect, rect2: IEntityRect): boole
   const dx = x1 - x2;
   const dy = y1 - y2;
 
-  return -(w1 - 1) <= dx && dx <= w2 - 1 && -(h1 - 1) <= dy && dy <= h2 - 1;
+  return -w1 < dx && dx < w2 && -h1 < dy && dy < h2;
 }
 
 /** 获取指定范围类的随机数 [min, max] */

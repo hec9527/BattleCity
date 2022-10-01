@@ -1,10 +1,11 @@
-import Brick from './brick';
 import Config from '../config';
 import brick from '../config/brick';
-
+import EVENT from '../event';
+import { isCollisionEvent } from '../guard';
 import { R } from '../loader';
 import { getCanvas } from '../util';
 import { getBrickType } from '../util/map-tool';
+import Entity from './entity';
 
 const PL = Config.battleField.paddingLeft;
 const PT = Config.battleField.paddingTop;
@@ -34,20 +35,35 @@ const dictionary: { [K in IBrickType]?: number } = {
  *```
  */
 
-export default class BrickFragment extends Brick {
-  protected status: TupleArray<number, 4>;
+export default class BrickFragment extends Entity implements IBrick, ISubScriber {
+  protected isCollision = true;
+  protected type: IEntityType = 'brick';
+  protected rect: IEntityRect;
+  private status: TupleArray<number, 4>;
+  private ctx!: CanvasRenderingContext2D;
   private sprite!: HTMLCanvasElement;
   private fragmentIndex: number;
-  private ctx!: CanvasRenderingContext2D;
+  private brickIndex: number;
+  private brickType: IBrickType;
 
-  constructor(index: number) {
-    super(index);
+  constructor(rect: IEntityRect, index: number) {
+    super();
+
+    this.rect = rect;
+    this.brickIndex = index;
     this.status = [1, 1, 1, 1];
-
-    this.isBrickFragment = true;
+    this.brickType = getBrickType(index);
     this.fragmentIndex = dictionary[getBrickType(index)] || 0;
-
     this.getImage();
+    this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
+  }
+
+  public getBrickIndex(): number {
+    return this.brickIndex;
+  }
+
+  public getBrickType(): IBrickType {
+    return this.brickType;
   }
 
   protected getImage(): void {
@@ -72,7 +88,7 @@ export default class BrickFragment extends Brick {
 
     if (this.brickType === 'brick') {
       /** 土块，任何等级的子弹都能打碎 */
-      if (bullet.getType() === 'normal') {
+      if (bullet.getType() === 'enhance') {
         return super.destroy(bullet);
       }
       const [p1, p2, n1, n2] = {
@@ -102,5 +118,16 @@ export default class BrickFragment extends Brick {
   public draw(ctx: CanvasRenderingContext2D): void {
     const [x, y, w, h] = this.rect;
     ctx.drawImage(this.sprite, x + PL, y + PT, w, h);
+  }
+
+  public notify(event: INotifyEvent<Record<string, unknown>>): void {
+    if (
+      isCollisionEvent(event) &&
+      event.type === EVENT.COLLISION.ENTITY &&
+      event.entity === this &&
+      event.initiator.getEntityType() === 'bullet'
+    ) {
+      this.destroy(event.initiator as IBullet);
+    }
   }
 }

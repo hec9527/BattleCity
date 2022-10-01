@@ -29,6 +29,16 @@ export default class EnemyCamp implements ISubScriber {
 
   constructor() {
     this.eventManager.addSubscriber(this, [EVENT.TANK.ENEMY_TANK_DESTROYED, EVENT.GAME.PAUSE]);
+
+    // const e1 = new EnemyTank([40, 64, 32, 32], 1);
+    // e1.setDirection(1);
+    // e1.setStop(true);
+    // const e2 = new EnemyTank([300, 64, 32, 32], 2);
+    // e2.setStop(true);
+    // e2.setDirection(3);
+
+    // this.controllerContainer.addController(new EnemyController(e1));
+    // this.controllerContainer.addController(new EnemyController(e2));
   }
 
   public update(): void {
@@ -36,13 +46,12 @@ export default class EnemyCamp implements ISubScriber {
     this.createTick++;
     if (
       this.pause ||
-      this.enemyCount > this.enemies.length ||
+      this.enemyCount >= this.enemies.length ||
       this.enemyAlive >= Config.entity.maxEnemyAlive ||
       this.createTick <= Config.entity.createEnemyInterval
     ) {
       return;
     }
-
     this.createEnemy();
   }
 

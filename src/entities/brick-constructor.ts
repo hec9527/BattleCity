@@ -1,4 +1,5 @@
 import Brick from './brick';
+import BrickFragment from './brick-fragment';
 import {
   fullBrick,
   missLeftBottomBrick,
@@ -36,11 +37,7 @@ export default class BrickConstructor {
         return;
       }
       const [x, y] = rect;
-
-      import('./brick-fragment').then(({ default: BrickFragment }) => {
-        const brickFragment = new BrickFragment(brickIndex);
-        brickFragment.setRect([fragment.x + x, fragment.y + y, 16, 16]);
-      });
+      new BrickFragment([fragment.x + x, fragment.y + y, 16, 16], brickIndex);
     });
   }
 

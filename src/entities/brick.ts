@@ -11,9 +11,12 @@
 import Entity from './entity';
 import Config from '../config';
 import EVENT from '../event';
+import BrickFragment from './brick-fragment';
 import { R } from '../loader';
 import { getBrickType } from '../util/map-tool';
 import brick, { missLeftBottomBrick, missLeftTopBrick, missRightBottomBrick, missRightTopBrick } from '../config/brick';
+import { isCollisionEvent } from '../guard';
+import { isEntityCollision } from '../util';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
@@ -56,9 +59,8 @@ class Brick extends Entity implements IBrick, ISubScriber {
     }
   }
 
-  private broken() {
+  private broken(bullet: IBullet) {
     fragmentPosition.forEach((fragment, index) => {
-      // prettier-ignore
       if (
         (index === 0 && missLeftTopBrick.includes(this.brickIndex)) ||
         (index === 1 && missRightTopBrick.includes(this.brickIndex)) ||
@@ -68,16 +70,21 @@ class Brick extends Entity implements IBrick, ISubScriber {
         return;
       }
       const [x, y] = this.rect;
+      const rect = [fragment.x + x, fragment.y + y, 16, 16] as IEntityRect;
 
-      import('./brick-fragment').then(({ default: BrickFragment }) => {
-        const brickFragment = new BrickFragment(dictionary[this.brickType] || 0);
-        brickFragment.setRect([fragment.x + x, fragment.y + y, 16, 16]);
-      });
-      super.destroy();
+      const brickFragment = new BrickFragment(rect, dictionary[this.brickType] || 0);
+      if (isEntityCollision(rect, bullet.getRect())) {
+        brickFragment.destroy(bullet);
+      }
     });
+    super.destroy();
   }
 
   public update(): void {}
+
+  public getBrickType(): IBrickType {
+    return this.brickType;
+  }
 
   public getBrickIndex(): number {
     return this.brickIndex;
@@ -85,20 +92,23 @@ class Brick extends Entity implements IBrick, ISubScriber {
 
   public destroy(bullet: IBullet): void {
     if (this.isBrickFragment) return super.destroy();
-    if (this.brickType === 'brick') {
-      if (bullet.getType() !== 'enhance') {
-        this.broken();
-      } else {
-        super.destroy();
-      }
-    } else if (this.brickType === 'iron' && bullet.getType() === 'enhance') {
-      this.broken();
-    }
+    this.broken(bullet);
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
     const [x, y, w, h] = this.rect;
     ctx.drawImage(R.Image.brick, 32 * this.brickIndex, 0, 32, 32, x + PL, y + PT, w, h);
+  }
+
+  public notify(event: INotifyEvent<Record<string, unknown>>): void {
+    if (
+      isCollisionEvent(event) &&
+      event.type === EVENT.COLLISION.ENTITY &&
+      event.entity === this &&
+      event.initiator.getEntityType() === 'bullet'
+    ) {
+      this.destroy(event.initiator as IBullet);
+    }
   }
 }
 

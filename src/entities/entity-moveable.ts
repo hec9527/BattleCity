@@ -32,12 +32,16 @@ export default abstract class EntityMoveable extends Entity implements IEntityMo
     this.rect = [x, y, w, h];
   }
 
+  public getLastDirection(): IDirection {
+    return this.lastDirection;
+  }
+
   public getLastRect(): IEntityRect {
     return this.lastRect;
   }
 
   protected move(): void {
-    if (this.speed === 0 || ++this.moveTick < this.moveFrequency) return;
+    if (this.speed === 0 || ++this.moveTick < this.moveFrequency || this.pause) return;
     this.moveTick = 0;
     this.lastRect = this.rect;
     this.rect = this.getNextFrameRect();
@@ -84,7 +88,7 @@ export default abstract class EntityMoveable extends Entity implements IEntityMo
   }
 
   public update(): void {
-    if (this.isDestroyed || this.stop || this.pause) {
+    if (this.isDestroyed || this.stop) {
       return;
     }
 

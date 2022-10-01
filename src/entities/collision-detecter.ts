@@ -3,12 +3,7 @@ import Config from '../config';
 import { isEntityCollision } from '../util';
 
 class CollisionDetecter {
-  private entities: IEntity[];
   private eventManager = EVENT.EM;
-
-  constructor(entities: IEntity[]) {
-    this.entities = entities;
-  }
 
   private detectBorder(initiator: IEntity): boolean {
     const [x, y, w, h] = initiator.getRect();
@@ -30,19 +25,19 @@ class CollisionDetecter {
     return false;
   }
 
-  private detectEntity(initiator: IEntity) {
-    this.entities.forEach(entity => {
+  private detectEntity(entities: IEntity[], initiator: IEntity) {
+    [...entities].forEach(entity => {
       if (entity === initiator) return;
-      if (!entity.getCollision()) return;
+      // if (!entity.getCollision()) return;
       if (isEntityCollision(initiator.getRect(), entity.getRect())) {
         this.eventManager.fireEvent({ type: EVENT.COLLISION.ENTITY, initiator, entity });
       }
     });
   }
 
-  public detect(initiator: IEntity) {
+  public detect(entities: IEntity[], initiator: IEntity) {
     this.detectBorder(initiator);
-    this.detectEntity(initiator);
+    this.detectEntity(entities, initiator);
   }
 }
 

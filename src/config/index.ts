@@ -25,10 +25,9 @@ const Config = {
     stageChange: 2,
     cursorMove: 3,
     cursorBlink: 15,
-    /** 射击间隔时间 */
-    shoot: 10,
+    shootInterval: 20,
     /** 改变移动状态 */
-    trackStatus: 6,
+    trackStatus: 15,
     trackStatusFast: 3,
     trackStatusSlow: 20,
     // moveStatus
@@ -36,22 +35,16 @@ const Config = {
     birth: 70,
     birthStatus: 5,
     /** 保护罩 10s 600帧 */
-    protector: 600,
-    protectorShort: 300,
-    protectorStatus: 3,
+    protector: 900,
+    protectorStatus: 5,
     /** 奖励持续时间 */
     award: 600,
     awardBlink: 200,
     awardBlinkFrequency: 15,
-    /** 转向间隔 */
-    changeDirection: 5,
     /** 爆炸持续时间 */
-    explode: 30,
-    explodeStatus: 5,
-    /** 子弹爆炸时间 */
-    explodeBullet: 8,
-    /** 子弹爆炸时间 */
-    bulletExplodeStatus: 3,
+    explodeBase: 27,
+    explodeBullet: 10,
+    explodeStatus: 3,
     /** 定身时间 */
     stopStatus: 600,
     /** 战斗结束停留时间 */
@@ -64,15 +57,23 @@ const Config = {
     wallBlinkDuration: 15,
   },
   speed: {
+    slowest: 1.1,
+    slower: 1.3,
     slow: 1.5,
     normal: 1.8,
-    fast: 2.2,
+    fast: 2,
+    faster: 2.2,
+    fastest: 2.5,
   },
   colors: {
     black: '#000',
     gray: '#d3d3d3',
     red: '#b82619',
     white_100: '#f5f5f5',
+  },
+  explosion: {
+    bullet: [0, 1, 2, 1],
+    base: [0, 1, 2, 3, 4, 2],
   },
   entity: {
     createAllyInterval: 50,

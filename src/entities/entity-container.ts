@@ -8,7 +8,7 @@ class EntityContainer implements ISubScriber {
 
   constructor() {
     this.eventManager.addSubscriber(this, [EVENT.ENTITY.CREATED, EVENT.ENTITY.DESTROYED, EVENT.ENTITY.MOVE]);
-    this.collisionDetecter = new CollisionDetecter(this.entities);
+    this.collisionDetecter = new CollisionDetecter();
   }
 
   private sortEntityByZIndex(): void {
@@ -24,11 +24,11 @@ class EntityContainer implements ISubScriber {
   }
 
   public update(): void {
-    this.entities.forEach(entity => entity.update());
+    [...this.entities].forEach(entity => entity.update());
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
-    this.entities.forEach(entity => entity.draw(ctx));
+    [...this.entities].forEach(entity => entity.draw(ctx));
   }
 
   public addEntity(entity: IEntity) {
@@ -62,7 +62,7 @@ class EntityContainer implements ISubScriber {
         this.removeEntity(event.entity);
         break;
       case EVENT.ENTITY.MOVE:
-        this.collisionDetecter.detect(event.entity);
+        this.collisionDetecter.detect([...this.entities], event.entity);
         break;
       default:
         console.warn(`useless event subScriber: ${event.type}`);

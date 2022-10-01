@@ -8,7 +8,6 @@ const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 class EnemyTank extends Tank implements IEnemyTank {
   protected readonly type: IEntityType = 'enemyTank';
   protected rect: IEntityRect;
-  protected flashTank = false;
   protected isCollision = true;
 
   private award = 0;
@@ -21,33 +20,44 @@ class EnemyTank extends Tank implements IEnemyTank {
     this.enemyType = type;
     this.direction = 2;
     this.stop = false;
+    this.camp = 'enemy';
 
     this.initSpeed();
   }
 
   protected hit(): void {
     if (this.protected) return;
-    if (this.armor >= 1) {
-      this.armor--;
+    if (this.level >= 4) {
+      this.level--;
+    } else {
+      this.level = 1;
+      this.bulletLimit = 1;
+    }
+    if (this.award >= 1) {
+      this.award--;
       this.eventManager.fireEvent<ITankEvent>({ type: EVENT.TANK.AWARD_TANK_HIT, tank: this });
       return;
     }
-    super.hit();
+    if (this.armor >= 1) {
+      this.armor--;
+      return;
+    }
+    super.destroy();
   }
 
   private initSpeed(): void {
-    const { normal, slow, fast } = Config.speed;
+    const { normal, slower, slowest, slow, fast, faster } = Config.speed;
     switch (this.enemyType) {
       case 0:
       case 1:
-        this.speed = normal;
+        this.speed = slower;
         break;
       case 2:
-        this.speed = fast;
+        this.speed = faster;
         break;
       case 3:
       default:
-        this.speed = slow;
+        this.speed = slowest;
         break;
     }
   }
@@ -87,7 +97,7 @@ class EnemyTank extends Tank implements IEnemyTank {
     ctx.drawImage(
       R.Image.enemyTank,
       this.enemyType * 32,
-      (this.direction * 2 + this.trackStatus) * 32,
+      (this.direction * 2 + this.trackStatus.getStatus()) * 32,
       32,
       32,
       x + PL,

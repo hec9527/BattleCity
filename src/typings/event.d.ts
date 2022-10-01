@@ -29,9 +29,15 @@ declare interface IEntityEvent extends INotifyEvent {
 declare interface ITankEvent extends INotifyEvent {
   tank: IEntity;
 }
+
 declare interface IBulletEvent extends INotifyEvent {
-  bullet: IEntity;
+  bullet: IBullet;
 }
+
+declare interface IBulletExplosionEvent extends IBulletEvent {
+  explosion: boolean;
+}
+
 declare interface IAwardEvent extends INotifyEvent {
   award: IEntity;
 }

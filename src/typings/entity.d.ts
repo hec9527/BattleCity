@@ -16,15 +16,15 @@ declare type IEntityType =
   | 'bullet'
   | 'cursor'
   | 'curtain'
-  | 'brickWall'
   | 'base'
-  | 'spriteAnimation';
+  | 'spriteAnimation'
+  | 'explosionAnimation';
 
-declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
+declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'blank' | 'brickWall';
 
 declare type IEnemyType = 0 | 1 | 2 | 3;
 
-declare type IBulletType = 'normal' | 'faster' | 'enhance';
+declare type IBulletType = 'normal' | 'enhance';
 
 /**
  * 奖励类型
@@ -43,6 +43,7 @@ declare interface IEntity {
   getCenter(): IPoint;
   getZIndex(): number;
   getCollision(): boolean;
+  getDestroyed(): boolean;
   getEntityType(): IEntityType;
   getDirection(): IDirection;
   setDirection(direction: IDirection): void;
@@ -51,11 +52,16 @@ declare interface IEntity {
 }
 
 declare interface IEntityMoveable extends IEntity {
+  setStop(stop: boolean): void;
   getLastRect(): IEntityRect;
+  getNextFrameRect(): IEntityRect;
+  getLastDirection(): IDirection;
 }
 
 declare interface ITank extends IEntityMoveable {
   shoot(): void;
+  getLevel(): number;
+  isProtected(): boolean;
 }
 
 declare interface IEnemyTank extends ITank {
@@ -66,6 +72,7 @@ declare interface IEnemyTank extends ITank {
 }
 
 declare interface IAllyTank extends ITank {
+  setShooting(shoot: boolean): void;
   getPlayer(): IPlayer;
   setPlayer(player: IPlayer): void;
 }
@@ -81,4 +88,5 @@ declare interface IAward extends IEntity {
 
 declare interface IBrick extends IEntity {
   getBrickIndex(): number;
+  getBrickType(): IBrickType;
 }

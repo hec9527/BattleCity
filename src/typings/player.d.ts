@@ -3,5 +3,5 @@ declare interface IPlayer {
   getTank(): ITank;
   getScore(): number;
   addLife(): void;
-  getControl(): string;
+  getRoleType(): 'P1' | 'P2';
 }

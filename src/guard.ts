@@ -15,6 +15,9 @@ export function isTankEvent(event: INotifyEvent): event is ITankEvent {
 export function isBulletEvent(event: INotifyEvent): event is IBulletEvent {
   return !!event.bullet;
 }
+export function isBulletExplosionEvent(event: INotifyEvent): event is IBulletExplosionEvent {
+  return !!event.bullet && event.type === EVENT.BULLET.DESTROYED;
+}
 export function isAwardEvent(event: INotifyEvent): event is IAwardEvent {
   return !!event.award;
 }

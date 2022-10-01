@@ -10,7 +10,7 @@ export default class BirthAnimation extends Entity {
   protected isCollision = false;
   protected type: IEntityType = 'spriteAnimation';
   protected rect: IEntityRect;
-  private animationTicker = new StatusToggle([4, 3, 2, 1, 2, 3], Config.ticker.birthStatus, true);
+  private animationTicker = new StatusToggle([4, 3, 2, 1, 2, 3], Config.ticker.birthStatus);
   private survivalTicker: ITicker;
 
   constructor(rect: IEntityRect, callback: AnyFunction) {
