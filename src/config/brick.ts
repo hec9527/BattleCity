@@ -77,6 +77,7 @@ export const missRightBottomBrick = [
   Brick.brickTop,
   Brick.brickLeft,
   Brick.ironTop,
+  Brick.ironLeft,
   Brick.brickLeft,
   Brick.brickLeftBottom,
   Brick.ironLeftBottom,

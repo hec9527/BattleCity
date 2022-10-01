@@ -84,14 +84,24 @@ export function getBulletPos(direction: IDirection, x: number, y: number): IEnti
   return [x, y, 8, 8];
 }
 
+/**
+ *
+ * @returns [t, r, b, l]
+ */
+export function getBoundingRect(rect: IEntityRect) {
+  const [x, y, w, h] = rect;
+  return [y, x + w - 1, y + h - 1, x];
+}
+
 /** 判断两个实体是否碰撞 */
 export function isEntityCollision(rect1: IEntityRect, rect2: IEntityRect): boolean {
   const [x1, y1, w1, h1] = rect1;
   const [x2, y2, w2, h2] = rect2;
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const res = -w2 < dx && dx < w1 && -h2 < dy && dy < h1;
-  return res;
+
+  const dx = x1 - x2;
+  const dy = y1 - y2;
+
+  return -(w1 - 1) <= dx && dx <= w2 - 1 && -(h1 - 1) <= dy && dy <= h2 - 1;
 }
 
 /** 获取指定范围类的随机数 [min, max] */
@@ -127,21 +137,4 @@ export function getRewardRect(): IEntityRect {
     return getRewardRect();
   }
   return rect;
-}
-
-/** 确定派生类类型 */
-export function isEnemyTank(entity: IEntity): entity is import('../entities/enemy-tank').default {
-  return entity.type === 'enemyTank';
-}
-export function isAllyTank(entity: IEntity): entity is import('../entities/ally-tank').default {
-  return entity.type === 'allyTank';
-}
-export function isBrick(entity: IEntity): entity is import('../entities/brick').default {
-  return entity.type === 'brick';
-}
-export function isBullet(entity: IEntity): entity is import('../entities/bullet').default {
-  return entity.type === 'bullet';
-}
-export function isReward(entity: IEntity): entity is import('../entities/reward').default {
-  return entity.type === 'reward';
 }

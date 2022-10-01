@@ -3,10 +3,10 @@ import Config from '../config';
 import { isEntityCollision } from '../util';
 
 class CollisionDetecter {
-  private entities: Set<IEntity>;
+  private entities: IEntity[];
   private eventManager = EVENT.EM;
 
-  constructor(entities: Set<IEntity>) {
+  constructor(entities: IEntity[]) {
     this.entities = entities;
   }
 

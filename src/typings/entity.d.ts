@@ -6,11 +6,13 @@ declare type IPriority = 0 | 1 | 2 | 3;
 
 declare type IEntityRect = [number, number, number, number];
 
-declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet';
+declare type IEntityType = 'brick' | 'enemyTank' | 'allyTank' | 'reward' | 'bullet' | 'cursor';
 
 declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'boss' | 'blank';
 
 declare type IEnemyType = 0 | 1 | 2 | 3;
+
+declare type IBulletType = 'normal' | 'faster' | 'enhance';
 
 /**
  * 奖励类型
@@ -29,6 +31,7 @@ declare interface IEntity {
   getZIndex(): number;
   getCollision(): boolean;
   getEntityType(): IEntityType;
+  getDirection(): IDirection;
   update(): void;
   draw(ctx: CanvasRenderingContext2D): void;
 }
@@ -51,8 +54,13 @@ declare interface IAllyTank extends ITank {
 
 declare interface IBullet extends IEntity {
   getTank(): IEntity;
+  getType(): IBulletType;
 }
 
 declare interface IAward extends IEntity {
   getAwardType(): IRewardType;
+}
+
+declare interface IBrick extends IEntity {
+  getBrickIndex(): number;
 }

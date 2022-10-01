@@ -7,8 +7,8 @@ abstract class Entity implements IEntity, ISubScriber {
   // 是否参与碰撞检测
   protected abstract isCollision: boolean;
   protected readonly eventManager = EVENT.EM;
-  protected readonly zIndex = 0;
   protected abstract rect: IEntityRect;
+  protected zIndex = 1;
   protected camp: ICamp = 'neutral';
   protected direction: IDirection = 0;
   protected isDestroyed = false;
@@ -26,7 +26,8 @@ abstract class Entity implements IEntity, ISubScriber {
     this.eventManager.fireEvent({ type: EVENT.ENTITY.CREATED, entity: this });
   }
 
-  protected destroy(): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected destroy(...args: any[]): void {
     this.isDestroyed = true;
     this.eventManager.fireEvent({ type: EVENT.ENTITY.DESTROYED, entity: this });
     this.eventManager.removeSubscriber(this);
@@ -53,8 +54,8 @@ abstract class Entity implements IEntity, ISubScriber {
     if (this.speed === 0 || ++this.moveTick < this.moveFrequency) return;
     this.moveTick = 0;
     this.rect = this.getNextFrameRect();
-    this.postMove();
     this.eventManager.fireEvent({ type: EVENT.ENTITY.MOVE, entity: this });
+    this.postMove();
   }
 
   private resolveCollisionBorder(): void {

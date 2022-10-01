@@ -1,12 +1,19 @@
 import Brick from './brick';
-import Entity from './entity';
 import Config from '../config';
-import { Resource } from '../loader';
-import { getCanvas } from '../util';
+import brick from '../config/brick';
 
-const R = Resource.getResource();
+import { R } from '../loader';
+import { getCanvas } from '../util';
+import { getBrickType } from '../util/map-tool';
+
 const PL = Config.battleField.paddingLeft;
 const PT = Config.battleField.paddingTop;
+
+const dictionary: { [K in IBrickType]?: number } = {
+  iron: brick.iron,
+  brick: brick.brick,
+  grass: brick.grass,
+};
 
 /**
  * # 砖块碎片
@@ -30,21 +37,24 @@ const PT = Config.battleField.paddingTop;
 export default class BrickFragment extends Brick {
   protected status: TupleArray<number, 4>;
   private sprite!: HTMLCanvasElement;
-  private sCtx!: CanvasRenderingContext2D;
+  private fragmentIndex: number;
+  private ctx!: CanvasRenderingContext2D;
 
-  constructor(props: IBrickOption) {
-    super(props);
+  constructor(index: number) {
+    super(index);
     this.status = [1, 1, 1, 1];
-    this.rect[2] = this.rect[3] = 16;
+
+    this.isBrickFragment = true;
+    this.fragmentIndex = dictionary[getBrickType(index)] || 0;
 
     this.getImage();
   }
 
   protected getImage(): void {
     const [canvas, ctx] = getCanvas(16, 16);
-    ctx.drawImage(R.Image.brick, this.brickIndex * 32, 0, 16, 16, 0, 0, 16, 16);
+    ctx.drawImage(R.Image.brick, this.fragmentIndex * 32, 0, 16, 16, 0, 0, 16, 16);
     this.sprite = canvas;
-    this.sCtx = ctx;
+    this.ctx = ctx;
   }
 
   protected clipSprite(): void {
@@ -52,26 +62,25 @@ export default class BrickFragment extends Brick {
       if (s === 0) {
         const x = [1, 3].includes(i) ? 8 : 0;
         const y = [2, 3].includes(i) ? 8 : 0;
-        this.sCtx.clearRect(x, y, 8, 8);
+        this.ctx.clearRect(x, y, 8, 8);
       }
     });
   }
 
-  // 子弹击中砖块碎片的时候，延迟die，可同时消除相邻的砖块
-  die(bullet: IBullet): void {
-    if ((['grass', 'river', 'ice', 'blank'] as IBrickType[]).includes(this.brickType)) {
-      return;
-    } else if (this.brickType === 'brick') {
+  public destroy(bullet: IBullet): void {
+    if ((['grass', 'river', 'ice', 'blank'] as IBrickType[]).includes(this.brickType)) return;
+
+    if (this.brickType === 'brick') {
       /** 土块，任何等级的子弹都能打碎 */
-      if (bullet.level >= 2) {
-        return Entity.prototype.die.call(this);
+      if (bullet.getType() === 'normal') {
+        return super.destroy(bullet);
       }
       const [p1, p2, n1, n2] = {
         0: [2, 3, 0, 1],
         1: [0, 2, 1, 3],
         2: [0, 1, 2, 3],
         3: [1, 3, 2, 0],
-      }[bullet.getDir()];
+      }[bullet.getDirection()];
       if (this.status[p1] === 0 && this.status[p2] === 0) {
         this.status[n1] = this.status[n2] = 0;
       } else {
@@ -79,22 +88,19 @@ export default class BrickFragment extends Brick {
       }
 
       if (this.status.reduce((p, c) => p + c) === 0) {
-        return Entity.prototype.die.call(this);
+        return super.destroy(bullet);
       } else {
         this.clipSprite();
       }
-    } else if (this.brickType === 'iron') {
-      if (bullet.level > 4) {
-        /** 铁块，需要4级以上的子弹才能打碎 */
-        Entity.prototype.die.call(this);
-      }
+    } else if (this.brickType === 'iron' && bullet.getType() === 'enhance') {
+      return super.destroy(bullet);
     }
   }
 
-  update(): void {}
+  public update(): void {}
 
-  draw(): void {
+  public draw(ctx: CanvasRenderingContext2D): void {
     const [x, y, w, h] = this.rect;
-    this.cCtx.drawImage(this.sprite, x + PL, y + PT, w, h);
+    ctx.drawImage(this.sprite, x + PL, y + PT, w, h);
   }
 }

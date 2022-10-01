@@ -10,6 +10,7 @@ class Bullet extends Entity implements IBullet {
   protected rect: IEntityRect;
   protected type: IEntityType = 'bullet';
   private tank: IEntity;
+  private bulletType: IBulletType = 'normal';
 
   constructor(tank: IEntity) {
     super();
@@ -23,6 +24,14 @@ class Bullet extends Entity implements IBullet {
 
   public getTank(): IEntity {
     return this.tank;
+  }
+
+  public getType(): IBulletType {
+    return this.bulletType;
+  }
+
+  public setType(type: IBulletType): void {
+    this.bulletType = type;
   }
 
   public update(): void {}

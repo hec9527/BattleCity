@@ -1,5 +1,5 @@
 import { fixMapBirthPlace, fixMapBossPlace, getRealStage } from '../util/map-tool';
-import MapData from '../config/maps';
+import MapData from '../map/data';
 type IPlayer = import('./player').default;
 
 export class Game {

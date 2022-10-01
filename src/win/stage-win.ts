@@ -37,7 +37,6 @@ class StageWin implements IGameWin, ISubScriber {
   }
 
   private nextWin(): void {
-    this.eventManager.removeAllSubscribers();
     this.winManager.setStage(this.stage);
     this.winManager.toBattleWin();
   }

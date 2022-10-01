@@ -1,9 +1,7 @@
 import Tank from './tank';
 import EVENT from '../event';
 import Config from '../config';
-import { Resource } from '../loader';
-
-const R = Resource.getResource();
+import { R } from '../loader';
 
 class EnemyTank extends Tank implements IEnemyTank {
   protected readonly type: IEntityType = 'enemyTank';

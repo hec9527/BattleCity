@@ -27,15 +27,22 @@ const preventKey = ['arrowup', 'arrowleft', 'arrowdown', 'arrowright'];
 class Keyboard implements IController {
   private events: IControllerEvent[] = [];
   private eventManager = EVENT.EM;
+  private keys: { [K in string]: boolean } = {};
 
   constructor() {
     document.addEventListener('keydown', e => {
-      this.events.push({ type: 'KEY_PRESS', key: mapper[e.key.toLocaleLowerCase()] });
-      if (preventKey.includes(e.key.toLocaleLowerCase())) {
+      const key = e.key.toLocaleLowerCase();
+      if (this.keys[key]) return;
+      this.keys[key] = true;
+      this.events.push({ type: 'KEY_PRESS', key: mapper[key] });
+      if (preventKey.includes(key)) {
         e.preventDefault();
       }
     });
     document.addEventListener('keyup', e => {
+      const key = e.key.toLocaleLowerCase();
+      if (!this.keys[key]) return;
+      this.keys[key] = false;
       this.events.push({ type: 'KEY_RELEASE', key: mapper[e.key.toLocaleLowerCase()] });
       e.preventDefault();
     });

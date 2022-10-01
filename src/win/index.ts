@@ -42,26 +42,32 @@ class WindowManager implements IWindowManager {
   }
 
   public toBattleWin(): void {
+    this.eventManager.removeAllSubscribers();
     this.gameWin = new BattleWin(this);
   }
 
   public toConstructWin(): void {
+    this.eventManager.removeAllSubscribers();
     this.gameWin = new ConstructionWin(this);
   }
 
   public toGameOverWin(): void {
+    this.eventManager.removeAllSubscribers();
     this.gameWin = new GameOverWin(this);
   }
 
   public toMenuWin(): void {
+    this.eventManager.removeAllSubscribers();
     this.gameWin = new MenuWin(this);
   }
 
   public toSettleWin(): void {
+    this.eventManager.removeAllSubscribers();
     this.gameWin = new SettleWin(this);
   }
 
   public toStageWin(): void {
+    this.eventManager.removeAllSubscribers();
     this.gameWin = new StageWin(this);
   }
 

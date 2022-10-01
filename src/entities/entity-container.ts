@@ -2,13 +2,25 @@ import EVENT from '../event';
 import CollisionDetecter from './collision-detecter';
 
 class EntityContainer implements ISubScriber {
-  private entities: Set<IEntity> = new Set();
+  private entities: IEntity[] = [];
   private eventManager: IEventManager = EVENT.EM;
   private collisionDetecter: CollisionDetecter;
 
   constructor() {
     this.eventManager.addSubscriber(this, [EVENT.ENTITY.CREATED, EVENT.ENTITY.DESTROYED, EVENT.ENTITY.MOVE]);
     this.collisionDetecter = new CollisionDetecter(this.entities);
+  }
+
+  private sortEntityByZIndex(): void {
+    this.entities.sort((a, b) => {
+      if (a.getZIndex() > b.getZIndex()) {
+        return 1;
+      }
+      if (a.getZIndex() < b.getZIndex()) {
+        return -1;
+      }
+      return 0;
+    });
   }
 
   public update(): void {
@@ -20,15 +32,36 @@ class EntityContainer implements ISubScriber {
   }
 
   public addEntity(entity: IEntity) {
-    this.entities.add(entity);
+    this.entities.push(entity);
+    this.sortEntityByZIndex();
+    // console.table(this.entities, [
+    //   'zIndex',
+    //   'brickIndex',
+    //   'fragmentIndex',
+    //   'brickType',
+    //   'camp',
+    //   'direction',
+    //   'isCollision',
+    //   'rect',
+    //   'status',
+    // ]);
   }
 
   public removeEntity(entity: IEntity) {
-    this.entities.delete(entity);
+    for (let i = 0; i < this.entities.length; i++) {
+      if (this.entities[i] === entity) {
+        this.entities.splice(i, 1);
+        return;
+      }
+    }
   }
 
   public clearEntity() {
-    this.entities.clear();
+    this.entities = [];
+  }
+
+  public getAllEntity(): IEntity[] {
+    return [...this.entities];
   }
 
   public notify(event: INotifyEvent<Record<'entity', IEntity>>): void {

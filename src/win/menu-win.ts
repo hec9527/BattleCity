@@ -27,7 +27,6 @@ class MenuWin implements IGameWin, ISubScriber {
   }
 
   private nextWin(): void {
-    this.eventManager.removeAllSubscribers();
     const index = this.MenuCursor.getMenuIndex();
     switch (index) {
       case 0:

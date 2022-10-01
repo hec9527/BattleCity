@@ -16,6 +16,10 @@ const TANK = {
   LAST_ENEMY_TANK_DESTROYED: 'LAST_ENEMY_TANK_DESTROYED',
 };
 
+const CONSTRUCT = {
+  BUILD: 'CONSTRUCT_BUILD',
+};
+
 const BULLET = {
   DESTROYED: 'BULLET_DESTROYED',
 };
@@ -65,6 +69,7 @@ export default {
   EM,
   KEYBOARD,
   AWARD,
+  CONSTRUCT,
   ENTITY,
   TANK,
   BULLET,

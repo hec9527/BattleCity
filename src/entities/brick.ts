@@ -10,20 +10,12 @@
 
 import Entity from './entity';
 import Config from '../config';
-import { Resource } from '../loader';
-import { isEntityCollision } from '../util';
+import EVENT from '../event';
+import { R } from '../loader';
 import { getBrickType } from '../util/map-tool';
-import brick, {
-  fullBrick,
-  missLeftBottomBrick,
-  missLeftTopBrick,
-  missRightBottomBrick,
-  missRightTopBrick,
-} from '../config/brick';
+import brick, { missLeftBottomBrick, missLeftTopBrick, missRightBottomBrick, missRightTopBrick } from '../config/brick';
 
-const R = Resource.getResource();
-const PL = Config.battleField.paddingLeft;
-const PT = Config.battleField.paddingTop;
+const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
 const fragmentPosition = [
   { x: 0, y: 0 },
@@ -38,33 +30,33 @@ const dictionary: { [K in IBrickType]?: number } = {
   grass: brick.grass,
 };
 
-class Brick extends Entity {
-  public type: IEntityType = 'brick';
-  public isCollision: boolean;
-
+class Brick extends Entity implements IBrick, ISubScriber {
+  protected type: IEntityType = 'brick';
+  protected isCollision: boolean;
+  protected isBrickFragment = false;
   protected brickIndex: number;
   protected brickType: IBrickType;
-  protected cCtx: CanvasRenderingContext2D;
+  protected rect: IEntityRect = [0, 0, 32, 32];
 
-  constructor({ index, pos }: IBrickOption) {
-    super([...pos, 32, 32] as IEntityRect);
+  constructor(brickIndex: number) {
+    super();
 
-    this.brickIndex = index;
-    this.brickType = getBrickType(index);
+    this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
+
+    this.brickIndex = brickIndex;
+    this.brickType = getBrickType(brickIndex);
     this.isCollision = !['grass', 'ice', 'blank'].includes(this.brickType);
 
-    if (!fullBrick.includes(index)) {
-      this.broken();
-    }
-
     if (this.brickType === 'grass') {
-      this.cCtx = this.ctx.fg;
+      this.zIndex = 3;
+    } else if (this.brickType === 'ice') {
+      this.zIndex = -1;
     } else {
-      this.cCtx = this.ctx.bg;
+      this.zIndex = 0;
     }
   }
 
-  private broken(bullet?: IBullet) {
+  private broken() {
     fragmentPosition.forEach((fragment, index) => {
       // prettier-ignore
       if (
@@ -78,42 +70,35 @@ class Brick extends Entity {
       const [x, y] = this.rect;
 
       import('./brick-fragment').then(({ default: BrickFragment }) => {
-        const brickFragment = new BrickFragment({
-          pos: [fragment.x + x, fragment.y + y],
-          index: dictionary[this.brickType] || 0,
-        });
-        if (bullet && isEntityCollision(bullet.rect, brickFragment.rect)) {
-          brickFragment.die(bullet);
-        }
+        const brickFragment = new BrickFragment(dictionary[this.brickType] || 0);
+        brickFragment.setRect([fragment.x + x, fragment.y + y, 16, 16]);
       });
+      super.destroy();
     });
   }
 
-  update(): void {}
+  public update(): void {}
 
-  die(bullet: IBullet): void {
+  public getBrickIndex(): number {
+    return this.brickIndex;
+  }
+
+  public destroy(bullet: IBullet): void {
+    if (this.isBrickFragment) return super.destroy();
     if (this.brickType === 'brick') {
-      this.broken(bullet);
-      this.world.beforeNextFrame(() => super.die());
-    } else if (this.brickType === 'boss') {
-      console.log('game over');
-      this.brickIndex = brick.bossBroken;
-      import('../object/game').then(({ default: game }) => {
-        // TODO
-        // K.lock();
-        // game.getInstance().setGameOver();
-      });
-    } else if (this.brickType === 'iron') {
-      if (bullet.level > 4) {
-        this.broken(bullet);
-        this.world.beforeNextFrame(() => super.die());
+      if (bullet.getType() !== 'enhance') {
+        this.broken();
+      } else {
+        super.destroy();
       }
+    } else if (this.brickType === 'iron' && bullet.getType() === 'enhance') {
+      this.broken();
     }
   }
 
-  draw(): void {
+  public draw(ctx: CanvasRenderingContext2D): void {
     const [x, y, w, h] = this.rect;
-    this.cCtx.drawImage(R.Image.brick, 32 * this.brickIndex, 0, 32, 32, x + PL, y + PT, w, h);
+    ctx.drawImage(R.Image.brick, 32 * this.brickIndex, 0, 32, 32, x + PL, y + PT, w, h);
   }
 }
 
