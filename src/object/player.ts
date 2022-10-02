@@ -54,7 +54,7 @@ export default class Player implements IPlayer {
     return this.tank;
   }
 
-  public setTank(tank: IAllyTank): void {
+  public setTank(tank: IAllyTank | null): void {
     this.tank = tank;
   }
 
@@ -68,6 +68,6 @@ export default class Player implements IPlayer {
 
   public addLife(): void {
     this.life++;
-    // R.Audio.play('life');
+    R.Audio.play('life');
   }
 }

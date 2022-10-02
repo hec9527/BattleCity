@@ -1,6 +1,8 @@
 import Tank from './tank';
 import EVENT from '../event';
 import Config from '../config';
+import StatusToggle from '../status-toggle';
+
 import { R } from '../loader';
 import { randomInt } from '../util';
 
@@ -10,6 +12,7 @@ class EnemyTank extends Tank implements IEnemyTank {
   protected readonly type: IEntityType = 'enemyTank';
   protected rect: IEntityRect;
   protected isCollision = true;
+  protected shootStatus = new StatusToggle([0, 1], Config.ticker.enemyShoot, 1);
 
   private award = 0;
   private armor = 0;
@@ -23,6 +26,7 @@ class EnemyTank extends Tank implements IEnemyTank {
     this.stop = false;
     this.camp = 'enemy';
 
+    this.shootStatus.setFinished(true);
     this.initSpeed();
   }
 

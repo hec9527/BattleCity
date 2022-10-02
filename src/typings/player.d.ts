@@ -3,7 +3,7 @@ declare interface IPlayer {
   addLife(): void;
   reduceLife(): void;
   getTank(): IAllyTank | null;
-  setTank(tank: IAllyTank): void;
+  setTank(tank: IAllyTank | null): void;
   getScore(): number;
   addScore(score: number): void;
   getRoleType(): 'P1' | 'P2';

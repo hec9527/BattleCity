@@ -50,6 +50,8 @@ export default class AllyCamp implements ISubScriber {
         tank.inheritFromTank(playerTank);
       }
 
+      player.setTank(tank);
+
       if (!this.defeat) {
         const controller = new AllyController(tank);
         controller.setPalsy(this.palsy);
@@ -82,11 +84,20 @@ export default class AllyCamp implements ISubScriber {
 
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
     if (isTankEvent(event) && event.type === EVENT.TANK.ALLY_TANK_DESTROYED) {
-      this.createTask.push(
-        new Ticker(config.entity.createAllyInterval, () => {
-          this.create((event.tank as IAllyTank).getPlayer());
-        }),
-      );
+      const player = (event.tank as IAllyTank).getPlayer();
+      player.setTank(null);
+
+      if (this.players.filter(player => player.getTank() || player.getLife() > 0).length > 0) {
+        this.createTask.push(
+          new Ticker(config.entity.createAllyInterval, () => {
+            this.create(player);
+          }),
+        );
+      } else {
+        this.defeat = true;
+        this.eventManager.fireEvent({ type: EVENT.GAME.DEFEAT });
+        return;
+      }
     } else if (event.type === EVENT.BASE.DESTROY) {
       this.defeat = true;
     } else if (event.type === EVENT.MINE.ALLY_OVER) {

@@ -3,7 +3,7 @@ import { isAwardEvent, isEnemyTankKilledEvent, isExplosionEvent } from '../guard
 import Score, { IScoreValue } from './score';
 
 export default class ScoreFactory implements ISubScriber {
-  eventManager = EVENT.EM;
+  private eventManager = EVENT.EM;
 
   constructor() {
     this.eventManager.addSubscriber(this, [

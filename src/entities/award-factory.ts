@@ -2,8 +2,8 @@ import EVENT from '../event';
 import Award from './award';
 
 export default class AwardFactory implements ISubScriber {
-  eventManager = EVENT.EM;
-  award: IAward | null = null;
+  private eventManager = EVENT.EM;
+  private award: IAward | null = null;
 
   constructor() {
     this.eventManager.addSubscriber(this, [EVENT.AWARD.DESTROYED, EVENT.TANK.AWARD_TANK_HIT]);

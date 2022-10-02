@@ -15,13 +15,13 @@ abstract class Tank extends EntityMoveable implements ITank {
   protected level = 1; // 2级子弹加快， 3级2发子弹  4级护甲1可以击穿铁块
   private exploded = false;
 
+  protected abstract shootStatus: StatusToggle;
   protected trackStatus = new StatusToggle([0, 1], Config.ticker.trackStatus);
-  protected shootStatus = new StatusToggle([0, 1], Config.ticker.shootInterval, 1);
   protected protectorStatus = new StatusToggle([0, 1], Config.ticker.protectorStatus, 160);
 
   constructor() {
     super();
-    this.shootStatus.setFinished(true);
+
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY, EVENT.BULLET.DESTROYED, EVENT.BULLET.CREATE]);
   }
 

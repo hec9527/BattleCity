@@ -3,7 +3,7 @@ import Bullet from './bullet';
 import { isTankEvent } from '../guard';
 
 export default class BulletFactory implements ISubScriber {
-  eventManager = EVENT.EM;
+  private eventManager = EVENT.EM;
 
   constructor() {
     this.eventManager.addSubscriber(this, [EVENT.TANK.SHOOT]);

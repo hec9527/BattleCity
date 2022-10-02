@@ -1,3 +1,4 @@
+import config from '../config';
 import Player from '../object/player';
 
 class GameState implements IGameState {
@@ -35,6 +36,9 @@ class GameState implements IGameState {
 
   public nextStage(): void {
     this.stage++;
+    if (this.stage > config.game.maxStage) {
+      this.stage = config.game.maxStage;
+    }
   }
 }
 

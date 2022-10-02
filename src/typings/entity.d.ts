@@ -19,7 +19,8 @@ declare type IEntityType =
   | 'base'
   | 'score'
   | 'spriteAnimation'
-  | 'explosionAnimation';
+  | 'explosionAnimation'
+  | 'gameOverFlag';
 
 declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'blank' | 'brickWall';
 

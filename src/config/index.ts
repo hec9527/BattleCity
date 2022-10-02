@@ -21,11 +21,13 @@ const Config = {
     paddingLeft: 35,
   },
   ticker: {
+    defeat: 30,
     startDelay: 60,
     stageChange: 2,
     cursorMove: 3,
     cursorBlink: 15,
-    shootInterval: 20,
+    enemyShoot: 40,
+    allyShot: 20,
     /** 地雷 */
     mine: 600,
     /** 改变移动状态 */
@@ -51,7 +53,7 @@ const Config = {
     /** 定身时间 */
     stopStatus: 600,
     /** 战斗结束停留时间 */
-    battleOver: 400,
+    battleOver: 240,
     /** 围墙建造后保持时间 */
     wallBuildKeep: 600,
     /** 围墙建造后闪烁时间 */
@@ -72,6 +74,7 @@ const Config = {
     black: '#000',
     gray: '#d3d3d3',
     red: '#a73b2a',
+    red1: '#ce393b',
     white_100: '#f5f5f5',
   },
   explosion: {

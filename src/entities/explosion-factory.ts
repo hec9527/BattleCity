@@ -3,7 +3,7 @@ import { isBaseEvent, isBulletExplosionEvent, isTankEvent } from '../guard';
 import Explosion from './explosion';
 
 export default class ExplosionFactory implements ISubScriber {
-  eventManager = EVENT.EM;
+  private eventManager = EVENT.EM;
 
   constructor() {
     this.eventManager.addSubscriber(this, [EVENT.BULLET.DESTROYED, EVENT.TANK.DESTROYED, EVENT.BASE.DESTROY]);

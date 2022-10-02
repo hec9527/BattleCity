@@ -87,9 +87,9 @@ const CONTROL = {
 };
 
 const GAME = {
-  OVER: 'GAME_OVER',
   PAUSE: 'GAME_PAUSE',
-  BATTLE_START: 'GAME_BATTLE_START',
+  OVER: 'GAME_OVER',
+  DEFEAT: 'GAME_DEFEAT',
 };
 
 export default {

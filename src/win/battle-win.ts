@@ -15,6 +15,7 @@ import ScoreFactory from '../entities/score-factory';
 import AwardFactory from '../entities/award-factory';
 import MineTicker from '../entities/mine-ticker';
 import PauseFactory from '../entities/pause-factory';
+import GameOverFactory from '../entities/game-over-factory';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
@@ -31,7 +32,7 @@ class BattleWin implements IGameWin, ISubScriber {
   private nextWinTick: ITicker | null = null;
 
   constructor(winManager: IWindowManager, state: IGameState) {
-    state.setMode('double');
+    state.setMode('single');
 
     this.winManager = winManager;
     this.gameState = state;
@@ -42,6 +43,7 @@ class BattleWin implements IGameWin, ISubScriber {
     new BulletFactory();
     new Curtain('open', true);
     new ScoreFactory();
+    new GameOverFactory();
     new ExplosionFactory();
 
     BrickConstructor.buildFromMapData(MapManager.getMap(state.getStage()));
@@ -96,6 +98,7 @@ class BattleWin implements IGameWin, ISubScriber {
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
     switch (event.type) {
       case EVENT.BASE.DESTROY:
+      case EVENT.GAME.DEFEAT:
       case EVENT.TANK.LAST_ENEMY_TANK_DESTROYED:
         this.nextWinTick = new Ticker(config.ticker.battleOver);
         break;

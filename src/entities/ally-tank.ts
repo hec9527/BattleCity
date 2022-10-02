@@ -2,6 +2,7 @@ import Tank from './tank';
 import EVENT from '../event';
 import config from '../config';
 import { R } from '../loader';
+import StatusToggle from '../status-toggle';
 
 const { paddingLeft: PL, paddingTop: PT } = config.battleField;
 export const birthPlace = {
@@ -13,6 +14,8 @@ class AllyTank extends Tank implements IAllyTank {
   protected type: IEntityType = 'allyTank';
   protected rect: IEntityRect;
   protected isCollision = true;
+  protected shootStatus = new StatusToggle([0, 1], config.ticker.allyShot, 1);
+
   private player: IPlayer;
   private clipX: number;
   private shooting = false;
@@ -26,7 +29,8 @@ class AllyTank extends Tank implements IAllyTank {
     this.clipX = player.getRoleType() === 'P1' ? 0 : 32 * 4;
     this.speed = config.speed.slow;
 
-    this.addProtector();
+    this.shootStatus.setFinished(true);
+    // this.addProtector();
   }
 
   public inheritFromTank(tank: IAllyTank): void {
