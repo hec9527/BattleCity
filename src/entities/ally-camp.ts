@@ -1,15 +1,10 @@
 import config from '../config';
 import EVENT from '../event';
 import Ticker from '../ticker';
-import AllyTank from './ally-tank';
+import AllyTank, { birthPlace } from './ally-tank';
 import AllyController from './ally-controller';
-import { isTankEvent } from '../guard';
 import BirthAnimation from './birth-animation';
-
-const birthPlace = {
-  P1: [128, 384, 32, 32] as IEntityRect,
-  P2: [256, 384, 32, 32] as IEntityRect,
-};
+import { isTankEvent } from '../guard';
 
 export default class AllyCamp implements ISubScriber {
   private eventManager = EVENT.EM;
@@ -29,8 +24,19 @@ export default class AllyCamp implements ISubScriber {
   public create(player: IPlayer) {
     const role = player.getRoleType();
     const rect = birthPlace[role];
+    const playerTank = player.getTank();
+    if (!playerTank && player.getLife() === 0) {
+      return;
+    }
     new BirthAnimation(rect, () => {
-      const tank = new AllyTank(rect, player);
+      const tank = new AllyTank(player);
+
+      if (playerTank) {
+        tank.inheritFromTank(playerTank);
+      } else {
+        player.reduceLife();
+      }
+
       if (!this.defeat) {
         const controller = new AllyController(tank);
         controller.setPalsy(this.palsy);

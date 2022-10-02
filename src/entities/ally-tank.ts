@@ -4,6 +4,10 @@ import config from '../config';
 import { R } from '../loader';
 
 const { paddingLeft: PL, paddingTop: PT } = config.battleField;
+export const birthPlace = {
+  P1: [128, 384, 32, 32] as IEntityRect,
+  P2: [256, 384, 32, 32] as IEntityRect,
+};
 
 class AllyTank extends Tank implements IAllyTank {
   protected type: IEntityType = 'allyTank';
@@ -13,9 +17,9 @@ class AllyTank extends Tank implements IAllyTank {
   private clipX: number;
   private shooting = false;
 
-  constructor(rect: IEntityRect, player: IPlayer) {
+  constructor(player: IPlayer) {
     super();
-    this.rect = rect;
+    this.rect = birthPlace[player.getRoleType()];
     this.player = player;
     this.camp = 'ally';
     this.direction = 0;
@@ -23,6 +27,10 @@ class AllyTank extends Tank implements IAllyTank {
     this.speed = config.speed.slow;
 
     this.addProtector();
+  }
+
+  public inheritFromTank(tank: IAllyTank): void {
+    this.upGrade(tank.getLevel());
   }
 
   public setPlayer(player: IPlayer): void {

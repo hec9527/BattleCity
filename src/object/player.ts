@@ -5,7 +5,7 @@ export type RoleType = keyof typeof EVENT.CONTROL;
 export default class Player implements IPlayer {
   private life = 3;
   private score = 0;
-  private tank: ITank | null = null;
+  private tank: IAllyTank | null = null;
   private roleType: RoleType;
   private awardLife = 0;
   private killRecord = {} as IKillRecord;
@@ -50,12 +50,20 @@ export default class Player implements IPlayer {
     return this.score;
   }
 
-  public getTank(): ITank | null {
+  public getTank(): IAllyTank | null {
     return this.tank;
+  }
+
+  public setTank(tank: IAllyTank): void {
+    this.tank = tank;
   }
 
   public getLife(): number {
     return this.life;
+  }
+
+  public reduceLife(): void {
+    this.life--;
   }
 
   public addLife(): void {

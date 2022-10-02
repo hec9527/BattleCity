@@ -49,6 +49,7 @@ declare interface IEntity {
   getCollision(): boolean;
   getDirection(): IDirection;
   getEntityType(): IEntityType;
+  setRect(rect: IEntityRect): void;
   setDirection(direction: IDirection): void;
   update(): void;
   draw(ctx: CanvasRenderingContext2D): void;
@@ -76,6 +77,7 @@ declare interface IEnemyTank extends ITank {
 }
 
 declare interface IAllyTank extends ITank {
+  inheritFromTank(tank: IAllyTank): void;
   setShooting(shoot: boolean): void;
   getPlayer(): IPlayer;
   setPlayer(player: IPlayer): void;

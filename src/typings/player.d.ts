@@ -1,8 +1,10 @@
 declare interface IPlayer {
   getLife(): number;
-  getTank(): ITank | null;
-  getScore(): number;
   addLife(): void;
+  reduceLife(): void;
+  getTank(): IAllyTank | null;
+  setTank(tank: IAllyTank): void;
+  getScore(): number;
   addScore(score: number): void;
   getRoleType(): 'P1' | 'P2';
   setKillRecord(type: IEnemyType): void;
