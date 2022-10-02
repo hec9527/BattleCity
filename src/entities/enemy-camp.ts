@@ -11,6 +11,7 @@ import { isTankEvent } from '../guard';
 const { paddingLeft, paddingTop } = Config.battleField;
 const PT = paddingTop + 20;
 const PL = paddingLeft + Config.battleField.width + 15;
+// const awardIndex = [4, 11, 17];
 const birthPlace = [
   [0, 0],
   [6, 0],
@@ -71,6 +72,7 @@ export default class EnemyCamp implements ISubScriber {
     const rect = [x * 32, y * 32, 32, 32] as IEntityRect;
     new BirthAnimation(rect, () => {
       const tank = new EnemyTank(rect, Number(type) as IEnemyType);
+      tank.setAward(1);
       this.controllerContainer.addController(new EnemyController(tank));
     });
   }

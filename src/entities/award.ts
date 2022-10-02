@@ -10,7 +10,6 @@ import { randomInt, isEntityCollision } from '../util';
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
 class Award extends Entity implements IAward {
-  private static instance: Award | null = null;
   protected rect: IEntityRect;
   protected type: IEntityType = 'award';
   protected isCollision = true;
@@ -20,7 +19,7 @@ class Award extends Entity implements IAward {
   private surviveTicker: ITicker;
   private blinkTicker: ITicker | null = null;
 
-  private constructor() {
+  constructor() {
     super();
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
 
@@ -48,26 +47,18 @@ class Award extends Entity implements IAward {
     return rect;
   }
 
-  protected destroy(picker?: IEntity): void {
+  public destroy(picker?: IEntity): void {
     if (this.isDestroyed) return;
+    this.isDestroyed = true;
     if (picker) {
-      this.eventManager.fireEvent<IAwardEvent>({ type: EVENT.AWARD.DESTROYED, award: this, picker });
+      this.eventManager.fireEvent<IAwardEvent>({ type: EVENT.AWARD.PICKED, award: this, picker });
     }
-    Award.instance?.destroy();
-    Award.instance = null;
+    this.eventManager.fireEvent({ type: EVENT.AWARD.DESTROYED });
     super.destroy();
   }
 
   public getAwardType(): IAwardType {
     return this.awardType;
-  }
-
-  public static getNewAward(): Award {
-    if (Award.instance) {
-      Award.instance.destroy();
-    }
-    Award.instance = new Award();
-    return Award.instance;
   }
 
   public update(): void {

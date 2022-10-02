@@ -46,6 +46,7 @@ const BULLET = {
 
 const AWARD = {
   DESTROYED: 'AWARD_DESTROYED',
+  PICKED: 'AWARD_PICKED',
 };
 
 const COLLISION = {

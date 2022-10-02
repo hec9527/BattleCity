@@ -87,7 +87,7 @@ class Bullet extends EntityMoveable implements IBullet {
             case 'allyTank':
             case 'enemyTank':
               if (this.camp !== entity.getCamp() && entity !== this.tank) {
-                this.destroy(false);
+                this.destroy();
               }
               break;
             case 'bullet':

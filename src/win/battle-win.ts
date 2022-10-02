@@ -11,6 +11,7 @@ import BrickConstructor from '../entities/brick-constructor';
 import BulletFactory from '../entities/bullet-factory';
 import ExplosionFactory from '../entities/explosion-factory';
 import ScoreFactory from '../entities/score-factory';
+import AwardFactory from '../entities/award-factory';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
@@ -28,9 +29,10 @@ class BattleWin implements IGameWin, ISubScriber {
     this.winManager = winManager;
     this.gameState = state;
     this.enemyCamp.setEnemies(enemyForce[state.getStage()]);
+    new AwardFactory();
+    new BulletFactory();
     new Curtain('open', true);
     new ScoreFactory();
-    new BulletFactory();
     new ExplosionFactory();
 
     state.setMode('double');

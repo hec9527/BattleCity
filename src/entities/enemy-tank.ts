@@ -81,11 +81,15 @@ class EnemyTank extends Tank implements IEnemyTank {
 
   public draw(ctx: CanvasRenderingContext2D): void {
     if (this.isDestroyed) return;
+    let clipX = this.enemyType * 64 + (this.award > 0 ? 32 : 0);
+    if (this.enemyType === 3) {
+      clipX = this.award > 0 ? 288 : 192 + this.armor * 32;
+    }
 
     const [x, y, w, h] = this.rect;
     ctx.drawImage(
       R.Image.enemyTank,
-      this.enemyType * 32,
+      clipX,
       (this.direction * 2 + this.trackStatus.getStatus()) * 32,
       32,
       32,

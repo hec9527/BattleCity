@@ -43,10 +43,10 @@ declare interface IEntity {
   getRect(): IEntityRect;
   getCenter(): IPoint;
   getZIndex(): number;
-  getCollision(): boolean;
   getDestroyed(): boolean;
-  getEntityType(): IEntityType;
+  getCollision(): boolean;
   getDirection(): IDirection;
+  getEntityType(): IEntityType;
   setDirection(direction: IDirection): void;
   update(): void;
   draw(ctx: CanvasRenderingContext2D): void;
@@ -84,6 +84,7 @@ declare interface IBullet extends IEntityMoveable {
 
 declare interface IAward extends IEntity {
   getAwardType(): IAwardType;
+  destroy(picker?: IEntity): void;
 }
 
 declare interface IBrick extends IEntity {
