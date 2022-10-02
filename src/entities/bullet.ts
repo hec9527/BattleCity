@@ -13,6 +13,8 @@ class Bullet extends EntityMoveable implements IBullet {
   protected readonly isCollision = true;
   protected rect: IEntityRect;
   protected type: IEntityType = 'bullet';
+  protected zIndex = 3;
+
   private tank: ITank;
   private bulletType: IBulletType;
 

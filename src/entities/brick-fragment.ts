@@ -1,11 +1,11 @@
 import Config from '../config';
 import brick from '../config/brick';
+import Entity from './entity';
 import EVENT from '../event';
-import { isCollisionEvent } from '../guard';
 import { R } from '../loader';
 import { getCanvas } from '../util';
+import { isCollisionEvent } from '../guard';
 import { getBrickType } from '../util/map-tool';
-import Entity from './entity';
 
 const PL = Config.battleField.paddingLeft;
 const PT = Config.battleField.paddingTop;

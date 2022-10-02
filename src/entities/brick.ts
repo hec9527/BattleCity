@@ -45,7 +45,6 @@ class Brick extends Entity implements IBrick, ISubScriber {
     super();
 
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
-
     this.brickIndex = brickIndex;
     this.brickType = getBrickType(brickIndex);
     this.isCollision = !['grass', 'ice', 'blank'].includes(this.brickType);

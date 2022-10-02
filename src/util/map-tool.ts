@@ -98,8 +98,5 @@ export function getBrickType(index: number): IBrickType {
   if (riverType.includes(index)) {
     return 'river';
   }
-  if (bossType.includes(index)) {
-    return 'boss';
-  }
   return 'blank';
 }

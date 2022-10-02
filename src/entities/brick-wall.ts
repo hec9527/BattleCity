@@ -54,8 +54,14 @@ class BrickWall extends BrickFragment implements ISubScriber {
   }
 
   public destroy(): void {
-    this.isDestroyed = true;
-    this.isCollision = false;
+    /**
+     * 解决子弹击碎围墙后围墙不再参与碰撞检测，子弹继续前进的问提
+     * fix: 这里最好使用同步方式
+     */
+    setTimeout(() => {
+      this.isDestroyed = true;
+      this.isCollision = false;
+    }, 0);
   }
 
   public hit(bullet: IBullet): void {
