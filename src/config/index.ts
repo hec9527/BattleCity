@@ -39,6 +39,7 @@ const Config = {
     /** 保护罩 10s 600帧 */
     protector: 900,
     protectorStatus: 5,
+    pause: 20,
     /** 奖励持续时间 */
     award: 600,
     awardBlink: 15,
@@ -64,13 +65,13 @@ const Config = {
     slow: 1.5,
     normal: 1.8,
     fast: 2,
-    faster: 2.2,
-    fastest: 2.5,
+    faster: 2.5,
+    fastest: 3.5,
   },
   colors: {
     black: '#000',
     gray: '#d3d3d3',
-    red: '#b82619',
+    red: '#a73b2a',
     white_100: '#f5f5f5',
   },
   explosion: {

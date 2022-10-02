@@ -1,13 +1,13 @@
 import EVENT from '../event';
-import Config from '../config';
-import { R } from '../loader';
+import config from '../config';
 import MenuCursor from '../entities/menu-cursor';
+import { R } from '../loader';
 
 class MenuWin implements IGameWin, ISubScriber {
   private eventManager = EVENT.EM;
   private winManager: IWindowManager;
   private status: 'slide' | 'select' = 'slide';
-  private scrollY = Config.canvas.height;
+  private scrollY = config.canvas.height;
   private speed = 5;
   private MenuCursor = new MenuCursor();
 
@@ -55,14 +55,14 @@ class MenuWin implements IGameWin, ISubScriber {
   public draw(ctx: CanvasRenderingContext2D): void {
     ctx.save();
     ctx.font = '16px prestart';
-    ctx.fillStyle = Config.colors.black;
-    ctx.fillRect(0, 0, Config.canvas.width, Config.canvas.height);
-    ctx.fillStyle = Config.colors.white_100;
+    ctx.fillStyle = config.colors.black;
+    ctx.fillRect(0, 0, config.canvas.width, config.canvas.height);
+    ctx.fillStyle = config.colors.white_100;
     ctx.drawImage(R.Image.UI, 0, 0, 376, 136, 68, this.scrollY + 80, 376, 136);
     ctx.fillText('© 2022 PRESENT', 146, this.scrollY + 400);
     ctx.fillText('ALL RIGHTS RESERVED', 106, this.scrollY + 425);
     this.MenuCursor.draw(ctx);
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = config.colors.red;
     ctx.fillText('HEC9257', 202, this.scrollY + 375);
     ctx.restore();
   }

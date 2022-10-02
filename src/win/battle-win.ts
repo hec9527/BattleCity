@@ -14,6 +14,7 @@ import ExplosionFactory from '../entities/explosion-factory';
 import ScoreFactory from '../entities/score-factory';
 import AwardFactory from '../entities/award-factory';
 import MineTicker from '../entities/mine-ticker';
+import PauseFactory from '../entities/pause-factory';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
@@ -22,6 +23,7 @@ class BattleWin implements IGameWin, ISubScriber {
   private winManager: IWindowManager;
   private gameState: IGameState;
   private entityContainer = new EntityContainer();
+  private pauseFactory = new PauseFactory();
   private mineTick = new MineTicker();
   private enemyCamp = new EnemyCamp();
   private allyCamp: AllyCamp;
@@ -59,6 +61,9 @@ class BattleWin implements IGameWin, ISubScriber {
   }
 
   public update(): void {
+    this.pauseFactory.update();
+    if (this.pauseFactory.getPause()) return;
+
     this.mineTick.update();
     this.allyCamp.update();
     this.enemyCamp.update();
@@ -77,6 +82,7 @@ class BattleWin implements IGameWin, ISubScriber {
     this.entityContainer.draw(ctx);
     this.enemyCamp.draw(ctx);
     this.allyCamp.draw(ctx);
+    this.pauseFactory.draw(ctx);
   }
 
   public destroyByEntityType(type: IEntityType) {
