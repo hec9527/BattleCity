@@ -1,6 +1,5 @@
 import Config from '../config';
 import EVENT from '../event';
-import Ticker from '../ticker';
 import StatusToggle from '../status-toggle';
 import EntityMoveable from './entity-moveable';
 
@@ -13,13 +12,12 @@ abstract class Tank extends EntityMoveable implements ITank {
   protected protected = false;
   protected bulletLimit = 1;
   protected bullets = 0;
-  protected level = 1;
+  protected level = 1; // 2级子弹加快， 3级2发子弹  4级护甲1可以击穿铁块
+  private exploded = false;
 
   protected trackStatus = new StatusToggle([0, 1], Config.ticker.trackStatus);
   protected shootStatus = new StatusToggle([0, 1], Config.ticker.shootInterval, 1);
-  protected protectorStatus = new StatusToggle([0, 1], Config.ticker.protectorStatus);
-
-  private protectorTicker: ITicker | null = null;
+  protected protectorStatus = new StatusToggle([0, 1], Config.ticker.protectorStatus, 160);
 
   constructor() {
     super();
@@ -39,11 +37,28 @@ abstract class Tank extends EntityMoveable implements ITank {
     return this.level;
   }
 
+  public getExploded(): boolean {
+    return this.exploded;
+  }
+
+  public isProtected(): boolean {
+    return this.protected;
+  }
+
+  public explosion(): void {
+    if (!this.protected) {
+      this.exploded = true;
+      this.destroy();
+    }
+  }
+
   public update(): void {
     this.shootStatus.update();
-    this.protectorStatus.update();
     if (this.protected) {
-      this.protectorTicker?.update();
+      this.protectorStatus.update();
+      if (this.protectorStatus.isFinished()) {
+        this.protected = false;
+      }
     }
     super.update();
   }
@@ -54,18 +69,15 @@ abstract class Tank extends EntityMoveable implements ITank {
 
   protected removeProtector(): void {
     this.protected = false;
-    this.protectorTicker = null;
+    this.protectorStatus.setFinished(true);
   }
 
   protected addProtector(): void {
     this.protected = true;
     this.protectorStatus.refresh();
-    this.protectorTicker = new Ticker(Config.ticker.protector, () => {
-      this.removeProtector();
-    });
   }
 
-  protected upGrade(level: number): void {
+  protected upGrade(level = 1): void {
     this.level += level;
     if (this.level > 4) {
       this.level = 4;
@@ -74,16 +86,13 @@ abstract class Tank extends EntityMoveable implements ITank {
       this.bulletLimit = 2;
     }
   }
-  public isProtected(): boolean {
-    return this.protected;
-  }
 
   protected destroy(): void {
     this.eventManager.fireEvent({ type: EVENT.TANK.DESTROYED, tank: this });
-
     super.destroy();
   }
 
+  protected abstract addLife(): void;
   protected abstract hit(): void;
 
   public draw(ctx: CanvasRenderingContext2D): void {
@@ -115,11 +124,54 @@ abstract class Tank extends EntityMoveable implements ITank {
       default:
         break;
     }
-
     // 解决碰撞砖块后，越过砖块的问题， 这里应该有其他解决办法
     if (Math.abs(x - nx) > 8 || Math.abs(y - ny) > 8) return;
-
     this.rect = [nx, ny, w, h];
+  }
+
+  private pickAward(award: IAward): void {
+    switch (award.getAwardType()) {
+      // 铁锹
+      case 0:
+        if (this.camp === 'enemy') {
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_SPADE });
+        } else {
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_SPADE });
+        }
+        break;
+      // 五角星
+      case 1:
+        this.upGrade();
+        break;
+      // 坦克
+      case 2:
+        this.addLife();
+        break;
+      // 保护
+      case 3:
+        this.addProtector();
+        break;
+      // 炸弹
+      case 4:
+        if (this.camp === 'enemy') {
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_BOMB });
+        } else {
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_BOMB });
+        }
+        break;
+      // 地雷
+      case 5:
+        if (this.camp === 'enemy') {
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_MINE });
+        } else {
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_MINE });
+        }
+        break;
+      // 手枪
+      case 6:
+        this.upGrade(4);
+        break;
+    }
   }
 
   public notify(event: INotifyEvent<ICollisionEvent>): void {
@@ -139,6 +191,9 @@ abstract class Tank extends EntityMoveable implements ITank {
             if (event.entity.getCamp() !== this.camp) {
               this.hit();
             }
+            break;
+          case 'award':
+            this.pickAward(event.entity as IAward);
             break;
         }
       } else if (

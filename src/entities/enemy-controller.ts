@@ -1,9 +1,10 @@
 import EVENT from '../event';
 import config from '../config';
-import { isCollisionEvent } from '../guard';
+import { isCollisionEvent, isTankEvent } from '../guard';
 
-export default class EnemyController implements ISubScriber {
+export default class EnemyController implements ISubScriber, IEnemyController {
   private tank: IEnemyTank;
+  private palsy = false;
   private eventManager = EVENT.EM;
   private changeDirectionInterval = 30;
   private changeDirectionTicker = 0;
@@ -11,7 +12,15 @@ export default class EnemyController implements ISubScriber {
   constructor(tank: IEnemyTank) {
     this.tank = tank;
 
-    this.eventManager.addSubscriber(this, [EVENT.COLLISION.BORDER, EVENT.COLLISION.ENTITY]);
+    this.eventManager.addSubscriber(this, [
+      EVENT.COLLISION.BORDER,
+      EVENT.COLLISION.ENTITY,
+      EVENT.TANK.ENEMY_TANK_DESTROYED,
+    ]);
+  }
+
+  public setPalsy(palsy: boolean): void {
+    this.palsy = palsy;
   }
 
   private getRandomDirection(prefer: IDirection): IDirection {
@@ -52,12 +61,16 @@ export default class EnemyController implements ISubScriber {
   }
 
   public update(): void {
+    if (this.palsy) return;
+
     this.tank.shoot();
     this.changeDirectionTicker++;
     this.changeDirection();
   }
 
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
+    if (this.palsy) return;
+
     if (isCollisionEvent(event) && event.initiator === this.tank) {
       if (event.type === EVENT.COLLISION.BORDER) {
         this.changeDirection(true);
@@ -76,6 +89,9 @@ export default class EnemyController implements ISubScriber {
           }
           break;
       }
+    }
+    if (isTankEvent(event) && event.type === EVENT.TANK.ENEMY_TANK_DESTROYED && this.tank === event.tank) {
+      this.eventManager.removeSubscriber(this);
     }
   }
 }

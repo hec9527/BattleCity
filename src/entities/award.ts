@@ -1,40 +1,29 @@
 import Tank from './tank';
 import EVENT from '../event';
-import Config from '../config';
-import Ticker from '../ticker';
+import config from '../config';
 import Entity from './entity';
+import DelayStatusToggle from '../delay-status-toggle';
 
 import { R } from '../loader';
 import { randomInt, isEntityCollision } from '../util';
 
-const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
+const { paddingLeft: PL, paddingTop: PT } = config.battleField;
 
 class Award extends Entity implements IAward {
   protected rect: IEntityRect;
   protected type: IEntityType = 'award';
-  protected isCollision = true;
+  protected isCollision = false;
 
   private awardType: IAwardType;
-  private status: 0 | 1 = 1;
-  private surviveTicker: ITicker;
-  private blinkTicker: ITicker | null = null;
+  private statusToggle = new DelayStatusToggle(config.ticker.award, [1, 0], config.ticker.awardBlink, 10);
 
   constructor() {
     super();
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
 
     this.awardType = randomInt(0, 6) as IAwardType;
+    this.awardType = 5;
     this.rect = Award.getRandomRect();
-    this.type = 'award';
-
-    this.surviveTicker = new Ticker(Config.ticker.award - Config.ticker.awardBlink, () => {
-      this.blinkTicker = new Ticker(Config.ticker.awardBlinkFrequency, () => {
-        this.status = this.status === 0 ? 1 : 0;
-      });
-      this.surviveTicker = new Ticker(Config.ticker.awardBlink, () => {
-        this.destroy();
-      });
-    });
   }
 
   private static getRandomRect(): IEntityRect {
@@ -53,7 +42,7 @@ class Award extends Entity implements IAward {
     if (picker) {
       this.eventManager.fireEvent<IAwardEvent>({ type: EVENT.AWARD.PICKED, award: this, picker });
     }
-    this.eventManager.fireEvent({ type: EVENT.AWARD.DESTROYED });
+    this.eventManager.fireEvent<IAwardEvent>({ type: EVENT.AWARD.DESTROYED, award: this, picker });
     super.destroy();
   }
 
@@ -62,12 +51,14 @@ class Award extends Entity implements IAward {
   }
 
   public update(): void {
-    this.surviveTicker.update();
-    this.blinkTicker?.update();
+    this.statusToggle.update();
+    if (this.statusToggle.isFinished()) {
+      this.destroy();
+    }
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
-    if (!this.status) return;
+    if (this.statusToggle.getStatus() === 0) return;
     ctx.drawImage(
       R.Image.bonus,
       this.awardType * 32,

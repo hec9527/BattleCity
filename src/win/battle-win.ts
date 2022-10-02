@@ -12,6 +12,7 @@ import BulletFactory from '../entities/bullet-factory';
 import ExplosionFactory from '../entities/explosion-factory';
 import ScoreFactory from '../entities/score-factory';
 import AwardFactory from '../entities/award-factory';
+import MineTicker from '../entities/mine-ticker';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
@@ -22,6 +23,7 @@ class BattleWin implements IGameWin, ISubScriber {
   private entityContainer = new EntityContainer();
   private enemyCamp = new EnemyCamp();
   private allyCamp = new AllyCamp();
+  private mineTick = new MineTicker();
 
   private nextWinTick: ITicker | null = null;
 
@@ -45,7 +47,12 @@ class BattleWin implements IGameWin, ISubScriber {
     BrickConstructor.buildBrickWall();
     BrickConstructor.buildBase();
 
-    this.eventManager.addSubscriber(this, [EVENT.TANK.LAST_ENEMY_TANK_DESTROYED, EVENT.BASE.DESTROY]);
+    this.eventManager.addSubscriber(this, [
+      EVENT.TANK.LAST_ENEMY_TANK_DESTROYED,
+      EVENT.BASE.DESTROY,
+      EVENT.AWARD.ALLY_PICK_BOMB,
+      EVENT.AWARD.ENEMY_PICK_BOMB,
+    ]);
   }
 
   private nextWin(): void {
@@ -53,6 +60,7 @@ class BattleWin implements IGameWin, ISubScriber {
   }
 
   public update(): void {
+    this.mineTick.update();
     this.allyCamp.update();
     this.enemyCamp.update();
     this.entityContainer.update();
@@ -71,12 +79,26 @@ class BattleWin implements IGameWin, ISubScriber {
     this.enemyCamp.draw(ctx);
   }
 
+  public destroyByEntityType(type: IEntityType) {
+    this.entityContainer.getAllEntity().forEach(entity => {
+      if (entity.getEntityType() === type) {
+        (entity as ITank).explosion();
+      }
+    });
+  }
+
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
-    if (event.type === EVENT.TANK.ALLY_TANK_DESTROYED || event.type === EVENT.TANK.LAST_ENEMY_TANK_DESTROYED) {
-      this.nextWinTick = new Ticker(config.ticker.battleOver);
-    }
-    if (event.type === EVENT.BASE.DESTROY) {
-      //
+    switch (event.type) {
+      case EVENT.BASE.DESTROY:
+      case EVENT.TANK.LAST_ENEMY_TANK_DESTROYED:
+        this.nextWinTick = new Ticker(config.ticker.battleOver);
+        break;
+      case EVENT.AWARD.ALLY_PICK_BOMB:
+        this.destroyByEntityType('enemyTank');
+        break;
+      case EVENT.AWARD.ENEMY_PICK_BOMB:
+        this.destroyByEntityType('allyTank');
+        break;
     }
   }
 }

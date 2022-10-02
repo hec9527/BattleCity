@@ -2,6 +2,7 @@ import Tank from './tank';
 import EVENT from '../event';
 import Config from '../config';
 import { R } from '../loader';
+import { randomInt } from '../util';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
@@ -65,6 +66,10 @@ class EnemyTank extends Tank implements IEnemyTank {
   protected destroy(): void {
     this.eventManager.fireEvent({ type: EVENT.TANK.ENEMY_TANK_DESTROYED, tank: this });
     super.destroy();
+  }
+
+  protected addLife(): void {
+    this.award = randomInt(1, 3);
   }
 
   public setAward(award: number): void {

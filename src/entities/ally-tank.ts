@@ -59,6 +59,10 @@ class AllyTank extends Tank implements IAllyTank {
     }
   }
 
+  protected addLife(): void {
+    this.player.addLife();
+  }
+
   public draw(ctx: CanvasRenderingContext2D): void {
     if (this.isDestroyed) return;
     const [x, y, w, h] = this.rect;

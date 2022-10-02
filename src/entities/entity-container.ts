@@ -53,16 +53,16 @@ class EntityContainer implements ISubScriber {
     return [...this.entities];
   }
 
-  public notify(event: INotifyEvent<Record<'entity', IEntity>>): void {
+  public notify(event: INotifyEvent): void {
     switch (event.type) {
       case EVENT.ENTITY.CREATED:
-        this.addEntity(event.entity);
+        this.addEntity((event as IEntityEvent).entity);
         break;
       case EVENT.ENTITY.DESTROYED:
-        this.removeEntity(event.entity);
+        this.removeEntity((event as IEntityEvent).entity);
         break;
       case EVENT.ENTITY.MOVE:
-        this.collisionDetecter.detect([...this.entities], event.entity);
+        this.collisionDetecter.detect([...this.entities], (event as IEntityEvent).entity);
         break;
       default:
         console.warn(`useless event subScriber: ${event.type}`);

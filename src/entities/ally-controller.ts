@@ -8,6 +8,8 @@ export default class AllyController implements ISubScriber {
   private pause = false;
   private defeat = false;
   private hasShoot = false;
+  private pressedKeys = new Set<string>();
+  private palsy = false; // timing stop
 
   constructor(tank: IAllyTank) {
     this.tank = tank;
@@ -17,12 +19,26 @@ export default class AllyController implements ISubScriber {
       EVENT.KEYBOARD.RELEASE,
       EVENT.GAME.PAUSE,
       EVENT.TANK.ALLY_TANK_DESTROYED,
+      EVENT.MINE.ALLY_OVER,
       EVENT.BASE.DESTROY,
+      EVENT.AWARD.ENEMY_PICK_MINE,
     ]);
+  }
+
+  public setPalsy(palsy: boolean): void {
+    this.palsy = palsy;
+  }
+
+  public getPalsy(): boolean {
+    return this.palsy;
   }
 
   private keyPress(key: string) {
     const { UP, DOWN, RIGHT, LEFT, A, B } = EVENT.CONTROL[this.role];
+    if ([UP, DOWN, RIGHT, LEFT].includes(key)) {
+      this.pressedKeys.add(key);
+    }
+
     switch (key) {
       case UP:
         this.tank.setDirection(0);
@@ -55,6 +71,12 @@ export default class AllyController implements ISubScriber {
 
   private releaseKey(key: string) {
     const { UP, DOWN, RIGHT, LEFT, A, B } = EVENT.CONTROL[this.role];
+
+    this.pressedKeys.delete(key);
+    if (this.pressedKeys.size > 0 && ![A, B].includes(key)) {
+      this.keyPress(Array.from(this.pressedKeys)[0]);
+      return;
+    }
     switch (key) {
       case UP:
       case RIGHT:
@@ -90,12 +112,26 @@ export default class AllyController implements ISubScriber {
 
     if (this.pause) return;
 
+    if (event.type === EVENT.MINE.ALLY_OVER) {
+      this.palsy = false;
+      return;
+    } else if (this.palsy) {
+      return;
+    }
+
+    if (event.type === EVENT.AWARD.ENEMY_PICK_MINE) {
+      this.palsy = true;
+      this.tank.setStop(true);
+      this.tank.setShooting(false);
+    }
+
     if (isControlEvent(event)) {
       if (event.type === EVENT.KEYBOARD.PRESS) {
         this.keyPress(event.key);
       } else if (event.type === EVENT.KEYBOARD.RELEASE) {
         this.releaseKey(event.key);
       }
+      return;
     }
 
     if (isTankEvent(event) && event.type === EVENT.TANK.ALLY_TANK_DESTROYED && event.tank === this.tank) {

@@ -24,6 +24,7 @@ class BrickWall extends BrickFragment implements ISubScriber {
 
     // this.rebuild();
     this.buildTicker.setFinished(true);
+    this.eventManager.addSubscriber(this, [EVENT.AWARD.ENEMY_PICK_SPADE, EVENT.AWARD.ALLY_PICK_SPADE]);
   }
 
   private build(type: 'brick' | 'iron'): void {
@@ -89,9 +90,9 @@ class BrickWall extends BrickFragment implements ISubScriber {
       event.initiator.getEntityType() === 'bullet'
     ) {
       this.hit(event.initiator as IBullet);
-    } else if (event.type === EVENT.BRICK.BUILD_WALL) {
+    } else if (event.type === EVENT.AWARD.ALLY_PICK_SPADE) {
       this.rebuild();
-    } else if (event.type === EVENT.BRICK.DESTROY_WALL) {
+    } else if (event.type === EVENT.AWARD.ENEMY_PICK_SPADE) {
       this.destroy();
     }
   }

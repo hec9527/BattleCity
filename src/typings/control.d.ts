@@ -5,4 +5,5 @@ declare interface IController {
 declare interface IEnemyController {
   update(): void;
   getTank(): IEnemyTank;
+  setPalsy(palsy: boolean): void;
 }

@@ -44,7 +44,7 @@ declare interface IBulletExplosionEvent extends IBulletEvent {
 
 declare interface IAwardEvent extends INotifyEvent {
   award: IEntity;
-  picker: IEntity;
+  picker?: IEntity;
 }
 
 declare interface IExplosionEvent extends INotifyEvent {

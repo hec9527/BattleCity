@@ -61,7 +61,9 @@ declare interface IEntityMoveable extends IEntity {
 
 declare interface ITank extends IEntityMoveable {
   shoot(): void;
+  explosion(): void;
   getLevel(): number;
+  getExploded(): boolean;
   isProtected(): boolean;
 }
 

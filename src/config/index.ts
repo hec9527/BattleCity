@@ -26,6 +26,8 @@ const Config = {
     cursorMove: 3,
     cursorBlink: 15,
     shootInterval: 20,
+    /** 地雷 */
+    mine: 600,
     /** 改变移动状态 */
     trackStatus: 15,
     trackStatusFast: 3,
@@ -39,8 +41,7 @@ const Config = {
     protectorStatus: 5,
     /** 奖励持续时间 */
     award: 600,
-    awardBlink: 200,
-    awardBlinkFrequency: 15,
+    awardBlink: 15,
     score: 15,
     /** 爆炸持续时间 */
     explodeBase: 27,

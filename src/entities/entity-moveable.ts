@@ -7,8 +7,7 @@ import { isCollisionEvent } from '../guard';
 export default abstract class EntityMoveable extends Entity implements IEntityMoveable {
   protected speed = 0;
   protected moveFrequency = 1;
-  protected palsy = false; // timing stop
-  protected stop = true; // move stop
+  protected stop = true;
   protected pause = false;
 
   private lastDirection: IDirection = 0;
