@@ -63,7 +63,7 @@ abstract class Entity implements IEntity, ISubScriber {
   }
 
   public getCollision() {
-    return this.isCollision || !this.isDestroyed;
+    return this.isCollision;
   }
 
   public getZIndex() {

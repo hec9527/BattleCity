@@ -92,7 +92,16 @@ class Brick extends Entity implements IBrick, ISubScriber {
 
   public destroy(bullet: IBullet): void {
     if (this.isBrickFragment) return super.destroy();
-    this.broken(bullet);
+    switch (this.brickIndex) {
+      case brick.brick:
+        this.broken(bullet);
+        break;
+      case brick.iron:
+        bullet.getType() === 'enhance' && this.broken(bullet);
+        break;
+      default:
+        break;
+    }
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
