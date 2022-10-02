@@ -15,16 +15,20 @@ export default class TaskManager {
   }
 
   public update(): void {
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      if (this.taskList.length === 0) return;
-      if (this.taskList[0].update) {
-        this.taskList[0].update();
-        return;
+    if (this.taskList.length === 0) return;
+
+    if (this.taskList[0].update) {
+      this.taskList[0].update();
+      if (this.taskList[0].isFinished?.()) {
+        this.taskList.shift();
       }
-      if (this.taskList[0].execute) {
-        this.taskList[0].execute();
-      }
+      return;
+    }
+
+    if (this.taskList[0].execute) {
+      this.taskList[0].execute();
+      this.taskList.shift();
+      return;
     }
   }
 }

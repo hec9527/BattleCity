@@ -3,8 +3,17 @@ import Player from '../object/player';
 
 class GameState implements IGameState {
   private mode: IGameMode = 'single';
+  private gameOver = false;
   private stage = 1;
   private players: IPlayer[] = [];
+
+  public getGameOver(): boolean {
+    return this.gameOver;
+  }
+
+  public setGameOver(over: boolean): void {
+    this.gameOver = over;
+  }
 
   public getMode() {
     return this.mode;

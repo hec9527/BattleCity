@@ -20,7 +20,8 @@ declare type IEntityType =
   | 'score'
   | 'spriteAnimation'
   | 'explosionAnimation'
-  | 'gameOverFlag';
+  | 'gameOverFlag'
+  | 'scorePoint';
 
 declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'blank' | 'brickWall';
 

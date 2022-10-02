@@ -21,10 +21,12 @@ class WindowManager implements IWindowManager {
     const [, ctx] = getCanvas(Config.canvas.width, Config.canvas.height, Config.canvas.id);
     this.ctx = ctx;
 
+    // this.toConstructWin();
     // this.toMenuWin();
     // this.toStageWin();
-    this.toBattleWin();
-    // this.toConstructWin();
+    // this.toBattleWin();
+    this.toSettleWin();
+    // this.toGameOverWin()
   }
 
   public setStage(stage: number): void {
@@ -66,7 +68,7 @@ class WindowManager implements IWindowManager {
 
   public toSettleWin(): void {
     this.eventManager.removeAllSubscribers();
-    this.gameWin = new SettleWin(this);
+    this.gameWin = new SettleWin(this, this.state);
   }
 
   public toStageWin(): void {

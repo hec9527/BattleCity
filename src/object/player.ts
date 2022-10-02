@@ -12,6 +12,7 @@ export default class Player implements IPlayer {
 
   constructor(key: RoleType = 'P1') {
     this.roleType = key;
+    this.resetKillRecord();
   }
 
   public resetKillRecord(): void {

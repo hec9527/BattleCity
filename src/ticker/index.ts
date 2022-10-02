@@ -1,8 +1,8 @@
 export default class Ticker implements ITicker {
   private finished = false;
-  protected tick = 0;
-  protected tickOut: number;
-  protected callback?: AnyFunction;
+  private tick = 0;
+  private tickOut: number;
+  private callback?: AnyFunction;
 
   constructor(tickOut: number, callback?: AnyFunction) {
     this.tickOut = tickOut;
@@ -20,14 +20,5 @@ export default class Ticker implements ITicker {
 
   public isFinished(): boolean {
     return this.finished;
-  }
-}
-
-export class BlinkTicker extends Ticker {
-  public override update(): void {
-    if (++this.tick >= this.tickOut) {
-      this.callback?.();
-      this.tick = 0;
-    }
   }
 }

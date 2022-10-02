@@ -33,6 +33,7 @@ const dictionary: { [K in IBrickType]?: number } = {
   grass: brick.grass,
 };
 
+// todo 河流会流动
 class Brick extends Entity implements IBrick, ISubScriber {
   protected type: IEntityType = 'brick';
   protected isCollision: boolean;

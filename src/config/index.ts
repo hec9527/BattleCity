@@ -75,6 +75,9 @@ const Config = {
     gray: '#d3d3d3',
     red: '#a73b2a',
     red1: '#ce393b',
+    yellow: '#dfa041',
+    brick_red: '#a73b2a',
+    white: '#ffffff',
     white_100: '#f5f5f5',
   },
   explosion: {
