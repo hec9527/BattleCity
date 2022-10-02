@@ -17,6 +17,7 @@ declare type IEntityType =
   | 'cursor'
   | 'curtain'
   | 'base'
+  | 'score'
   | 'spriteAnimation'
   | 'explosionAnimation';
 
@@ -65,7 +66,6 @@ declare interface ITank extends IEntityMoveable {
 }
 
 declare interface IEnemyTank extends ITank {
-  getScore(): number;
   getEnemyType(): IEnemyType;
   setArmor(armor: number): void;
   setAward(award: number): void;

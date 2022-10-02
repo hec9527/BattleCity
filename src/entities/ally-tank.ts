@@ -1,4 +1,5 @@
 import Tank from './tank';
+import EVENT from '../event';
 import config from '../config';
 import { R } from '../loader';
 
@@ -43,13 +44,18 @@ class AllyTank extends Tank implements IAllyTank {
     }
   }
 
+  protected destroy(): void {
+    this.eventManager.fireEvent({ type: EVENT.TANK.ALLY_TANK_DESTROYED, tank: this });
+    super.destroy();
+  }
+
   protected hit(): void {
     if (this.protected) return;
     if (this.level >= 2) {
       this.bulletLimit = 1;
       this.level--;
     } else {
-      super.destroy();
+      this.destroy();
     }
   }
 

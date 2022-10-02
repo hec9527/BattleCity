@@ -19,6 +19,7 @@ export default class Base extends Entity {
 
   public hit(): void {
     if (!this.isDestroyed) {
+      return false;
       this.eventManager.fireEvent({ type: EVENT.BASE.DESTROY, base: this });
       this.isDestroyed = true;
     }

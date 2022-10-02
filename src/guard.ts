@@ -22,5 +22,8 @@ export function isBulletExplosionEvent(event: INotifyEvent): event is IBulletExp
   return !!event.bullet && event.type === EVENT.BULLET.DESTROYED;
 }
 export function isAwardEvent(event: INotifyEvent): event is IAwardEvent {
-  return !!event.award;
+  return !!event.award && !!event.picker;
+}
+export function isExplosionEvent(event: INotifyEvent): event is IExplosionEvent {
+  return !!event.target;
 }

@@ -42,7 +42,7 @@ class EnemyTank extends Tank implements IEnemyTank {
       this.armor--;
       return;
     }
-    super.destroy();
+    this.destroy();
   }
 
   private initSpeed(): void {
@@ -62,28 +62,17 @@ class EnemyTank extends Tank implements IEnemyTank {
     }
   }
 
+  protected destroy(): void {
+    this.eventManager.fireEvent({ type: EVENT.TANK.ENEMY_TANK_DESTROYED, tank: this });
+    super.destroy();
+  }
+
   public setAward(award: number): void {
     this.award = award;
   }
 
   public setArmor(armor: number): void {
     this.armor = armor;
-  }
-
-  public getScore() {
-    switch (this.enemyType) {
-      case 0: // normal
-        return 100;
-      case 1: // enhance
-        return 200;
-      case 2: // fast
-        return 300;
-      case 3: // armor
-        return 400;
-      default:
-        console.warn(`unregistered enemy type: ${this.enemyType}`);
-        return 400;
-    }
   }
 
   public getEnemyType(): IEnemyType {

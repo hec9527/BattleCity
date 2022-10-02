@@ -1,4 +1,3 @@
-import Map from '../map';
 import EVENT from '../event';
 import Config from '../config';
 import config from '../config';
@@ -11,10 +10,12 @@ import EntityContainer from '../entities/entity-container';
 import BrickConstructor from '../entities/brick-constructor';
 import BulletFactory from '../entities/bullet-factory';
 import ExplosionFactory from '../entities/explosion-factory';
+import ScoreFactory from '../entities/score-factory';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
 class BattleWin implements IGameWin, ISubScriber {
+  private eventManager = EVENT.EM;
   private winManager: IWindowManager;
   private gameState: IGameState;
   private entityContainer = new EntityContainer();
@@ -28,6 +29,7 @@ class BattleWin implements IGameWin, ISubScriber {
     this.gameState = state;
     this.enemyCamp.setEnemies(enemyForce[state.getStage()]);
     new Curtain('open', true);
+    new ScoreFactory();
     new BulletFactory();
     new ExplosionFactory();
 
@@ -37,9 +39,11 @@ class BattleWin implements IGameWin, ISubScriber {
       this.allyCamp.create(player);
     });
 
-    BrickConstructor.buildFromMapData(Map.getMap(state.getStage()));
+    // BrickConstructor.buildFromMapData(Map.getMap(state.getStage()));
     BrickConstructor.buildBrickWall();
     BrickConstructor.buildBase();
+
+    this.eventManager.addSubscriber(this, [EVENT.TANK.LAST_ENEMY_TANK_DESTROYED, EVENT.BASE.DESTROY]);
   }
 
   private nextWin(): void {

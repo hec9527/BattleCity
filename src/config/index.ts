@@ -41,6 +41,7 @@ const Config = {
     award: 600,
     awardBlink: 200,
     awardBlinkFrequency: 15,
+    score: 15,
     /** 爆炸持续时间 */
     explodeBase: 27,
     explodeBullet: 10,

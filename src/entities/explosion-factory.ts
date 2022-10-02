@@ -1,6 +1,6 @@
 import EVENT from '../event';
 import { isBaseEvent, isBulletExplosionEvent, isTankEvent } from '../guard';
-import ExplosionAnimation from './explosion-animation';
+import Explosion from './explosion';
 
 export default class ExplosionFactory implements ISubScriber {
   eventManager = EVENT.EM;
@@ -11,11 +11,11 @@ export default class ExplosionFactory implements ISubScriber {
 
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
     if (isBulletExplosionEvent(event) && event.explosion) {
-      new ExplosionAnimation(event.bullet.getRect(), 'bullet');
+      new Explosion(event.bullet, 'bullet');
     } else if (isTankEvent(event) && event.type === EVENT.TANK.DESTROYED) {
-      new ExplosionAnimation(event.tank.getRect(), 'base');
+      new Explosion(event.tank, 'base');
     } else if (isBaseEvent(event) && event.type == EVENT.BASE.DESTROY) {
-      new ExplosionAnimation(event.base.getRect(), 'base');
+      new Explosion(event.base, 'base');
     }
   }
 }

@@ -44,6 +44,11 @@ declare interface IBulletExplosionEvent extends IBulletEvent {
 
 declare interface IAwardEvent extends INotifyEvent {
   award: IEntity;
+  picker: IEntity;
+}
+
+declare interface IExplosionEvent extends INotifyEvent {
+  target: IEntity;
 }
 
 declare interface IControllerEvent extends INotifyEvent {

@@ -3,20 +3,19 @@ import EVENT from '../event';
 import Config from '../config';
 import Ticker from '../ticker';
 import Entity from './entity';
-import { Resource } from '../loader';
+
+import { R } from '../loader';
 import { randomInt, isEntityCollision } from '../util';
 
-const R = Resource.getResource();
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
 class Award extends Entity implements IAward {
-  private static instance: Award | undefined = undefined;
+  private static instance: Award | null = null;
   protected rect: IEntityRect;
   protected type: IEntityType = 'award';
-  public readonly awardType: IAwardType;
-  public readonly isCollision = true;
+  protected isCollision = true;
 
-  // status
+  private awardType: IAwardType;
   private status: 0 | 1 = 1;
   private surviveTicker: ITicker;
   private blinkTicker: ITicker | null = null;
@@ -49,9 +48,13 @@ class Award extends Entity implements IAward {
     return rect;
   }
 
-  protected destroy(): void {
+  protected destroy(picker?: IEntity): void {
     if (this.isDestroyed) return;
-    this.eventManager.fireEvent<IAwardEvent>({ type: EVENT.AWARD.DESTROYED, award: this });
+    if (picker) {
+      this.eventManager.fireEvent<IAwardEvent>({ type: EVENT.AWARD.DESTROYED, award: this, picker });
+    }
+    Award.instance?.destroy();
+    Award.instance = null;
     super.destroy();
   }
 
@@ -89,7 +92,7 @@ class Award extends Entity implements IAward {
 
   public notify(event: INotifyEvent<ICollisionEvent>): void {
     if (event.type === EVENT.COLLISION.ENTITY && event.entity === this && event.initiator instanceof Tank) {
-      this.destroy();
+      this.destroy(event.initiator);
     }
   }
 }

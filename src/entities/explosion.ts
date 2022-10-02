@@ -1,25 +1,28 @@
-import StatusToggle from '../status-toggle';
+import EVENT from '../event';
 import Entity from './entity';
 import config from '../config';
 import Ticker from '../ticker';
+import StatusToggle from '../status-toggle';
+
 import { R } from '../loader';
 
 type IExplosionType = keyof typeof config.explosion;
 
 const { paddingLeft: PL, paddingTop: PT } = config.battleField;
 
-export default class ExplosionAnimation extends Entity {
+export default class Explosion extends Entity {
   protected type: IEntityType = 'explosionAnimation';
   protected rect: IEntityRect;
   protected isCollision = false;
-  protected zIndex = 3;
+  protected zIndex = 4;
 
   private frameStatus: StatusToggle;
   private explosionTick: ITicker;
+  private target: IEntity;
 
-  constructor(rect: IEntityRect, type: IExplosionType = 'base') {
+  constructor(target: IEntity, type: IExplosionType = 'base') {
     super();
-    let [x, y] = rect;
+    let [x, y] = target.getRect();
     if (type === 'base') {
       x -= 16;
       y -= 16;
@@ -28,9 +31,18 @@ export default class ExplosionAnimation extends Entity {
       y -= 28;
     }
 
+    this.target = target;
     this.rect = [x, y, 64, 64];
     this.frameStatus = new StatusToggle(config.explosion[type], config.ticker.explodeStatus);
     this.explosionTick = new Ticker(type === 'base' ? config.ticker.explodeBase : config.ticker.explodeBullet);
+  }
+
+  protected destroy(): void {
+    if (this.target.getEntityType() === 'enemyTank') {
+      this.eventManager.fireEvent({ type: EVENT.EXPLOSION.ENEMY_YANK_EXPLOSION, target: this.target });
+    }
+
+    super.destroy();
   }
 
   public update(): void {

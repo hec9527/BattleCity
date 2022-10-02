@@ -78,15 +78,8 @@ abstract class Tank extends EntityMoveable implements ITank {
     return this.protected;
   }
 
-  public destroy(): void {
-    this.eventManager.removeSubscriber(this);
+  protected destroy(): void {
     this.eventManager.fireEvent({ type: EVENT.TANK.DESTROYED, tank: this });
-
-    if (this.camp === 'ally') {
-      this.eventManager.fireEvent({ type: EVENT.TANK.ALLY_TANK_DESTROYED, tank: this });
-    } else if (this.camp === 'enemy') {
-      this.eventManager.fireEvent({ type: EVENT.TANK.ENEMY_TANK_DESTROYED, tank: this });
-    }
 
     super.destroy();
   }
