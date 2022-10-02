@@ -12,6 +12,7 @@ import Entity from './entity';
 import Config from '../config';
 import EVENT from '../event';
 import BrickFragment from './brick-fragment';
+import StatusToggle from '../status-toggle';
 import { R } from '../loader';
 import { getBrickType } from '../util/map-tool';
 import brick, { missLeftBottomBrick, missLeftTopBrick, missRightBottomBrick, missRightTopBrick } from '../config/brick';
@@ -33,7 +34,6 @@ const dictionary: { [K in IBrickType]?: number } = {
   grass: brick.grass,
 };
 
-// todo 河流会流动
 class Brick extends Entity implements IBrick, ISubScriber {
   protected type: IEntityType = 'brick';
   protected isCollision: boolean;
@@ -41,6 +41,7 @@ class Brick extends Entity implements IBrick, ISubScriber {
   protected brickIndex: number;
   protected brickType: IBrickType;
   protected rect: IEntityRect = [0, 0, 32, 32];
+  protected status: StatusToggle | undefined;
 
   constructor(brickIndex: number) {
     super();
@@ -56,6 +57,10 @@ class Brick extends Entity implements IBrick, ISubScriber {
       this.zIndex = -1;
     } else {
       this.zIndex = 0;
+    }
+
+    if (this.brickType === 'river') {
+      this.status = new StatusToggle([0, 1], 30);
     }
   }
 
@@ -80,7 +85,9 @@ class Brick extends Entity implements IBrick, ISubScriber {
     super.destroy();
   }
 
-  public update(): void {}
+  public update(): void {
+    this.status?.update();
+  }
 
   public getBrickType(): IBrickType {
     return this.brickType;
@@ -106,7 +113,8 @@ class Brick extends Entity implements IBrick, ISubScriber {
 
   public draw(ctx: CanvasRenderingContext2D): void {
     const [x, y, w, h] = this.rect;
-    ctx.drawImage(R.Image.brick, 32 * this.brickIndex, 0, 32, 32, x + PL, y + PT, w, h);
+    const status = this.status?.getStatus() || 0;
+    ctx.drawImage(R.Image.brick, 32 * (this.brickIndex + status), 0, 32, 32, x + PL, y + PT, w, h);
   }
 
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
