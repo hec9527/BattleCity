@@ -52,6 +52,7 @@ class BattleWin implements IGameWin, ISubScriber {
 
     this.eventManager.addSubscriber(this, [
       EVENT.TANK.LAST_ENEMY_TANK_DESTROYED,
+      EVENT.GAME.DEFEAT,
       EVENT.BASE.DESTROY,
       EVENT.AWARD.ALLY_PICK_BOMB,
       EVENT.AWARD.ENEMY_PICK_BOMB,
@@ -100,7 +101,9 @@ class BattleWin implements IGameWin, ISubScriber {
       case EVENT.BASE.DESTROY:
       case EVENT.GAME.DEFEAT:
       case EVENT.TANK.LAST_ENEMY_TANK_DESTROYED:
-        this.nextWinTick = new Ticker(config.ticker.battleOver);
+        if (!this.nextWin) {
+          this.nextWinTick = new Ticker(config.ticker.battleOver);
+        }
         break;
       case EVENT.AWARD.ALLY_PICK_BOMB:
         this.destroyByEntityType('enemyTank');
