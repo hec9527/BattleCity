@@ -51,6 +51,10 @@ declare interface IExplosionEvent extends INotifyEvent {
   target: IEntity;
 }
 
+declare interface IEnemyTankKilledEvent extends ITankEvent {
+  killer: IAllyTank;
+}
+
 declare interface IControllerEvent extends INotifyEvent {
   type: 'KEY_PRESS' | 'KEY_RELEASE';
   key: string;

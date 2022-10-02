@@ -27,3 +27,6 @@ export function isAwardEvent(event: INotifyEvent): event is IAwardEvent {
 export function isExplosionEvent(event: INotifyEvent): event is IExplosionEvent {
   return !!event.target;
 }
+export function isEnemyTankKilledEvent(event: INotifyEvent): event is IEnemyTankKilledEvent {
+  return isTankEvent(event) && !!event.killer;
+}

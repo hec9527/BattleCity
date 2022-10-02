@@ -44,18 +44,18 @@ class AllyTank extends Tank implements IAllyTank {
     }
   }
 
-  protected destroy(): void {
-    this.eventManager.fireEvent({ type: EVENT.TANK.ALLY_TANK_DESTROYED, tank: this });
+  protected destroy(killer?: ITank): void {
+    this.eventManager.fireEvent({ type: EVENT.TANK.ALLY_TANK_DESTROYED, tank: this, killer });
     super.destroy();
   }
 
-  protected hit(): void {
+  protected hit(bullet: IBullet): void {
     if (this.protected) return;
     if (this.level >= 2) {
       this.bulletLimit = 1;
       this.level--;
     } else {
-      this.destroy();
+      this.destroy(bullet.getTank());
     }
   }
 

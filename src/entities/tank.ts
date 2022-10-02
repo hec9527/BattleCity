@@ -93,7 +93,7 @@ abstract class Tank extends EntityMoveable implements ITank {
   }
 
   protected abstract addLife(): void;
-  protected abstract hit(): void;
+  protected abstract hit(bullet: IBullet): void;
 
   public draw(ctx: CanvasRenderingContext2D): void {
     if (this.protected) {
@@ -134,9 +134,9 @@ abstract class Tank extends EntityMoveable implements ITank {
       // 铁锹
       case 0:
         if (this.camp === 'enemy') {
-          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_SPADE });
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_SPADE, award, picker: this });
         } else {
-          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_SPADE });
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_SPADE, award, picker: this });
         }
         break;
       // 五角星
@@ -154,17 +154,17 @@ abstract class Tank extends EntityMoveable implements ITank {
       // 炸弹
       case 4:
         if (this.camp === 'enemy') {
-          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_BOMB });
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_BOMB, award, picker: this });
         } else {
-          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_BOMB });
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_BOMB, award, picker: this });
         }
         break;
       // 地雷
       case 5:
         if (this.camp === 'enemy') {
-          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_MINE });
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ENEMY_PICK_MINE, award, picker: this });
         } else {
-          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_MINE });
+          this.eventManager.fireEvent({ type: EVENT.AWARD.ALLY_PICK_MINE, award, picker: this });
         }
         break;
       // 手枪
@@ -189,7 +189,7 @@ abstract class Tank extends EntityMoveable implements ITank {
             break;
           case 'bullet':
             if (event.entity.getCamp() !== this.camp) {
-              this.hit();
+              this.hit(event.entity as IBullet);
             }
             break;
           case 'award':
@@ -201,7 +201,7 @@ abstract class Tank extends EntityMoveable implements ITank {
         event.initiator.getEntityType() === 'bullet' &&
         event.initiator.getCamp() !== this.getCamp()
       ) {
-        this.hit();
+        this.hit(event.initiator as IBullet);
       }
     } else if (isBulletEvent(event)) {
       if (event.type === EVENT.BULLET.DESTROYED && event.bullet.getTank() === this) {

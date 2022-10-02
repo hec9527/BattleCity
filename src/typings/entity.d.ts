@@ -27,6 +27,8 @@ declare type IEnemyType = 0 | 1 | 2 | 3;
 
 declare type IBulletType = 'normal' | 'enhance';
 
+declare type IKillRecord = { [K in IEnemyType]: number };
+
 /**
  * 奖励类型
  * - 0 铁锹
@@ -80,7 +82,7 @@ declare interface IAllyTank extends ITank {
 }
 
 declare interface IBullet extends IEntityMoveable {
-  getTank(): IEntity;
+  getTank(): ITank;
   getType(): IBulletType;
 }
 

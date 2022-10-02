@@ -26,7 +26,7 @@ class EnemyTank extends Tank implements IEnemyTank {
     this.initSpeed();
   }
 
-  protected hit(): void {
+  protected hit(bullet: IBullet): void {
     if (this.protected) return;
     if (this.level >= 4) {
       this.level--;
@@ -43,7 +43,7 @@ class EnemyTank extends Tank implements IEnemyTank {
       this.armor--;
       return;
     }
-    this.destroy();
+    this.destroy(bullet.getTank());
   }
 
   private initSpeed(): void {
@@ -63,8 +63,8 @@ class EnemyTank extends Tank implements IEnemyTank {
     }
   }
 
-  protected destroy(): void {
-    this.eventManager.fireEvent({ type: EVENT.TANK.ENEMY_TANK_DESTROYED, tank: this });
+  protected destroy(killer?: ITank): void {
+    this.eventManager.fireEvent({ type: EVENT.TANK.ENEMY_TANK_DESTROYED, tank: this, killer });
     super.destroy();
   }
 
