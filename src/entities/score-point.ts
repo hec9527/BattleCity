@@ -1,25 +1,19 @@
 import config from '../config';
 import Ticker from '../ticker';
-import Entity from './entity';
 import { R } from '../loader';
 
-export default class ScorePoint extends Entity {
-  protected isCollision = false;
-  protected rect: IEntityRect = [0, 0, config.canvas.width, 32];
-  protected type: IEntityType = 'scorePoint';
-
+export default class ScorePoint {
   private enemyType: IEnemyType = 0;
+  private finished = false;
   private showPoint = false;
+  private currentNum = 0;
   private killNum1: number;
   private killNum2: number | undefined;
   private maxKillNum: number;
-  private currentNum = 0;
-  private finished = false;
-  private ticker: ITicker | undefined;
   private top: number;
+  private ticker: ITicker | undefined;
 
   constructor(enemyType: IEnemyType, top: number, player1: IPlayer, plater2?: IPlayer) {
-    super();
     this.top = top + 8;
     this.enemyType = enemyType;
     this.killNum1 = player1.getKillRecord()[enemyType];
@@ -44,6 +38,7 @@ export default class ScorePoint extends Entity {
     if (!this.ticker || this.ticker.isFinished()) {
       if (this.currentNum < this.maxKillNum) {
         this.currentNum++;
+        R.Audio.play('count', true);
         this.ticker = new Ticker(15);
       } else {
         this.finished = true;

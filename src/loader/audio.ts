@@ -41,9 +41,15 @@ export class Sound {
   constructor(private sounds: CacheAudio) {}
 
   private _play(file: Files) {
-    this.sounds[file].volume = 0.1;
+    this.sounds[file].volume = 0.8;
     this.sounds[file].play();
     this.sounds[file].onended = () => this.playingList.delete(file);
+  }
+
+  private _playMultichannel(file: Files) {
+    const audio = this.sounds[file].cloneNode() as HTMLAudioElement;
+    audio.volume = 0.8;
+    audio.play();
   }
 
   /**
@@ -52,10 +58,11 @@ export class Sound {
   public play(file: Files, /** 多声道播放 */ multichannel = true): void {
     if (!files.includes(file)) throw new Error(`未注册的音频文件: ${file}`);
     if (this.playingList.has(file)) return;
-
     if (!multichannel) {
       this.playingList.add(file);
+      this._play(file);
+    } else {
+      this._playMultichannel(file);
     }
-    this._play(file);
   }
 }

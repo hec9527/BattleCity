@@ -16,6 +16,7 @@ import AwardFactory from '../entities/award-factory';
 import MineTicker from '../entities/mine-ticker';
 import PauseFactory from '../entities/pause-factory';
 import GameOverFactory from '../entities/game-over-factory';
+import { R } from '../loader';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
@@ -33,6 +34,8 @@ class BattleWin implements IGameWin, ISubScriber {
   private nextWinTick: ITicker | null = null;
 
   constructor(winManager: IWindowManager, state: IGameState) {
+    R.Audio.play('start');
+
     // TODO mock
     state.setMode('single');
     state.setStage(4);

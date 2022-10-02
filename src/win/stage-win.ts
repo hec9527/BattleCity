@@ -3,7 +3,6 @@ import Ticker from '../ticker';
 import Config from '../config';
 import Curtain from '../entities/curtain';
 import EntityContainer from '../entities/entity-container';
-import { R } from '../loader';
 
 const { UP, DOWN, A, B, START } = EVENT.CONTROL.P1;
 
@@ -25,7 +24,6 @@ class StageWin implements IGameWin, ISubScriber {
   private nextWin(): void {
     if (this.startDelayTicker) return;
 
-    R.Audio.play('start');
     this.startDelayTicker = new Ticker(Config.ticker.startDelay, () => {
       this.winManager.setStage(this.stage);
       this.winManager.toBattleWin();
