@@ -2,6 +2,7 @@ import EVENT from '../event';
 import Config from '../config';
 import config from '../config';
 import Ticker from '../ticker';
+import MapManager from '../map';
 import Curtain from '../entities/curtain';
 import AllyCamp from '../entities/ally-camp';
 import EnemyCamp from '../entities/enemy-camp';
@@ -21,29 +22,27 @@ class BattleWin implements IGameWin, ISubScriber {
   private winManager: IWindowManager;
   private gameState: IGameState;
   private entityContainer = new EntityContainer();
-  private enemyCamp = new EnemyCamp();
-  private allyCamp = new AllyCamp();
   private mineTick = new MineTicker();
+  private enemyCamp = new EnemyCamp();
+  private allyCamp: AllyCamp;
 
   private nextWinTick: ITicker | null = null;
 
   constructor(winManager: IWindowManager, state: IGameState) {
+    state.setMode('double');
+
     this.winManager = winManager;
     this.gameState = state;
     this.enemyCamp.setEnemies(enemyForce[state.getStage()]);
+    this.allyCamp = new AllyCamp(state.getPlayers(), state.getStage());
+
     new AwardFactory();
     new BulletFactory();
     new Curtain('open', true);
     new ScoreFactory();
     new ExplosionFactory();
 
-    state.setMode('double');
-    const players = state.getPlayers();
-    players.forEach(player => {
-      this.allyCamp.create(player);
-    });
-
-    // BrickConstructor.buildFromMapData(Map.getMap(state.getStage()));
+    BrickConstructor.buildFromMapData(MapManager.getMap(state.getStage()));
     BrickConstructor.buildBrickWall();
     BrickConstructor.buildBase();
 
@@ -77,6 +76,7 @@ class BattleWin implements IGameWin, ISubScriber {
     ctx.fillRect(PL, PT, Config.battleField.width, Config.battleField.height);
     this.entityContainer.draw(ctx);
     this.enemyCamp.draw(ctx);
+    this.allyCamp.draw(ctx);
   }
 
   public destroyByEntityType(type: IEntityType) {

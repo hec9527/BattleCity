@@ -22,7 +22,6 @@ class Award extends Entity implements IAward {
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
 
     this.awardType = randomInt(0, 6) as IAwardType;
-    this.awardType = 5;
     this.rect = Award.getRandomRect();
   }
 

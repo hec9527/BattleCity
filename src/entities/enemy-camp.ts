@@ -1,4 +1,4 @@
-import Config from '../config';
+import config from '../config';
 import EVENT from '../event';
 import EnemyTank from './enemy-tank';
 import BirthAnimation from './birth-animation';
@@ -8,9 +8,9 @@ import EnemyControllerContainer from './enemy-controller-container';
 import { R } from '../loader';
 import { isTankEvent } from '../guard';
 
-const { paddingLeft, paddingTop } = Config.battleField;
+const { paddingLeft, paddingTop } = config.battleField;
 const PT = paddingTop + 20;
-const PL = paddingLeft + Config.battleField.width + 15;
+const PL = paddingLeft + config.battleField.width + 15;
 // const awardIndex = [4, 11, 17];
 const birthPlace = [
   [0, 0],
@@ -24,7 +24,7 @@ export default class EnemyCamp implements ISubScriber {
   private enemyCount = 0;
   private enemyAlive = 0;
   private birthIndex = 1;
-  private createTick = Config.entity.createEnemyInterval;
+  private createTick = config.entity.createEnemyInterval;
   private controllerContainer = new EnemyControllerContainer();
   private pause = false;
 
@@ -48,8 +48,8 @@ export default class EnemyCamp implements ISubScriber {
     if (
       this.pause ||
       this.enemyCount >= this.enemies.length ||
-      this.enemyAlive >= Config.entity.maxEnemyAlive ||
-      this.createTick <= Config.entity.createEnemyInterval
+      this.enemyAlive >= config.entity.maxEnemyAlive ||
+      this.createTick <= config.entity.createEnemyInterval
     ) {
       return;
     }
@@ -72,7 +72,6 @@ export default class EnemyCamp implements ISubScriber {
     const rect = [x * 32, y * 32, 32, 32] as IEntityRect;
     new BirthAnimation(rect, () => {
       const tank = new EnemyTank(rect, Number(type) as IEnemyType);
-      tank.setAward(1);
       this.controllerContainer.addController(new EnemyController(tank));
     });
   }
