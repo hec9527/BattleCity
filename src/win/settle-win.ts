@@ -11,6 +11,7 @@ class SettleWin implements IGameWin {
   private scorePoint2: ScorePoint;
   private scorePoint3: ScorePoint;
   private scorePoint4: ScorePoint;
+  private showTotal = false;
 
   constructor(winManager: IWindowManager, state: IGameState) {
     const self = this;
@@ -51,7 +52,13 @@ class SettleWin implements IGameWin {
           point.isFinished() && self.tasks.removeTask(this);
         },
       });
-      this.tasks.addTask(new Delay(15));
+      this.tasks.addTask(new Delay(5));
+    });
+
+    this.tasks.addTask({
+      execute() {
+        self.showTotal = true;
+      },
     });
 
     this.tasks.addTask(new Delay(60));
@@ -86,6 +93,13 @@ class SettleWin implements IGameWin {
     ctx.fillStyle = config.colors.yellow;
     ctx.fillText('20000', 374, 37);
 
+    // score
+    ctx.textAlign = 'right';
+    ctx.fillText(this.state.getPlayers()[0].getScore().toString(), 174, 148);
+    if (this.state.getMode() === 'double') {
+      ctx.fillText(this.state.getPlayers()[1].getScore().toString(), 423, 148);
+    }
+
     // stage
     ctx.fillStyle = config.colors.white;
     ctx.textAlign = 'left';
@@ -98,7 +112,7 @@ class SettleWin implements IGameWin {
     ctx.textAlign = 'left';
     ctx.fillText('1-PLAYER', 44, 116);
     if (this.state.getMode() === 'double') {
-      ctx.fillText('2-PLATER', 347, 116);
+      ctx.fillText('2-PLATER', 360, 116);
     }
 
     // bottom line
@@ -114,6 +128,22 @@ class SettleWin implements IGameWin {
     this.scorePoint2.draw(ctx);
     this.scorePoint3.draw(ctx);
     this.scorePoint4.draw(ctx);
+
+    // total flag
+    ctx.fillStyle = config.colors.white;
+    ctx.fillText('TOTAL', 83, 365);
+    ctx.textAlign = 'right';
+    if (this.showTotal) {
+      ctx.fillText(this.state.getPlayers()[0].getTotalKill().toString(), 220, 365);
+    }
+
+    if (this.state.getMode() === 'double') {
+      ctx.textAlign = 'left';
+      ctx.fillText('TOTAL', 358, 365);
+      if (this.showTotal) {
+        ctx.fillText(this.state.getPlayers()[1].getTotalKill().toString(), 300, 365);
+      }
+    }
 
     ctx.restore();
   }

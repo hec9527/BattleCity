@@ -26,4 +26,6 @@ export default function loadSource(): Promise<CacheResource> {
   });
 }
 
+// window.r = resource;
+
 export { resource as R, isLoad };

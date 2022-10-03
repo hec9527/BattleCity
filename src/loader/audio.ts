@@ -10,9 +10,11 @@ import config from '../config';
 
 const files = config.resource.audios;
 
+const multiChannelList: Files[] = ['attack', 'attackOver', 'count', 'misc', 'pause'];
+
 export type Files = typeof files[number];
 
-export type CacheAudio = { [K in Files]: HTMLAudioElement };
+export type CacheAudio = { [K in Files]: [HTMLAudioElement] };
 
 export function loadAudio(): Promise<Sound> {
   const cache = {} as CacheAudio;
@@ -23,7 +25,13 @@ export function loadAudio(): Promise<Sound> {
       audio.onerror = reject;
       audio.oncanplaythrough = () => {
         resolve();
-        cache[str] = audio;
+        cache[str] = [audio];
+        if (multiChannelList.includes(str)) {
+          const audio1 = audio.cloneNode() as HTMLAudioElement;
+          const audio2 = audio.cloneNode() as HTMLAudioElement;
+          const audio3 = audio.cloneNode() as HTMLAudioElement;
+          cache[str].push(audio1, audio2, audio3);
+        }
       };
       audio.src = `/audio/${str}.mp3`;
     });
@@ -36,20 +44,14 @@ export function loadAudio(): Promise<Sound> {
 }
 
 export class Sound {
-  private playingList: Set<Files> = new Set();
+  private playingList: Set<HTMLAudioElement> = new Set();
 
   constructor(private sounds: CacheAudio) {}
 
-  private _play(file: Files) {
-    this.sounds[file].volume = 0.8;
-    this.sounds[file].play();
-    this.sounds[file].onended = () => this.playingList.delete(file);
-  }
-
-  private _playMultichannel(file: Files) {
-    const audio = this.sounds[file].cloneNode() as HTMLAudioElement;
+  private _play(audio: HTMLAudioElement) {
     audio.volume = 0.8;
     audio.play();
+    audio.onended = () => this.playingList.delete(audio);
   }
 
   /**
@@ -57,12 +59,18 @@ export class Sound {
    */
   public play(file: Files, /** 多声道播放 */ multichannel = true): void {
     if (!files.includes(file)) throw new Error(`未注册的音频文件: ${file}`);
-    if (this.playingList.has(file)) return;
     if (!multichannel) {
-      this.playingList.add(file);
-      this._play(file);
+      const audio = this.sounds[file][0];
+      this.playingList.add(audio);
+      this._play(audio);
     } else {
-      this._playMultichannel(file);
+      const audios = this.sounds[file];
+      for (let i = 0; i < audios.length; i++) {
+        if (!this.playingList.has(audios[i])) {
+          this.playingList.add(audios[i]);
+          this._play(audios[i]);
+        }
+      }
     }
   }
 }

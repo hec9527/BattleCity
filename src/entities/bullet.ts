@@ -62,6 +62,7 @@ class Bullet extends EntityMoveable implements IBullet {
   }
 
   protected destroy(explosion = true): void {
+    this.rect = this.getNextFrameRect();
     this.eventManager.fireEvent<IBulletExplosionEvent>({ type: EVENT.BULLET.DESTROYED, bullet: this, explosion });
     super.destroy();
   }

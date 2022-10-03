@@ -24,6 +24,10 @@ export default class Player implements IPlayer {
     };
   }
 
+  public getTotalKill(): number {
+    return ([0, 1, 2, 3] as IEnemyType[]).reduce((pre: number, cur) => this.killRecord[cur] + pre, 0);
+  }
+
   public setKillRecord(type: IEnemyType): void {
     this.killRecord[type] = this.killRecord[type] + 1;
     this.addScore((type + 1) * 100);

@@ -9,5 +9,6 @@ declare interface IPlayer {
   getRoleType(): 'P1' | 'P2';
   setKillRecord(type: IEnemyType): void;
   getKillRecord(): IKillRecord;
+  getTotalKill(): number;
   resetKillRecord(): void;
 }
