@@ -38,7 +38,7 @@ class BattleWin implements IGameWin, ISubScriber {
 
     // TODO mock
     state.setMode('single');
-    state.setStage(4);
+    state.setStage(1);
 
     this.winManager = winManager;
     this.gameState = state;
@@ -108,7 +108,7 @@ class BattleWin implements IGameWin, ISubScriber {
       case EVENT.BASE.DESTROY:
       case EVENT.GAME.DEFEAT:
       case EVENT.TANK.LAST_ENEMY_TANK_DESTROYED:
-        if (!this.nextWin) {
+        if (!this.nextWinTick) {
           this.defeat = event.type !== EVENT.TANK.LAST_ENEMY_TANK_DESTROYED;
           this.nextWinTick = new Ticker(config.ticker.battleOver);
         }

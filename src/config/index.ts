@@ -69,6 +69,8 @@ const Config = {
     fast: 2,
     faster: 2.5,
     fastest: 3.5,
+    bullet: 4,
+    bulletEnhance: 6.5,
   },
   colors: {
     black: '#000',

@@ -25,7 +25,7 @@ class Bullet extends EntityMoveable implements IBullet {
     this.direction = tank.getDirection();
     this.rect = this.getBulletRect();
     this.bulletType = tank.getLevel() >= 4 ? 'enhance' : 'normal';
-    this.speed = tank.getLevel() > 1 ? config.speed.fastest : Config.speed.faster;
+    this.speed = tank.getLevel() > 1 ? config.speed.bulletEnhance : Config.speed.bullet;
 
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
   }

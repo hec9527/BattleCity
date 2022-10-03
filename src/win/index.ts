@@ -24,8 +24,8 @@ class WindowManager implements IWindowManager {
     // this.toConstructWin();
     // this.toMenuWin();
     // this.toStageWin();
-    // this.toBattleWin();
-    this.toSettleWin();
+    this.toBattleWin();
+    // this.toSettleWin();
     // this.toGameOverWin()
   }
 
