@@ -48,7 +48,7 @@ class WindowManager implements IWindowManager {
   public toBattleWin(): void {
     this.eventManager.removeAllSubscribers();
     this.gameWin = new BattleWin(this, this.state);
-    console.log(this.gameWin);
+    console.debug(this.gameWin);
   }
 
   public toConstructWin(): void {

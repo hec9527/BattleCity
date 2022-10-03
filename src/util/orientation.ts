@@ -20,13 +20,13 @@ const handleOrientationChange = () => {
   switch (window.orientation) {
     case -90:
     case 90:
-      console.log('横屏:' + window.orientation);
+      console.debug('横屏:' + window.orientation);
       container.classList.remove('rotate');
       break;
     case 0:
     case 180:
       container.classList.add('rotate');
-      console.log('竖屏:' + window.orientation);
+      console.debug('竖屏:' + window.orientation);
       break;
     default:
       checkOrientation();

@@ -62,9 +62,11 @@ export default class EnemyCamp implements ISubScriber {
     const rect = [x * 32, y * 32, 32, 32] as IEntityRect;
     new BirthAnimation(rect, () => {
       const tank = new EnemyTank(rect, Number(type) as IEnemyType);
-      const award = randomInt(0, 10) > 7 ? Math.sqrt(randomInt(1, 16)) : 0;
-      const armor = (Number(type) as IEnemyType) === 3 && Math.random() > 0.5 ? Math.sqrt(randomInt(1, 9)) : 0;
-      tank.setArmor(award);
+      const award = randomInt(0, 10) > 5 ? Math.floor(Math.sqrt(randomInt(1, 16))) : 0;
+      const armor =
+        (Number(type) as IEnemyType) === 3 && Math.random() > 0.5 ? Math.floor(Math.sqrt(randomInt(1, 9))) : 0;
+
+      tank.setAward(award);
       tank.setArmor(armor);
       this.controllerContainer.addController(new EnemyController(tank));
     });

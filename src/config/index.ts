@@ -75,7 +75,7 @@ const Config = {
     enemyNormal: 1.7,
     enemyFast: 2.5,
     bullet: 4,
-    bulletEnhance: 6.5,
+    bulletEnhance: 7,
   },
   colors: {
     black: '#000',

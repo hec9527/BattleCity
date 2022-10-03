@@ -17,22 +17,22 @@ class SettleWin implements IGameWin {
     const self = this;
 
     // ========= mock =========
-    state.setMode('double');
+    // state.setMode('double');
     const [P1, P2] = state.getPlayers();
 
-    for (let i = 0; i < 3; i++) {
-      P1.setKillRecord(0);
-      P2.setKillRecord(0);
-    }
-    for (let i = 0; i < 5; i++) {
-      P1.setKillRecord(1);
-    }
-    for (let i = 0; i < 8; i++) {
-      P2.setKillRecord(2);
-    }
-    for (let i = 0; i < 4; i++) {
-      P1.setKillRecord(3);
-    }
+    // for (let i = 0; i < 3; i++) {
+    //   P1.setKillRecord(0);
+    //   P2.setKillRecord(0);
+    // }
+    // for (let i = 0; i < 5; i++) {
+    //   P1.setKillRecord(1);
+    // }
+    // for (let i = 0; i < 8; i++) {
+    //   P2.setKillRecord(2);
+    // }
+    // for (let i = 0; i < 4; i++) {
+    //   P1.setKillRecord(3);
+    // }
 
     this.winManager = winManager;
     this.state = state;

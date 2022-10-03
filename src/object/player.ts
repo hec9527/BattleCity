@@ -48,7 +48,6 @@ export default class Player implements IPlayer {
       this.addLife();
       this.awardLife++;
     }
-    console.log(this.score);
   }
 
   public getScore(): number {

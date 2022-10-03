@@ -27,7 +27,7 @@ class AllyTank extends Tank implements IAllyTank {
     this.camp = 'ally';
     this.direction = 0;
     this.clipX = player.getRoleType() === 'P1' ? 0 : 32 * 4;
-    this.speed = config.speed.slow;
+    this.speed = config.speed.ally;
 
     this.shootStatus.setFinished(true);
     this.addProtector();
