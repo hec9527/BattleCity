@@ -111,6 +111,7 @@ class BattleWin implements IGameWin, ISubScriber {
         if (!this.nextWinTick) {
           this.defeat = event.type !== EVENT.TANK.LAST_ENEMY_TANK_DESTROYED;
           this.nextWinTick = new Ticker(config.ticker.battleOver);
+          this.pauseFactory.setActive(false);
         }
         break;
       case EVENT.AWARD.ALLY_PICK_BOMB:

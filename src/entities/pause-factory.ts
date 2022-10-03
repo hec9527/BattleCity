@@ -8,6 +8,7 @@ import { isControlEvent } from '../guard';
 export default class PauseFactory implements ISubScriber {
   private eventManager = EVENT.EM;
   private pause = false;
+  private active = true;
   private pauseStatus = new StatusToggle([1, 0], config.ticker.pause);
 
   constructor() {
@@ -15,9 +16,14 @@ export default class PauseFactory implements ISubScriber {
   }
 
   public update(): void {
+    if (!this.active) return;
     if (this.pause) {
       this.pauseStatus.update();
     }
+  }
+
+  public setActive(active: boolean): void {
+    this.active = active;
   }
 
   public getPause(): boolean {
@@ -36,6 +42,7 @@ export default class PauseFactory implements ISubScriber {
   }
 
   public notify(event: INotifyEvent<Record<string, unknown>>): void {
+    if (!this.active) return;
     if (isControlEvent(event) && event.type === EVENT.KEYBOARD.PRESS && event.key === EVENT.CONTROL.P1.START) {
       this.pause = !this.pause;
       this.eventManager.fireEvent({ type: EVENT.GAME.PAUSE });

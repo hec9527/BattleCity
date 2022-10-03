@@ -13,7 +13,7 @@ export default class MenuCursor extends Entity implements ISubScriber {
   protected rect: IEntityRect = [0, 0, 32, 32];
 
   private scrollY = 0;
-  private trackStatus = new StatusToggle([0, 1], Config.ticker.trackStatus, true);
+  private trackStatus = new StatusToggle([0, 1], Config.ticker.trackStatusFast);
   private cursorTicker: ITicker | null = null;
   private menuIndex = 0;
   private menuItems = ['1 PLAYER', '2 PLAYERS', 'CONSTRUCTION'];

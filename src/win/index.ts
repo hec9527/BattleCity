@@ -22,9 +22,9 @@ class WindowManager implements IWindowManager {
     this.ctx = ctx;
 
     // this.toConstructWin();
-    // this.toMenuWin();
+    this.toMenuWin();
     // this.toStageWin();
-    this.toBattleWin();
+    // this.toBattleWin();
     // this.toSettleWin();
     // this.toGameOverWin()
   }

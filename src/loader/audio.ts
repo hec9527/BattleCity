@@ -22,7 +22,11 @@ export function loadAudio(): Promise<Sound> {
   const loadAudio = (str: Files) => {
     return new Promise<void>((resolve, reject) => {
       const audio = new Audio();
-      audio.onerror = reject;
+      audio.onerror = () => {
+        reject();
+        Printer.error(`音频加载失败：${str}`);
+      };
+      audio.preload = 'auto';
       audio.oncanplaythrough = () => {
         resolve();
         cache[str] = [audio];
@@ -34,6 +38,16 @@ export function loadAudio(): Promise<Sound> {
         }
       };
       audio.src = `/audio/${str}.mp3`;
+
+      // preload 在IOS中被禁止，可以先静音播放，让音频加载进来，然后立马暂停并且解除静音
+      try {
+        audio.muted = true;
+        audio.play();
+        audio.pause();
+        audio.muted = false;
+      } catch (error) {
+        //
+      }
     });
   };
 

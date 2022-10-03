@@ -16,6 +16,10 @@
   padding: 0;
   list-style: none;
   user-select: none !important;
+  -webkit-user-select: none !important; /* Chrome/Safari */
+  -moz-user-select: none !important; /* Firefox */
+  -ms-user-select: none !important; /* IE10+ */
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -24,135 +28,345 @@ body {
   height: 100%;
 }
 
-body {
-  display: grid;
-  background: url('/img/bilibili.jpg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  place-items: center;
-}
-
-#container {
-  position: relative;
-  display: flex;
-  width: 900px;
-  height: 550px;
-  overflow: hidden;
-  background: #abf7;
-  border-radius: 16px;
-  box-shadow: 2px 2px 20px 4px #6664;
-  /** backdrop-filter: blur(30px); // 导致页面卡顿 */
-
-  &::before,
-  &::after {
-    z-index: -1;
-    content: '';
-    position: absolute;
-    display: block;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-  }
-
-  &::after {
-    background-image: url('/img/glass-texture.png');
-  }
-
-  &::before {
-    // filter: blur(10px);
-    background-position: center;
-    background-image: url(/img/bilibili.jpg);
-  }
-
-  #video-container {
-    position: relative;
+// PC
+@media screen and(min-width:1024px) {
+  body {
     display: grid;
-    width: 600px;
-    height: inherit;
+    background: url('/img/bilibili.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
     place-items: center;
+  }
+
+  #container {
+    position: relative;
+    display: flex;
+    width: 900px;
+    height: 550px;
+    overflow: hidden;
+    background: #abf7;
+    border-radius: 16px;
+    box-shadow: 2px 2px 20px 4px #6664;
+    /** backdrop-filter: blur(30px); // 导致页面卡顿 */
+
+    &::before,
+    &::after {
+      z-index: -1;
+      content: '';
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
 
     &::after {
-      position: absolute;
-      right: -1px;
-      width: 1px;
+      background-image: url('/img/glass-texture.png');
+    }
+
+    &::before {
+      // filter: blur(10px);
+      background-position: center;
+      background-image: url(/img/bilibili.jpg);
+    }
+
+    #video-container {
+      position: relative;
+      display: grid;
+      width: 600px;
       height: inherit;
-      background: #75737344;
-      content: '';
-    }
-
-    & #game {
-      width: 516px;
-      height: 456px;
-      background-color: #000;
-    }
-  }
-}
-
-#tips-container {
-  width: 300px;
-
-  h2 {
-    margin: 85px 0 30px;
-    color: transparent;
-    font-weight: 900;
-    font-size: 36px;
-    text-align: center;
-    background: url('/img/text.png');
-    background-clip: text !important;
-    // prettier-ignore
-    -webkit-background-clip: text;
-  }
-
-  h3 {
-    margin: 35px 0 10px;
-    color: #5d6999;
-    text-align: center;
-  }
-
-  .operate-group {
-    color: #5d6999d3;
-    font-family: prestart, 'prestart2p', 'Myriad Pro', 'San Francisco';
-
-    > div {
-      display: grid;
-      grid-template-rows: repeat(2, 1fr);
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px 4px;
-      margin: 0 24px;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    .opt-btn {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      height: 22px;
-      overflow: hidden;
-      background: #d8eaff;
-      border-radius: 4px;
       place-items: center;
 
-      > div {
-        display: grid;
-        place-items: center;
-        width: 100%;
-        height: 100%;
-        background: #d0d8fd;
+      &::after {
+        position: absolute;
+        right: -1px;
+        width: 1px;
+        height: inherit;
+        background: #75737344;
+        content: '';
+      }
+
+      & #game {
+        width: 516px;
+        height: 456px;
+        background-color: #000;
       }
     }
   }
 
-  #copy-right {
+  #tips-container {
+    width: 300px;
+
+    h2 {
+      margin: 85px 0 30px;
+      color: transparent;
+      font-weight: 900;
+      font-size: 36px;
+      text-align: center;
+      background: url('/img/text.png');
+      background-clip: text !important;
+      -webkit-background-clip: text;
+    }
+
+    h3 {
+      margin: 35px 0 10px;
+      color: #5d6999;
+      text-align: center;
+    }
+
+    .operate-group {
+      color: #5d6999d3;
+      font-family: prestart, 'prestart2p', 'Myriad Pro', 'San Francisco';
+
+      > div {
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px 4px;
+        margin: 0 24px;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .opt-btn {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        height: 22px;
+        overflow: hidden;
+        background: #d8eaff;
+        border-radius: 4px;
+        place-items: center;
+
+        > div {
+          display: grid;
+          place-items: center;
+          width: 100%;
+          height: 100%;
+          background: #d0d8fd;
+        }
+      }
+    }
+
+    #copy-right {
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
+      color: #abf;
+      font-size: 12px;
+      font-family: prestart, prestart2p, 'Myriad Pro', 'San Francisco';
+      transform: scale(0.85);
+      transform-origin: right bottom;
+      text-shadow: 1px 1px 3px #fff, -1px -1px 1px #666;
+    }
+  }
+}
+
+// mobile ipad
+@media screen and(max-width:1024px) {
+  body {
+    background-color: #626262;
+  }
+
+  #container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #video-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  #controller-container {
     position: absolute;
-    right: 15px;
-    bottom: 15px;
-    color: #abf;
-    font-size: 12px;
-    font-family: prestart, prestart2p, 'Myriad Pro', 'San Francisco';
-    transform: scale(0.85);
-    transform-origin: right bottom;
-    text-shadow: 1px 1px 3px #fff, -1px -1px 1px #666;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    z-index: 90;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px;
+    opacity: 0.7;
+    box-sizing: border-box;
+
+    > div {
+      flex: 1;
+
+      &:nth-of-type(2) {
+        flex: 2;
+      }
+    }
+
+    .direction {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 5px;
+      width: 120px;
+      height: 120px;
+      color: #f5f5f5;
+      font-size: 18px;
+      text-align: center;
+      line-height: 50px;
+      margin: 0 20px 40px;
+
+      > div {
+        width: 50px;
+        height: 50px;
+        align-self: center;
+        position: relative;
+        font-family: 'prestart';
+
+        &::after {
+          content: '';
+          display: block;
+          width: 0;
+          height: 0;
+          position: absolute;
+          border: 25px solid transparent;
+        }
+
+        &:nth-of-type(1),
+        &:nth-of-type(4) {
+          height: 40px;
+        }
+        &:nth-of-type(2),
+        &:nth-of-type(3) {
+          width: 40px;
+        }
+
+        &:nth-of-type(1) {
+          grid-area: 1/2/2/3;
+          background: #efcd8d;
+          border-radius: 6px 6px 0 0;
+          &::after {
+            bottom: -25px;
+            border-top-color: #efcd8d;
+            border-bottom-width: 0;
+          }
+        }
+        &:nth-of-type(2) {
+          grid-area: 2/1/3/2;
+          background: #d98884;
+          border-radius: 6px 0 0 6px;
+          &::after {
+            top: 0;
+            right: -25px;
+            border-left-color: #d98884;
+            border-right-width: 0;
+          }
+        }
+        &:nth-of-type(3) {
+          grid-area: 2/3/3/4;
+          background: #a1caa0;
+          border-radius: 0 6px 6px 0;
+          &::after {
+            top: 0;
+            left: -25px;
+            border-right-color: #a1caa0;
+            border-left-width: 0;
+          }
+        }
+        &:nth-of-type(4) {
+          grid-area: 3/2/4/3;
+          background: #f3e5d8;
+          border-radius: 0 0 6px 6px;
+          &::after {
+            top: -25px;
+            border-bottom-color: #f3e5d8;
+            border-top-width: 0;
+          }
+        }
+      }
+    }
+
+    .menu {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+
+      > div {
+        font-family: 'prestart';
+        width: 90px;
+        height: 25px;
+        color: #fff;
+        font-size: 12px;
+        background: #7c5e15;
+        border-radius: 8px;
+        box-sizing: border-box;
+        display: grid;
+        place-items: center;
+
+        &#start {
+          margin-left: 16px;
+          background: #d17045;
+        }
+      }
+    }
+
+    .action {
+      width: 80px;
+      height: 80px;
+      position: relative;
+
+      > div {
+        position: absolute;
+        display: inline-grid;
+        place-items: center;
+        font-size: 30px;
+        color: #fff;
+        font-family: 'prestart';
+        top: 0;
+        left: -20px;
+        width: 80px;
+        height: 80px;
+        background: #e6d9a4;
+        border-radius: 100%;
+
+        &:nth-of-type(2) {
+          transform: translate(50%, -120%);
+          background: #a6b2aa;
+        }
+      }
+    }
+  }
+
+  // 设备未横屏，旋转控件
+  #container.rotate {
+    width: 100vh;
+    height: 100vw;
+    transform: rotate(90deg) translateY(-100%);
+    transform-origin: left top;
+    overflow: hidden;
+
+    #video-container {
+      width: 100vh;
+      height: 100vw;
+      overflow: hidden;
+    }
+
+    #controller-container {
+      width: 100vh;
+      height: 100vw;
+      // IOS safari，canvas旋转后层级会出现问题，覆盖在控件上面
+      transform: translateZ(1px);
+
+      .action > div {
+        &:nth-of-type(1) {
+          transform: translate(-30%, 0%);
+        }
+        &:nth-of-type(2) {
+          transform: translate(20%, -120%);
+        }
+      }
+    }
   }
 }

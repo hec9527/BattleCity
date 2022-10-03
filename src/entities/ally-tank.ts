@@ -30,7 +30,7 @@ class AllyTank extends Tank implements IAllyTank {
     this.speed = config.speed.slow;
 
     this.shootStatus.setFinished(true);
-    // this.addProtector();
+    this.addProtector();
   }
 
   public inheritFromTank(tank: IAllyTank): void {

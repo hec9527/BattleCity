@@ -32,19 +32,30 @@ class Keyboard implements IController {
   constructor() {
     document.addEventListener('keydown', e => {
       const key = e.key.toLocaleLowerCase();
-      this.keys[key] = true;
-      this.events.push({ type: 'KEY_PRESS', key: mapper[key] });
       if (preventKey.includes(key)) {
         e.preventDefault();
       }
+      this.press(key);
     });
     document.addEventListener('keyup', e => {
       const key = e.key.toLocaleLowerCase();
-      if (!this.keys[key]) return;
-      this.keys[key] = false;
-      this.events.push({ type: 'KEY_RELEASE', key: mapper[e.key.toLocaleLowerCase()] });
       e.preventDefault();
+      if (!this.keys[key]) return;
+      this.release(key);
     });
+  }
+
+  public press(key: string) {
+    console.log('press', key);
+
+    this.keys[key] = true;
+    this.events.push({ type: 'KEY_PRESS', key: mapper[key] });
+  }
+
+  public release(key: string) {
+    console.log('release', key);
+    this.keys[key] = false;
+    this.events.push({ type: 'KEY_RELEASE', key: mapper[key] });
   }
 
   public emitControl(): void {
@@ -55,4 +66,4 @@ class Keyboard implements IController {
   }
 }
 
-export default Keyboard;
+export default new Keyboard();

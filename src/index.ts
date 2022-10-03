@@ -1,6 +1,8 @@
 import Loader from './loader/';
 import Printer from './util/print';
-import Keyboard from './object/keyboard';
+import keyboard from './object/keyboard';
+import './object/simulator';
+import './util/orientation';
 import './less/index.less';
 
 // Printer.copyright();
@@ -8,7 +10,6 @@ import './less/index.less';
 Loader().then(() => {
   Printer.info('资源加载完毕');
   import('./win').then(win => {
-    const keyboard = new Keyboard();
     const windowManager = new win.default();
 
     function gameLoop() {

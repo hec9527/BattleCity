@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0;">
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Battle City</title>
@@ -14,7 +14,7 @@
     <div id="video-container">
       <canvas id="game" width="416" height="416"></canvas>
     </div>
-    <div id="tips-container">
+    <div id="tips-container" class="hide">
       <div id="operate-tips">
         <h2>游戏操作</h2>
         <div class="operate-group">
@@ -58,6 +58,32 @@
       </div>
       <div id="copy-right">
         DISIN BY HEC9527
+      </div>
+
+    </div>
+
+    <div id="controller-container">
+      <div>
+        <div class="direction">
+          <div id="up">T</div>
+          <div id="left">L</div>
+          <div id="right">R</div>
+          <div id="down">B</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="menu">
+          <div id="select">SELECT</div>
+          <div id="start">START</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="action">
+          <div id="a">A</div>
+          <div id="b">B</div>
+        </div>
       </div>
     </div>
   </div>
