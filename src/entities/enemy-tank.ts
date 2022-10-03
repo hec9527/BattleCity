@@ -51,18 +51,18 @@ class EnemyTank extends Tank implements IEnemyTank {
   }
 
   private initSpeed(): void {
-    const { normal, slower, slowest, slow, fast, faster } = Config.speed;
+    const { enemySlow, enemyFast, enemyNormal } = Config.speed;
     switch (this.enemyType) {
       case 0:
       case 1:
-        this.speed = slower;
+        this.speed = enemyNormal;
         break;
       case 2:
-        this.speed = faster;
+        this.speed = enemyFast;
         break;
       case 3:
       default:
-        this.speed = slowest;
+        this.speed = enemySlow;
         break;
     }
   }
@@ -92,7 +92,7 @@ class EnemyTank extends Tank implements IEnemyTank {
     if (this.isDestroyed) return;
     let clipX = this.enemyType * 64 + (this.award > 0 ? 32 : 0);
     if (this.enemyType === 3) {
-      clipX = this.award > 0 ? 288 : 192 + this.armor * 32;
+      clipX = this.award > 0 ? 288 : 192 + Math.min(this.armor, 2) * 32;
     }
 
     const [x, y, w, h] = this.rect;

@@ -21,7 +21,10 @@ export default class AllyCamp implements ISubScriber {
   constructor(players: IPlayer[], stage: number) {
     this.stage = stage;
     this.players = players;
-    this.players.forEach(player => this.create(player));
+    this.players.forEach(player => {
+      this.create(player);
+      player.resetKillRecord();
+    });
 
     this.eventManager.addSubscriber(this, [
       EVENT.TANK.ALLY_TANK_DESTROYED,

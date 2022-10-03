@@ -61,6 +61,17 @@ class SettleWin implements IGameWin {
       },
     });
 
+    this.tasks.addTask({
+      execute() {
+        if (self.state.getMode() === 'single') return;
+        if (P1.getTotalKill() > P2.getTotalKill()) {
+          P1.addScore(1000);
+        } else if (P1.getTotalKill() < P2.getTotalKill()) {
+          P2.addScore(1000);
+        }
+      },
+    });
+
     this.tasks.addTask(new Delay(60));
     this.tasks.addTask({ execute: () => this.nextWindow() });
   }

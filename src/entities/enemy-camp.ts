@@ -7,11 +7,11 @@ import EnemyControllerContainer from './enemy-controller-container';
 
 import { R } from '../loader';
 import { isTankEvent } from '../guard';
+import { randomInt } from '../util';
 
 const { paddingLeft, paddingTop } = config.battleField;
 const PT = paddingTop + 20;
 const PL = paddingLeft + config.battleField.width + 15;
-// const awardIndex = [4, 11, 17];
 const birthPlace = [
   [0, 0],
   [6, 0],
@@ -30,16 +30,6 @@ export default class EnemyCamp implements ISubScriber {
 
   constructor() {
     this.eventManager.addSubscriber(this, [EVENT.TANK.ENEMY_TANK_DESTROYED, EVENT.GAME.PAUSE]);
-
-    // const e1 = new EnemyTank([40, 64, 32, 32], 1);
-    // e1.setDirection(1);
-    // e1.setStop(true);
-    // const e2 = new EnemyTank([300, 64, 32, 32], 2);
-    // e2.setStop(true);
-    // e2.setDirection(3);
-
-    // this.controllerContainer.addController(new EnemyController(e1));
-    // this.controllerContainer.addController(new EnemyController(e2));
   }
 
   public update(): void {
@@ -72,6 +62,10 @@ export default class EnemyCamp implements ISubScriber {
     const rect = [x * 32, y * 32, 32, 32] as IEntityRect;
     new BirthAnimation(rect, () => {
       const tank = new EnemyTank(rect, Number(type) as IEnemyType);
+      const award = randomInt(0, 10) > 7 ? Math.sqrt(randomInt(1, 16)) : 0;
+      const armor = (Number(type) as IEnemyType) === 3 && Math.random() > 0.5 ? Math.sqrt(randomInt(1, 9)) : 0;
+      tank.setArmor(award);
+      tank.setArmor(armor);
       this.controllerContainer.addController(new EnemyController(tank));
     });
   }

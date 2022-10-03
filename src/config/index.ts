@@ -69,6 +69,11 @@ const Config = {
     fast: 2,
     faster: 2.5,
     fastest: 3.5,
+
+    ally: 2.0,
+    enemySlow: 1,
+    enemyNormal: 1.7,
+    enemyFast: 2.5,
     bullet: 4,
     bulletEnhance: 6.5,
   },

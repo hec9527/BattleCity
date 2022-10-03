@@ -36,10 +36,6 @@ class BattleWin implements IGameWin, ISubScriber {
   constructor(winManager: IWindowManager, state: IGameState) {
     R.Audio.play('start');
 
-    // TODO mock
-    state.setMode('single');
-    state.setStage(1);
-
     this.winManager = winManager;
     this.gameState = state;
     this.enemyCamp.setEnemies(enemyForce[state.getStage()]);
