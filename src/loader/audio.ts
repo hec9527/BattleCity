@@ -20,10 +20,10 @@ export function loadAudio(): Promise<Sound> {
   const cache = {} as CacheAudio;
 
   const loadAudio = (str: Files) => {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(resolve => {
       const audio = new Audio();
       audio.onerror = () => {
-        reject();
+        resolve();
         Printer.error(`音频加载失败：${str}`);
       };
       audio.preload = 'auto';
