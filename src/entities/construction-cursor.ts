@@ -45,10 +45,13 @@ export default class ConstructionCursor extends EntityMoveable {
       this.currentBrickIndex++;
     }
     if (this.currentBrickIndex === 14) {
-      this.currentBrickIndex = 17;
-    } else if (this.currentBrickIndex > 20) {
       this.currentBrickIndex = 0;
     }
+    // if (this.currentBrickIndex === 14) {
+    //   this.currentBrickIndex = 17;
+    // } else if (this.currentBrickIndex > 20) {
+    //   this.currentBrickIndex = 0;
+    // }
     this.buildBrick();
   }
 
@@ -60,10 +63,13 @@ export default class ConstructionCursor extends EntityMoveable {
       this.currentBrickIndex--;
     }
     if (this.currentBrickIndex < 0) {
-      this.currentBrickIndex = 20;
-    } else if (this.currentBrickIndex === 16) {
       this.currentBrickIndex = 13;
     }
+    // if (this.currentBrickIndex < 0) {
+    //   this.currentBrickIndex = 20;
+    // } else if (this.currentBrickIndex === 16) {
+    //   this.currentBrickIndex = 13;
+    // }
     this.buildBrick();
   }
 
