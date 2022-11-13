@@ -26,3 +26,8 @@ declare interface ITask {
 }
 
 declare type IMapData = TupleArray<TupleArray<number, 13>, 13>;
+
+declare interface Window {
+  /** 是否允许敌方坦克获取奖励 */
+  allowEnemyPick: boolean;
+}

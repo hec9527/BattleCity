@@ -7,6 +7,8 @@ import './less/index.less';
 
 Printer.copyright();
 
+window.allowEnemyPick = true;
+
 Loader().then(() => {
   Printer.info('资源加载完毕');
   import('./win').then(win => {
