@@ -6,7 +6,7 @@ export default class EnemyController implements ISubScriber, IEnemyController {
   private tank: IEnemyTank;
   private palsy = false;
   private eventManager = EVENT.EM;
-  private changeDirectionInterval = 30;
+  private changeDirectionInterval = 45;
   private changeDirectionTicker = 0;
 
   constructor(tank: IEnemyTank) {

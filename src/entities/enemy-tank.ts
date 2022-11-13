@@ -77,6 +77,13 @@ class EnemyTank extends Tank implements IEnemyTank {
     this.award = randomInt(1, 3);
   }
 
+  public update(): void {
+    if (this.bullets === 0) {
+      this.shootStatus.update();
+    }
+    super.update();
+  }
+
   public setAward(award: number): void {
     this.award = award;
   }

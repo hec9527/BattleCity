@@ -39,7 +39,7 @@ const Config = {
     cursorMove: 3,
     cursorBlink: 15,
     enemyShoot: 40,
-    allyShot: 20,
+    allyShot: 15,
     /** 地雷 */
     mine: 600,
     /** 改变移动状态 */
@@ -62,7 +62,7 @@ const Config = {
     explodeBullet: 10,
     explodeStatus: 3,
     /** 战斗结束停留时间 */
-    battleOver: 240,
+    battleOver: 150,
     /** 围墙建造后保持时间 */
     wallBuildKeep: 600,
     /** 围墙建造后闪烁时间 */

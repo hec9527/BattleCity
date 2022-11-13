@@ -51,6 +51,7 @@ class AllyTank extends Tank implements IAllyTank {
 
   public update(): void {
     super.update();
+    this.shootStatus.update();
     if (this.shooting) {
       super.shoot();
     }

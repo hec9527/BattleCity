@@ -53,7 +53,6 @@ abstract class Tank extends EntityMoveable implements ITank {
   }
 
   public update(): void {
-    this.shootStatus.update();
     if (this.protected) {
       this.protectorStatus.update();
       if (this.protectorStatus.isFinished()) {
