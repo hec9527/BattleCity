@@ -131,7 +131,7 @@ abstract class Tank extends EntityMoveable implements ITank {
   }
 
   private pickAward(award: IAward): void {
-    if (this.getCamp() === 'enemy' || !window.allowEnemyPick) return;
+    if (this.getCamp() === 'enemy' && !window.allowEnemyPick) return;
 
     switch (award.getAwardType()) {
       // 铁锹
