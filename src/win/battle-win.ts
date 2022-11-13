@@ -33,9 +33,6 @@ class BattleWin implements IGameWin, ISubScriber {
   private nextWinTick: ITicker | null = null;
 
   constructor(winManager: IWindowManager, state: IGameState) {
-    // TODO 删除
-    state.setMode('single');
-
     this.winManager = winManager;
     this.gameState = state;
     this.enemyCamp.setEnemies(enemyForce[state.getStage()]);
