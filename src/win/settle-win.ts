@@ -2,6 +2,7 @@ import config from '../config';
 import ScorePoint from '../entities/score-point';
 import TaskManager from '../task';
 import { Delay } from '../delay';
+import { R } from '../loader';
 
 class SettleWin implements IGameWin {
   private winManager: IWindowManager;
@@ -52,7 +53,7 @@ class SettleWin implements IGameWin {
           point.isFinished() && self.tasks.removeTask(this);
         },
       });
-      this.tasks.addTask(new Delay(5));
+      this.tasks.addTask(new Delay(15));
     });
 
     this.tasks.addTask({
@@ -61,18 +62,31 @@ class SettleWin implements IGameWin {
       },
     });
 
+    this.tasks.addTask(new Delay(15));
+
     this.tasks.addTask({
       execute() {
         if (self.state.getMode() === 'single') return;
         if (P1.getTotalKill() > P2.getTotalKill()) {
+          R.Audio.play('misc');
           P1.addScore(1000);
         } else if (P1.getTotalKill() < P2.getTotalKill()) {
+          R.Audio.play('misc');
           P2.addScore(1000);
         }
       },
     });
 
-    this.tasks.addTask(new Delay(60));
+    this.tasks.addTask(new Delay(30));
+
+    if (!this.state.getGameOver()) {
+      this.tasks.addTask({
+        execute() {
+          R.Audio.play('start');
+        },
+      });
+    }
+    this.tasks.addTask(new Delay(90));
     this.tasks.addTask({ execute: () => this.nextWindow() });
   }
 

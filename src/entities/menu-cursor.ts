@@ -24,10 +24,12 @@ export default class MenuCursor extends Entity implements ISubScriber {
   }
 
   private preMenuItem(): void {
+    R.Audio.play('hit', true);
     this.menuIndex = this.menuIndex - 1 >= 0 ? this.menuIndex - 1 : this.menuItems.length - 1;
   }
 
   private nextMenuItem(): void {
+    R.Audio.play('hit', true);
     this.menuIndex = this.menuIndex + 1 >= this.menuItems.length ? 0 : this.menuIndex + 1;
   }
 

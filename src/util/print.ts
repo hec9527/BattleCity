@@ -30,7 +30,7 @@ export const Log = {
 
   copyright(): void {
     console.log(
-      `%c ${str} \n\n%c Copyright © 2021 \n%c Powered By Hec9527`,
+      `%c ${str} \n\n%c Copyright © 2022 \n%c Powered By Hec9527`,
       'color: #abf; padding 24px 36px;',
       'color: #f78; padding-left: 250px',
       'color: #78f; ',

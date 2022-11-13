@@ -63,9 +63,10 @@ class AllyTank extends Tank implements IAllyTank {
 
   protected hit(bullet: IBullet): void {
     if (this.protected) return;
-    if (this.level >= 2) {
+    if (this.level >= 4) {
       this.bulletLimit = 1;
-      this.level--;
+      this.level = 2;
+      R.Audio.play('hit');
     } else {
       this.destroy(bullet.getTank());
     }

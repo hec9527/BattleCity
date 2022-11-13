@@ -6,8 +6,21 @@ const Config = {
     maxStage: 256,
   },
   resource: {
-    audios: ['attack', 'attackOver', 'bomb', 'count', 'eat', 'life', 'misc', 'move', 'over', 'pause', 'start'] as const,
-    images: ['bonus', 'brick', 'enemyTank', 'explode', 'getScore', 'getScoreDouble', 'myTank', 'tool', 'UI'] as const,
+    audios: [
+      'attack',
+      'bomb',
+      'count',
+      'eat',
+      'explosion',
+      'hit',
+      'life',
+      'misc',
+      'move',
+      'over',
+      'pause',
+      'start',
+    ] as const,
+    images: ['bonus', 'brick', 'enemyTank', 'explode', 'myTank', 'tool', 'UI'] as const,
   },
   canvas: {
     width: 516,
@@ -23,7 +36,6 @@ const Config = {
   ticker: {
     defeat: 30,
     startDelay: 60,
-    stageChange: 2,
     cursorMove: 3,
     cursorBlink: 15,
     enemyShoot: 40,
@@ -33,13 +45,12 @@ const Config = {
     /** 改变移动状态 */
     trackStatus: 15,
     trackStatusFast: 3,
-    trackStatusSlow: 20,
     // moveStatus
     /** 出身动画时间 */
     birth: 70,
     birthStatus: 5,
     /** 保护罩 10s 600帧 */
-    protector: 900,
+    protector: 600,
     protectorStatus: 5,
     pause: 20,
     /** 奖励持续时间 */
@@ -50,8 +61,6 @@ const Config = {
     explodeBase: 27,
     explodeBullet: 10,
     explodeStatus: 3,
-    /** 定身时间 */
-    stopStatus: 600,
     /** 战斗结束停留时间 */
     battleOver: 240,
     /** 围墙建造后保持时间 */
@@ -62,20 +71,12 @@ const Config = {
     wallBlinkStatus: 30,
   },
   speed: {
-    slowest: 1.1,
-    slower: 1.3,
-    slow: 1.5,
-    normal: 1.8,
-    fast: 2,
-    faster: 2.5,
-    fastest: 3.5,
-
-    ally: 2.0,
+    ally: 1.5,
     enemySlow: 1,
-    enemyNormal: 1.7,
-    enemyFast: 2.5,
+    enemyNormal: 1.3,
+    enemyFast: 2,
     bullet: 4,
-    bulletEnhance: 7,
+    bulletEnhance: 7.5,
   },
   colors: {
     black: '#000',
@@ -96,13 +97,6 @@ const Config = {
     createEnemyInterval: 80,
     maxEnemyAlive: 5,
   },
-  wall: [
-    [11, 5],
-    [11, 6],
-    [11, 7],
-    [12, 5],
-    [12, 7],
-  ] as [number, number][],
   base: [12 * 32, 6 * 32],
 };
 

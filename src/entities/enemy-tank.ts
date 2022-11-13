@@ -38,6 +38,7 @@ class EnemyTank extends Tank implements IEnemyTank {
       this.level = 1;
       this.bulletLimit = 1;
     }
+    R.Audio.play('hit');
     if (this.award >= 1) {
       this.award--;
       this.eventManager.fireEvent<ITankEvent>({ type: EVENT.TANK.AWARD_TANK_HIT, tank: this });

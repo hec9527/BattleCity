@@ -5,7 +5,7 @@ import './object/simulator';
 import './util/orientation';
 import './less/index.less';
 
-// Printer.copyright();
+Printer.copyright();
 
 Loader().then(() => {
   Printer.info('资源加载完毕');

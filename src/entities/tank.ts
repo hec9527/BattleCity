@@ -65,6 +65,9 @@ abstract class Tank extends EntityMoveable implements ITank {
 
   protected postMove(): void {
     this.trackStatus.update();
+    if (this.camp === 'ally') {
+      R.Audio.play('move');
+    }
   }
 
   protected removeProtector(): void {
@@ -78,10 +81,8 @@ abstract class Tank extends EntityMoveable implements ITank {
   }
 
   protected upGrade(level = 1): void {
-    this.level += level;
-    if (this.level > 4) {
-      this.level = 4;
-    }
+    this.level = Math.min(4, this.level + level);
+
     if (this.level >= 3) {
       this.bulletLimit = 2;
     }
@@ -89,6 +90,7 @@ abstract class Tank extends EntityMoveable implements ITank {
 
   protected destroy(): void {
     this.eventManager.fireEvent({ type: EVENT.TANK.DESTROYED, tank: this });
+    R.Audio.play('explosion');
     super.destroy();
   }
 
@@ -171,6 +173,16 @@ abstract class Tank extends EntityMoveable implements ITank {
       case 6:
         this.upGrade(4);
         break;
+    }
+
+    if (this.camp === 'ally') {
+      switch (award.getAwardType()) {
+        case 2:
+        case 4:
+          break;
+        default:
+          R.Audio.play('eat');
+      }
     }
   }
 

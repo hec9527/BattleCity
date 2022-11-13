@@ -1,5 +1,4 @@
 import { removeFromArr } from '../util';
-import EVENT from '../event';
 
 type ISubscriberList = {
   [K in string]: ISubScriber[];

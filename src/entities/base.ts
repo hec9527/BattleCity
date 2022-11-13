@@ -21,6 +21,7 @@ export default class Base extends Entity {
     if (!this.isDestroyed) {
       this.eventManager.fireEvent({ type: EVENT.BASE.DESTROY, base: this });
       this.isDestroyed = true;
+      R.Audio.play('bomb');
     }
   }
 

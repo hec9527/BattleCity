@@ -10,11 +10,11 @@ import config from '../config';
 
 const files = config.resource.audios;
 
-const multiChannelList: Files[] = ['attack', 'attackOver', 'count', 'misc', 'pause'];
+const multiChannelList: Files[] = ['attack', 'hit', 'count', 'misc', 'pause'];
 
 export type Files = typeof files[number];
 
-export type CacheAudio = { [K in Files]: [HTMLAudioElement] };
+export type CacheAudio = { [K in Files]: HTMLAudioElement[] };
 
 export function loadAudio(): Promise<Sound> {
   const cache = {} as CacheAudio;
@@ -29,29 +29,30 @@ export function loadAudio(): Promise<Sound> {
       audio.preload = 'auto';
       audio.oncanplaythrough = () => {
         resolve();
-        cache[str] = [audio];
-        if (multiChannelList.includes(str)) {
-          const audio1 = audio.cloneNode() as HTMLAudioElement;
-          const audio2 = audio.cloneNode() as HTMLAudioElement;
-          const audio3 = audio.cloneNode() as HTMLAudioElement;
-          cache[str].push(audio1, audio2, audio3);
-        }
+        cache[str] = [audio, ...(cache[str] || [])];
       };
-      audio.src = `/audio/${str}.mp3`;
+      audio.src = `/audio/${str}.ogg`;
 
       // preload 在IOS中被禁止，可以先静音播放，让音频加载进来，然后立马暂停并且解除静音
-      try {
-        audio.muted = true;
-        audio.play();
-        audio.pause();
-        audio.muted = false;
-      } catch (error) {
-        //
-      }
+      audio.muted = true;
+      audio.play();
+      audio.pause();
+      audio.muted = false;
     });
   };
 
-  return Promise.all(files.map(loadAudio)).then(() => {
+  const mapAudio = () => {
+    const arr = [...files];
+    files.forEach(file => {
+      if (multiChannelList.includes(file)) {
+        arr.push(file);
+        arr.push(file);
+      }
+    });
+    return arr.map(loadAudio);
+  };
+
+  return Promise.all(mapAudio()).then(() => {
     Printer.info('音频加载完成', cache);
     return new Sound(cache);
   });
