@@ -7,19 +7,34 @@
 ![version](./svg/version-1.0.0-3963bc.svg)
 ![node version](./svg/node-6.17.1+-3963bc.svg)
 ![License](./svg/license-MIT-3963bc.svg)
-![mocha](./svg/test-mocha-3963bc.svg)
 ![javascript](./svg/js-Es11-3963bc.svg)
 ![typescript](./svg/ts-4.2.4-3963bc.svg)
+![vite](./svg/vite-3.1.4.4-%234968b1.svg)
 ![author](./svg/author-hec9527-3963bc.svg)
 
 </div>
 
 [Battle city](https://github.com/hec9527/BattleCity)是经典的红白机游戏之一，其操作简单，玩法经典，经久不衰。本项目使用 `h5` + `ts` + `canvas` 原滋原味的复刻了红白机的游戏逻辑和流程。项目包含多个分支对应不同时期的历史版本。~~同时配有有非常完善的开发文档及日志~~，梳理实现思路和优化方向，~~所有代码经过严格的代码测试~~
 
+## 在线食用
+
+[http://tank.hec9527.top/](http://tank.hec9527.top/)
+
+## 本地享用
+
+```zsh
+git clone https://github.com/hec9527/BattleCity.git
+
+cd BattleCity
+
+pnpm install
+
+npm run dev
+```
+
 ## 游戏截图
 
-![](images/start.png)
+[查看关卡截图][./images]
 
-## 关卡数据
+![](images/win_start.png)
 
-[关卡精灵图](https://spritedatabase.net/game/3101)

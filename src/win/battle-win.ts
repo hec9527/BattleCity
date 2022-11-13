@@ -38,7 +38,6 @@ class BattleWin implements IGameWin, ISubScriber {
 
     this.winManager = winManager;
     this.gameState = state;
-    // this.enemyCamp.setEnemies('0123');
     this.enemyCamp.setEnemies(enemyForce[state.getStage()]);
     this.allyCamp = new AllyCamp(state.getPlayers(), state.getStage());
 
