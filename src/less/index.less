@@ -71,9 +71,11 @@ body {
     }
 
     &::before {
+      // 导致页面卡顿
       // filter: blur(10px);
+      background-color: #0002;
       background-position: center;
-      background-image: url(/img/bilibili.jpg);
+      // background-image: url(/img/bilibili.jpg);
     }
 
     #video-container {
@@ -157,12 +159,16 @@ body {
       position: absolute;
       right: 15px;
       bottom: 15px;
-      color: #abf;
+      // color: #abf;
+      color: transparent;
+      background-image: linear-gradient(10deg, rgb(10, 45, 201), rgb(7, 184, 10));
+      background-clip: text;
+      -webkit-background-clip: text;
       font-size: 12px;
       font-family: prestart, prestart2p, 'Myriad Pro', 'San Francisco';
       transform: scale(0.85);
       transform-origin: right bottom;
-      text-shadow: 1px 1px 3px #fff, -1px -1px 1px #666;
+      // text-shadow: 1px 1px 3px #fff, -1px -1px 1px #666;
     }
   }
 }
