@@ -62,7 +62,7 @@ class StageWin implements IGameWin, ISubScriber {
   }
 
   notify(event: IControllerEvent): void {
-    if (this.entityContainer.getAllEntity().length > 0) return;
+    if (this.entityContainer.getAllEntity().length > 0 || this.startDelayTicker) return;
 
     switch (event.key) {
       case UP:
