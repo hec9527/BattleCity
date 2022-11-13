@@ -13,6 +13,7 @@ class Award extends Entity implements IAward {
   protected rect: IEntityRect;
   protected type: IEntityType = 'award';
   protected isCollision = false;
+  protected zIndex = 4;
 
   private awardType: IAwardType;
   private statusToggle = new DelayStatusToggle(config.ticker.award, [1, 0], config.ticker.awardBlink, 10);
