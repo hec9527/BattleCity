@@ -65,7 +65,8 @@ abstract class Tank extends EntityMoveable implements ITank {
   protected postMove(): void {
     this.trackStatus.update();
     if (this.camp === 'ally') {
-      R.Audio.play('move');
+      // TODO 优化move音效
+      // R.Audio.play('move');
     }
   }
 

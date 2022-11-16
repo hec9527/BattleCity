@@ -14,6 +14,8 @@ class MenuWin implements IGameWin, ISubScriber {
   constructor(winManager: IWindowManager) {
     this.winManager = winManager;
     this.eventManager.addSubscriber(this, [EVENT.KEYBOARD.PRESS]);
+
+    document.addEventListener('touchend', () => R.Audio.play('count'), { once: true });
   }
 
   private updateScrollY(): void {

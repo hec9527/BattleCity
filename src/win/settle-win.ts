@@ -53,7 +53,7 @@ class SettleWin implements IGameWin {
           point.isFinished() && self.tasks.removeTask(this);
         },
       });
-      this.tasks.addTask(new Delay(15));
+      this.tasks.addTask(new Delay(30));
     });
 
     this.tasks.addTask({

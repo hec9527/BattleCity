@@ -10,10 +10,10 @@ const files = Config.resource.images;
 
 export type Files = typeof files[number];
 
-export type CacheImg = { [K in Files]: HTMLImageElement };
+export type ICacheImg = { [K in Files]: HTMLImageElement };
 
-export async function loadImages(): Promise<CacheImg> {
-  const cache = {} as CacheImg;
+export async function loadImages(): Promise<ICacheImg> {
+  const cache = {} as ICacheImg;
 
   const loadImage = (str: Files) => {
     return new Promise<void>((resolve, reject) => {

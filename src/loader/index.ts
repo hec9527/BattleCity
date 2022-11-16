@@ -1,16 +1,16 @@
-import { loadImages, CacheImg } from './images';
-import { loadAudio, Sound } from './audio';
+import { loadImages, ICacheImg } from './images';
+import { loadAudio, IAudioManager } from './audio';
 
 export type CacheResource = {
-  Image: CacheImg;
-  Audio: Sound;
+  Image: ICacheImg;
+  Audio: IAudioManager;
 };
 
 let isLoad = false;
 
 const resource: CacheResource = {
-  Image: {} as CacheImg,
-  Audio: {} as Sound,
+  Image: {} as ICacheImg,
+  Audio: {} as IAudioManager,
 };
 
 export default function loadSource(): Promise<CacheResource> {

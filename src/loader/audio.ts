@@ -1,91 +1,67 @@
-/**
- * 资源加载器 -- 音频
- * @author  hec9527
- */
-
+import config from '../config';
 import Printer from '../util/print';
 
-/** 音乐文件列表 */
-import config from '../config';
+type Files = typeof files[number];
+
+type Sounds = { [key in Files]: AudioBuffer };
 
 const files = config.resource.audios;
 
-const multiChannelList: Files[] = ['attack', 'hit', 'count', 'misc', 'pause'];
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const gainNode = audioCtx.createGain();
+gainNode.gain.value = 0;
 
-export type Files = typeof files[number];
+class AudioLoader {
+  private sounds = {} as Sounds;
+  private playing: Set<Files> = new Set();
 
-export type CacheAudio = { [K in Files]: HTMLAudioElement[] };
+  public setSound(sound: Files, buffer: AudioBuffer) {
+    this.sounds[sound] = buffer;
+  }
 
-export function loadAudio(): Promise<Sound> {
-  const cache = {} as CacheAudio;
+  public play(file: Files) {
+    if (this.playing.has(file)) return;
+    this.playing.add(file);
+    const source = audioCtx.createBufferSource();
+    source.buffer = this.sounds[file];
+    source.connect(gainNode).connect(audioCtx.destination);
+    source.start(0);
+    source.onended = () => {
+      /**
+       * 解决IOS第一次播放需要用户交互的问题
+       * https://stackoverflow.com/questions/12517000/no-sound-on-ios-6-web-audio-api
+       */
+      gainNode.gain.value = 1;
+      this.playing.delete(file);
+    };
+  }
+}
 
-  const loadAudio = (str: Files) => {
-    return new Promise<void>(resolve => {
-      const audio = new Audio();
-      audio.onerror = () => {
-        resolve();
-        Printer.error(`音频加载失败：${str}`);
-      };
-      audio.preload = 'auto';
-      audio.oncanplaythrough = () => {
-        resolve();
-        cache[str] = [audio, ...(cache[str] || [])];
-      };
-      audio.src = `/audio/${str}.ogg`;
+export function loadAudio() {
+  const audio = new AudioLoader();
 
-      // preload 在IOS中被禁止，可以先静音播放，让音频加载进来，然后立马暂停并且解除静音
-      audio.muted = true;
-      audio.play();
-      audio.pause();
-      audio.muted = false;
-    });
+  const fetchAudio = (src: Files) => {
+    return fetch(`/audio/${src}.wav`)
+      .then(res => res.arrayBuffer())
+      .then(res => {
+        return audioCtx.decodeAudioData(res);
+      })
+      .then(res => audio.setSound(src, res));
   };
 
-  const mapAudio = () => {
-    const arr = [...files];
-    files.forEach(file => {
-      if (multiChannelList.includes(file)) {
-        arr.push(file);
-        arr.push(file);
-      }
-    });
-    return arr.map(loadAudio);
-  };
-
-  return Promise.all(mapAudio()).then(() => {
-    Printer.info('音频加载完成', cache);
-    return new Sound(cache);
+  return new Promise<AudioLoader>(resolve => {
+    Promise.all(files.map(fetchAudio))
+      .then(() => Printer.info('音频资源加载完毕', audio))
+      .catch(rea => {
+        Printer.error(`音频资源加载出错，${rea}`);
+        alert('音频加载出错');
+      })
+      .finally(() => resolve(audio));
   });
 }
 
-export class Sound {
-  private playingList: Set<HTMLAudioElement> = new Set();
+type IAudioManager = AudioLoader;
 
-  constructor(private sounds: CacheAudio) {}
+export type { IAudioManager };
 
-  private _play(audio: HTMLAudioElement) {
-    audio.volume = 0.8;
-    audio.play();
-    audio.onended = () => this.playingList.delete(audio);
-  }
-
-  /**
-   *  注意： 谨慎使用多声道，可能会造成性能问题
-   */
-  public play(file: Files, /** 多声道播放 */ multichannel = true): void {
-    if (!files.includes(file)) throw new Error(`未注册的音频文件: ${file}`);
-    if (!multichannel) {
-      const audio = this.sounds[file][0];
-      this.playingList.add(audio);
-      this._play(audio);
-    } else {
-      const audios = this.sounds[file];
-      for (let i = 0; i < audios.length; i++) {
-        if (!this.playingList.has(audios[i])) {
-          this.playingList.add(audios[i]);
-          this._play(audios[i]);
-        }
-      }
-    }
-  }
-}
+export default loadAudio;

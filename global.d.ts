@@ -8,6 +8,10 @@
 
 declare module '*.png';
 
+declare interface Window {
+  webkitAudioContext: typeof window.AudioContext;
+}
+
 declare type AnyFunction = (...args: any[]) => any;
 
 declare type AnyObject = {

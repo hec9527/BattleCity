@@ -38,8 +38,8 @@ export default class ScorePoint {
     if (!this.ticker || this.ticker.isFinished()) {
       if (this.currentNum < this.maxKillNum) {
         this.currentNum++;
-        R.Audio.play('count', true);
-        this.ticker = new Ticker(15);
+        R.Audio.play('count');
+        this.ticker = new Ticker(10);
       } else {
         this.finished = true;
       }

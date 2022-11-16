@@ -24,12 +24,12 @@ export default class MenuCursor extends Entity implements ISubScriber {
   }
 
   private preMenuItem(): void {
-    R.Audio.play('hit', true);
+    R.Audio.play('hit');
     this.menuIndex = this.menuIndex - 1 >= 0 ? this.menuIndex - 1 : this.menuItems.length - 1;
   }
 
   private nextMenuItem(): void {
-    R.Audio.play('hit', true);
+    R.Audio.play('hit');
     this.menuIndex = this.menuIndex + 1 >= this.menuItems.length ? 0 : this.menuIndex + 1;
   }
 
@@ -65,7 +65,7 @@ export default class MenuCursor extends Entity implements ISubScriber {
   }
 
   public notify(event: IControllerEvent): void {
-    if (this.cursorTicker && !this.cursorTicker.isFinished()) return;
+    if ((this.cursorTicker && !this.cursorTicker.isFinished()) || this.scrollY !== 0) return;
     this.cursorTicker = new Ticker(Config.ticker.cursorMove);
 
     switch (event.key) {
