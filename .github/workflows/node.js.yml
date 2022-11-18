@@ -5,13 +5,12 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "v2" ]
+    branches: ['v2']
   pull_request:
-    branches: [ "v2" ]
+    branches: ['v2']
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -20,46 +19,46 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - name: checkout branck
-      uses: actions/checkout@v3
+      - name: checkout branch
+        uses: actions/checkout@v3
 
-    - name: Use Nodejs ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Nodejs ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: setup pnpm
-      uses: pnpm/action-setup@v2
-      id: pnpm-install
-      with:
+      - name: setup pnpm
+        uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
           version: 7
           run_install: false
-          
-    - name: Get pnpm store directory
-      id: pnpm-cache
-      shell: bash
-      run: |
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-    - name: Setup pnpm cache
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-    - name: Install dependencies
-      run: pnpm install
-      
-    - name: build project
-      run: pnpm build
+      - name: Install dependencies
+        run: pnpm install
 
-    - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v2
-      env:
+      - name: build project
+        run: pnpm build
+
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@v2
+        env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          SOURCE: "dist/"
+          SOURCE: 'dist/'
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
