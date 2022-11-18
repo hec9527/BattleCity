@@ -1,3 +1,4 @@
+import { version } from './package.json';
 import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
@@ -11,5 +12,9 @@ export default defineConfig({
     outDir: 'dist/',
     assetsInlineLimit: 10240,
     emptyOutDir: true,
+  },
+  define: {
+    BUILD_TIME: JSON.stringify(new Date().toLocaleString()),
+    BUILD_VERSION: JSON.stringify(version),
   },
 });
