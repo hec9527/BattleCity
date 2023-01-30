@@ -31,17 +31,6 @@ if (isMobile) {
     });
   };
 
-  // 禁用双指缩放
-  document.documentElement.addEventListener(
-    'touchstart',
-    e => {
-      if (e.touches.length > 1) {
-        e.preventDefault();
-      }
-    },
-    false,
-  );
-
   // 禁用双击缩放
   document.documentElement.addEventListener('touchend', e => {
     e.preventDefault();
