@@ -36,7 +36,10 @@ class AllyTank extends Tank implements IAllyTank {
   }
 
   public inheritFromTank(tank: IAllyTank): void {
-    this.upGrade(tank.getLevel());
+    this.level = tank.getLevel();
+    if (this.level >= 3) {
+      this.bulletLimit = 2;
+    }
   }
 
   public setPlayer(player: IPlayer): void {
@@ -89,7 +92,7 @@ class AllyTank extends Tank implements IAllyTank {
     const [x, y, w, h] = this.rect;
     ctx.drawImage(
       R.Image.myTank,
-      this.clipX + (this.level - 1) * 32,
+      this.clipX + (Math.min(this.level, 4) - 1) * 32,
       (this.direction * 2 + this.trackStatus.getStatus()) * 32,
       32,
       32,

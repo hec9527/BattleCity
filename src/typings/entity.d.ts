@@ -26,8 +26,6 @@ declare type IBrickType = 'brick' | 'iron' | 'ice' | 'grass' | 'river' | 'blank'
 
 declare type IEnemyType = 0 | 1 | 2 | 3;
 
-declare type IBulletType = 'normal' | 'enhance';
-
 declare type IKillRecord = { [K in IEnemyType]: number };
 
 /**
@@ -86,7 +84,7 @@ declare interface IAllyTank extends ITank {
 
 declare interface IBullet extends IEntityMoveable {
   getTank(): ITank;
-  getType(): IBulletType;
+  getLevel(): number;
 }
 
 declare interface IAward extends IEntity {

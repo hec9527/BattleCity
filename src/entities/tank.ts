@@ -80,8 +80,12 @@ abstract class Tank extends EntityMoveable implements ITank {
     this.protectorStatus.refresh();
   }
 
-  protected upGrade(level = 1): void {
-    this.level = Math.min(4, this.level + level);
+  protected upGrade(level: 1 | 4 = 1): void {
+    if (level === 4) {
+      this.level = this.level <= 4 ? 4 : this.level;
+    } else {
+      this.level = ++this.level > 6 ? 6 : this.level;
+    }
 
     if (this.level >= 3) {
       this.bulletLimit = 2;

@@ -106,19 +106,25 @@ export default class BrickFragment extends Entity implements IBrick, ISubScriber
   }
 
   public destroy(bullet: IBullet): void {
-    if ((['grass', 'river', 'ice', 'blank'] as IBrickType[]).includes(this.brickType)) return;
+    if ((['river', 'ice', 'blank'] as IBrickType[]).includes(this.brickType)) return;
 
-    if (this.brickType === 'brick') {
-      /** 土块，任何等级的子弹都能打碎 */
-      if (bullet.getType() === 'enhance') {
-        return super.destroy(bullet);
-      }
-      this.reduce(bullet);
-      if (this.status.reduce((p, c) => p + c) === 0) {
-        return super.destroy(bullet);
-      }
-    } else if (this.brickType === 'iron' && bullet.getType() === 'enhance') {
-      return super.destroy(bullet);
+    switch (this.brickType) {
+      case 'brick':
+        /** 土块，任何等级的子弹都能打碎 */
+        if (bullet.getLevel() >= 4) {
+          return super.destroy(bullet);
+        }
+        this.reduce(bullet);
+        if (this.status.reduce((p, c) => p + c) === 0) {
+          return super.destroy(bullet);
+        }
+        break;
+      case 'iron':
+        bullet.getLevel() >= 4 && super.destroy();
+        break;
+      case 'grass':
+        bullet.getLevel() >= 6 && super.destroy();
+        break;
     }
   }
 

@@ -12,7 +12,6 @@ import Entity from './entity';
 import Config from '../config';
 import EVENT from '../event';
 import BrickFragment from './brick-fragment';
-import StatusToggle from '../status-toggle';
 import { R } from '../loader';
 import { getBrickType } from '../util/map-tool';
 import brick, { missLeftBottomBrick, missLeftTopBrick, missRightBottomBrick, missRightTopBrick } from '../config/brick';
@@ -49,14 +48,17 @@ class Brick extends Entity implements IBrick, ISubScriber {
     this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
     this.brickIndex = brickIndex;
     this.brickType = getBrickType(brickIndex);
-    this.isCollision = !['grass', 'ice', 'blank'].includes(this.brickType);
+    this.isCollision = !['ice', 'blank'].includes(this.brickType);
 
-    if (this.brickType === 'grass') {
-      this.zIndex = 3;
-    } else if (this.brickType === 'ice') {
-      this.zIndex = -1;
-    } else {
-      this.zIndex = 0;
+    switch (this.brickType) {
+      case 'grass':
+        this.zIndex = 3;
+        break;
+      case 'ice':
+        this.zIndex = -1;
+        break;
+      default:
+        this.zIndex = 0;
     }
 
     if (this.brickType === 'river') {
@@ -102,7 +104,10 @@ class Brick extends Entity implements IBrick, ISubScriber {
         this.broken(bullet);
         break;
       case brick.iron:
-        bullet.getType() === 'enhance' && this.broken(bullet);
+        bullet.getLevel() >= 4 && this.broken(bullet);
+        break;
+      case brick.grass:
+        bullet.getLevel() === 6 && this.broken(bullet);
         break;
       default:
         break;

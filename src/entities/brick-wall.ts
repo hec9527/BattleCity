@@ -66,9 +66,8 @@ class BrickWall extends BrickFragment implements ISubScriber {
 
   public hit(bullet: IBullet): void {
     if (this.wallType === 'brick') {
-      if (bullet.getType() === 'normal') {
+      if (bullet.getLevel() < 4) {
         this.reduce(bullet);
-
         if (this.status.reduce((p, c) => p + c) === 0) {
           return this.destroy();
         }
@@ -76,7 +75,7 @@ class BrickWall extends BrickFragment implements ISubScriber {
         this.destroy();
       }
     } else {
-      if (bullet.getType() === 'enhance') {
+      if (bullet.getLevel() >= 4) {
         this.destroy();
       }
     }
