@@ -4,13 +4,13 @@
 
 <!-- https://shields.io/ -->
 
-![version](./svg/version-1.0.0-3963bc.svg)
-![node version](./svg/node-6.17.1+-3963bc.svg)
-![License](./svg/license-MIT-3963bc.svg)
-![javascript](./svg/js-Es11-3963bc.svg)
-![typescript](./svg/ts-4.2.4-3963bc.svg)
-![vite](./svg/vite-3.1.4.4-%234968b1.svg)
-![author](./svg/author-hec9527-3963bc.svg)
+![version](./svg/version.svg)
+![node version](./svg/node.svg)
+![License](./svg/license-MIT.svg)
+![javascript](./svg/js-Es11.svg)
+![typescript](./svg/ts.svg)
+![vite](./svg/vite.svg)
+![author](./svg/author-hec9527.svg)
 
 </div>
 
@@ -61,6 +61,7 @@ npm run dev
 - 检查地图界面是否正确
 - 游戏参数是否合理
 - 游戏bug上报
+- 建议&意见g
 
 ## 游戏截图
 
