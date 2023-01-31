@@ -33,3 +33,6 @@ export function isEnemyTankKilledEvent(event: INotifyEvent): event is IEnemyTank
 export function isRiverEvent(event: INotifyEvent): event is IRiverEvent {
   return event.type === EVENT.BRICK.RIVER_FLOW;
 }
+export function isAwardDetectEvent(event: INotifyEvent): event is IAwardDetectEvent {
+  return event.type === EVENT.AWARD.DETECT;
+}

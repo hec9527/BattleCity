@@ -7,7 +7,12 @@ class EntityContainer implements ISubScriber {
   private collisionDetecter: CollisionDetecter;
 
   constructor() {
-    this.eventManager.addSubscriber(this, [EVENT.ENTITY.CREATED, EVENT.ENTITY.DESTROYED, EVENT.ENTITY.MOVE]);
+    this.eventManager.addSubscriber(this, [
+      EVENT.ENTITY.CREATED,
+      EVENT.ENTITY.DESTROYED,
+      EVENT.ENTITY.MOVE,
+      EVENT.AWARD.CREATE,
+    ]);
     this.collisionDetecter = new CollisionDetecter();
   }
 
@@ -63,6 +68,9 @@ class EntityContainer implements ISubScriber {
         break;
       case EVENT.ENTITY.MOVE:
         this.collisionDetecter.detect([...this.entities], (event as IEntityEvent).entity);
+        break;
+      case EVENT.AWARD.CREATE:
+        this.eventManager.fireEvent<IAwardDetectEvent>({ type: EVENT.AWARD.DETECT, entities: this.getAllEntity() });
         break;
       default:
         console.warn(`useless event subScriber: ${event.type}`);

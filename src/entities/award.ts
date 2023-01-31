@@ -6,6 +6,7 @@ import DelayStatusToggle from '../delay-status-toggle';
 
 import { R } from '../loader';
 import { randomInt, isEntityCollision } from '../util';
+import { isAwardDetectEvent } from '../guard';
 
 const { paddingLeft: PL, paddingTop: PT } = config.battleField;
 
@@ -20,10 +21,11 @@ class Award extends Entity implements IAward {
 
   constructor() {
     super();
-    this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY]);
+    this.eventManager.addSubscriber(this, [EVENT.COLLISION.ENTITY, EVENT.AWARD.DETECT]);
 
     this.awardType = randomInt(0, 6) as IAwardType;
     this.rect = Award.getRandomRect();
+    this.eventManager.fireEvent({ type: EVENT.AWARD.CREATE });
   }
 
   private static getRandomRect(): IEntityRect {
@@ -34,6 +36,14 @@ class Award extends Entity implements IAward {
       return this.getRandomRect();
     }
     return rect;
+  }
+
+  private detectAwardRect(tanks: IEntity[]) {
+    const res = tanks.some(entity => isEntityCollision(this.rect, entity.getRect()));
+    if (res) {
+      this.rect = Award.getRandomRect();
+      this.detectAwardRect(tanks);
+    }
   }
 
   public destroy(picker?: IEntity): void {
@@ -75,6 +85,9 @@ class Award extends Entity implements IAward {
   public notify(event: INotifyEvent<ICollisionEvent>): void {
     if (event.type === EVENT.COLLISION.ENTITY && event.entity === this && event.initiator instanceof Tank) {
       this.destroy(event.initiator);
+    } else if (isAwardDetectEvent(event)) {
+      const tanks = event.entities.filter(entity => ['allyTank', 'enemyTank'].includes(entity.getEntityType()));
+      this.detectAwardRect(tanks);
     }
   }
 }
