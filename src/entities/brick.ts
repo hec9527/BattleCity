@@ -16,7 +16,7 @@ import StatusToggle from '../status-toggle';
 import { R } from '../loader';
 import { getBrickType } from '../util/map-tool';
 import brick, { missLeftBottomBrick, missLeftTopBrick, missRightBottomBrick, missRightTopBrick } from '../config/brick';
-import { isCollisionEvent } from '../guard';
+import { isCollisionEvent, isRiverEvent } from '../guard';
 import { isEntityCollision } from '../util';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
@@ -41,7 +41,7 @@ class Brick extends Entity implements IBrick, ISubScriber {
   protected brickIndex: number;
   protected brickType: IBrickType;
   protected rect: IEntityRect = [0, 0, 32, 32];
-  protected status: StatusToggle | undefined;
+  protected status = 0;
 
   constructor(brickIndex: number) {
     super();
@@ -60,7 +60,7 @@ class Brick extends Entity implements IBrick, ISubScriber {
     }
 
     if (this.brickType === 'river') {
-      this.status = new StatusToggle([0, 1], 30);
+      this.eventManager.addSubscriber(this, [EVENT.BRICK.RIVER_FLOW]);
     }
   }
 
@@ -85,9 +85,7 @@ class Brick extends Entity implements IBrick, ISubScriber {
     super.destroy();
   }
 
-  public update(): void {
-    this.status?.update();
-  }
+  public update(): void {}
 
   public getBrickType(): IBrickType {
     return this.brickType;
@@ -113,7 +111,7 @@ class Brick extends Entity implements IBrick, ISubScriber {
 
   public draw(ctx: CanvasRenderingContext2D): void {
     const [x, y, w, h] = this.rect;
-    const status = this.status?.getStatus() || 0;
+    const status = this.status;
     ctx.drawImage(R.Image.brick, 32 * (this.brickIndex + status), 0, 32, 32, x + PL, y + PT, w, h);
   }
 
@@ -125,6 +123,8 @@ class Brick extends Entity implements IBrick, ISubScriber {
       event.initiator.getEntityType() === 'bullet'
     ) {
       this.destroy(event.initiator as IBullet);
+    } else if (isRiverEvent(event)) {
+      this.status = event.status;
     }
   }
 }

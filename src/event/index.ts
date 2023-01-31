@@ -20,6 +20,10 @@ const MINE = {
   ENEMY_OVER: 'ENEMY_MIN_TICK_OVER',
 };
 
+const BRICK = {
+  RIVER_FLOW: 'BRICK_RIVER_FLOW',
+};
+
 const EXPLOSION = {
   ENEMY_YANK_EXPLOSION: 'ENEMY_YANK_EXPLOSION',
 };
@@ -89,6 +93,7 @@ export default {
   EM,
   BASE,
   MINE,
+  BRICK,
   KEYBOARD,
   EXPLOSION,
   AWARD,

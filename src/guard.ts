@@ -30,3 +30,6 @@ export function isExplosionEvent(event: INotifyEvent): event is IExplosionEvent 
 export function isEnemyTankKilledEvent(event: INotifyEvent): event is IEnemyTankKilledEvent {
   return isTankEvent(event) && !!event.killer;
 }
+export function isRiverEvent(event: INotifyEvent): event is IRiverEvent {
+  return event.type === EVENT.BRICK.RIVER_FLOW;
+}

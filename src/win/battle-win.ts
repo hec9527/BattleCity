@@ -9,13 +9,14 @@ import EnemyCamp from '../entities/enemy-camp';
 import enemyForce from '../config/enemy-force';
 import EntityContainer from '../entities/entity-container';
 import BrickConstructor from '../entities/brick-constructor';
-import BulletFactory from '../entities/bullet-factory';
 import ExplosionFactory from '../entities/explosion-factory';
+import GameOverFactory from '../entities/game-over-factory';
+import BulletFactory from '../entities/bullet-factory';
 import ScoreFactory from '../entities/score-factory';
 import AwardFactory from '../entities/award-factory';
-import MineTicker from '../entities/mine-ticker';
 import PauseFactory from '../entities/pause-factory';
-import GameOverFactory from '../entities/game-over-factory';
+import RiverTicker from '../entities/river-ticker';
+import MineTicker from '../entities/mine-ticker';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 
@@ -26,6 +27,7 @@ class BattleWin implements IGameWin, ISubScriber {
   private entityContainer = new EntityContainer();
   private pauseFactory = new PauseFactory();
   private mineTick = new MineTicker();
+  private riverTick = new RiverTicker();
   private enemyCamp = new EnemyCamp();
   private allyCamp: AllyCamp;
   private defeat = false;
@@ -68,6 +70,7 @@ class BattleWin implements IGameWin, ISubScriber {
     if (this.pauseFactory.getPause()) return;
 
     this.mineTick.update();
+    this.riverTick.update();
     this.allyCamp.update();
     this.enemyCamp.update();
     this.entityContainer.update();
