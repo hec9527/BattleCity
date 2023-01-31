@@ -49,9 +49,13 @@ const Config = {
     /** 出身动画时间 */
     birth: 70,
     birthStatus: 5,
-    /** 保护罩 10s 600帧 */
-    protector: 600,
+    /** 保护罩 800帧 --> 800/5=160次状态切换 */
+    protector: 160,
+    /** 我方出生保护罩 300帧 300/5=60次状态切换 */
+    protectorShort: 60,
+    /** 每次状态切换帧数 */
     protectorStatus: 5,
+    /** 20帧内只能触发一次暂停 */
     pause: 20,
     /** 奖励持续时间 */
     award: 600,

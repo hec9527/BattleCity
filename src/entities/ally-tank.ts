@@ -30,7 +30,9 @@ class AllyTank extends Tank implements IAllyTank {
     this.speed = config.speed.ally;
 
     this.shootStatus.setFinished(true);
-    this.addProtector();
+    this.protectorStatus.setLoop(config.ticker.protectorShort);
+    this.protectorStatus.refresh();
+    this.protected = true;
   }
 
   public inheritFromTank(tank: IAllyTank): void {
@@ -47,6 +49,11 @@ class AllyTank extends Tank implements IAllyTank {
 
   public setShooting(shoot: boolean): void {
     this.shooting = shoot;
+  }
+
+  protected addProtector(): void {
+    this.protectorStatus.setLoop(config.ticker.protector);
+    super.addProtector();
   }
 
   public update(): void {

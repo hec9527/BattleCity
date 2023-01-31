@@ -45,6 +45,10 @@ class StatusToggle<T extends any = number> {
     }
   }
 
+  public setLoop(loop: number): void {
+    this.loop = loop;
+  }
+
   public getStatus(): T {
     return this.status[this.currentIndex];
   }

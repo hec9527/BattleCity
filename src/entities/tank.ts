@@ -17,7 +17,7 @@ abstract class Tank extends EntityMoveable implements ITank {
 
   protected abstract shootStatus: StatusToggle;
   protected trackStatus = new StatusToggle([0, 1], Config.ticker.trackStatus);
-  protected protectorStatus = new StatusToggle([0, 1], Config.ticker.protectorStatus, 160);
+  protected protectorStatus = new StatusToggle([0, 1], Config.ticker.protectorStatus, Config.ticker.protector);
 
   constructor() {
     super();
