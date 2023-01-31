@@ -12,7 +12,7 @@ abstract class Tank extends EntityMoveable implements ITank {
   protected protected = false;
   protected bulletLimit = 1;
   protected bullets = 0;
-  protected level = 1; // 2级子弹加快， 3级2发子弹  4级护甲1可以击穿铁块
+  protected level = 1; // 2级子弹加快， 3级2发子弹  4级护甲、可以击穿铁块
   private exploded = false;
 
   protected abstract shootStatus: StatusToggle;

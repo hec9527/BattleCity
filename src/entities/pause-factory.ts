@@ -13,6 +13,15 @@ export default class PauseFactory implements ISubScriber {
 
   constructor() {
     this.eventManager.addSubscriber(this, [EVENT.KEYBOARD.PRESS]);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (!this.active || this.pause) return;
+        this.pause = true;
+        this.eventManager.fireEvent({ type: EVENT.GAME.PAUSE });
+        this.pauseStatus.refresh();
+        R.Audio.play('pause');
+      }
+    });
   }
 
   public update(): void {
