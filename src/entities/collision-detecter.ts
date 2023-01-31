@@ -35,6 +35,17 @@ class CollisionDetecter {
     });
   }
 
+  public detectTankSlide(entities: IEntity[], tank: ITank) {
+    entities.forEach(entity => {
+      if (entity === tank) return;
+      if (entity.getEntityType() !== 'brick') return;
+      if ((entity as IBrick).getBrickType() !== 'ice') return;
+      if (isEntityCollision(entity.getRect(), tank.getRect())) {
+        this.eventManager.fireEvent({ type: EVENT.TANK.ALLY_TANK_SLIDE, tank });
+      }
+    });
+  }
+
   public detect(entities: IEntity[], initiator: IEntity) {
     this.detectBorder(initiator);
     this.detectEntity(entities, initiator);

@@ -12,6 +12,7 @@ class EntityContainer implements ISubScriber {
       EVENT.ENTITY.DESTROYED,
       EVENT.ENTITY.MOVE,
       EVENT.AWARD.CREATE,
+      EVENT.TANK.ALLY_TANK_STOP,
     ]);
     this.collisionDetecter = new CollisionDetecter();
   }
@@ -67,10 +68,13 @@ class EntityContainer implements ISubScriber {
         this.removeEntity((event as IEntityEvent).entity);
         break;
       case EVENT.ENTITY.MOVE:
-        this.collisionDetecter.detect([...this.entities], (event as IEntityEvent).entity);
+        this.collisionDetecter.detect(this.getAllEntity(), (event as IEntityEvent).entity);
         break;
       case EVENT.AWARD.CREATE:
         this.eventManager.fireEvent<IAwardDetectEvent>({ type: EVENT.AWARD.DETECT, entities: this.getAllEntity() });
+        break;
+      case EVENT.TANK.ALLY_TANK_STOP:
+        this.collisionDetecter.detectTankSlide(this.getAllEntity(), (event as ITankEvent).tank);
         break;
       default:
         console.warn(`useless event subScriber: ${event.type}`);

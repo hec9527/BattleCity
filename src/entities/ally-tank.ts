@@ -1,8 +1,10 @@
 import Tank from './tank';
 import EVENT from '../event';
 import config from '../config';
-import { R } from '../loader';
 import StatusToggle from '../status-toggle';
+
+import { R } from '../loader';
+import { isTankEvent } from '../guard';
 
 const { paddingLeft: PL, paddingTop: PT } = config.battleField;
 export const birthPlace = {
@@ -19,6 +21,8 @@ class AllyTank extends Tank implements IAllyTank {
   private player: IPlayer;
   private clipX: number;
   private shooting = false;
+  private slide = false;
+  private slideStatus = new StatusToggle([0], 10, 1);
 
   constructor(player: IPlayer) {
     super();
@@ -33,6 +37,8 @@ class AllyTank extends Tank implements IAllyTank {
     this.protectorStatus.setLoop(config.ticker.protectorShort);
     this.protectorStatus.refresh();
     this.protected = true;
+
+    this.eventManager.addSubscriber(this, [EVENT.TANK.ALLY_TANK_SLIDE]);
   }
 
   public inheritFromTank(tank: IAllyTank): void {
@@ -64,6 +70,22 @@ class AllyTank extends Tank implements IAllyTank {
     this.shootStatus.update();
     if (this.shooting) {
       super.shoot();
+    }
+    if (this.slide) {
+      this.move();
+      this.slideStatus.update();
+      if (this.slideStatus.isFinished()) {
+        this.slide = false;
+      }
+    }
+  }
+
+  // @overwrite EntityMoveable.setStop
+  public setStop(stop: boolean): void {
+    if (this.slide) return;
+    this.stop = stop;
+    if (stop) {
+      this.eventManager.fireEvent({ type: EVENT.TANK.ALLY_TANK_STOP, tank: this });
     }
   }
 
@@ -102,6 +124,14 @@ class AllyTank extends Tank implements IAllyTank {
       h,
     );
     super.draw(ctx);
+  }
+
+  public notify(event: INotifyEvent<ICollisionEvent>): void {
+    super.notify(event);
+    if (event.type === EVENT.TANK.ALLY_TANK_SLIDE && isTankEvent(event) && event.tank === this) {
+      this.slide = true;
+      this.slideStatus.refresh();
+    }
   }
 }
 

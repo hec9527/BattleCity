@@ -27,7 +27,7 @@ declare interface IEntityEvent extends INotifyEvent {
 }
 
 declare interface ITankEvent extends INotifyEvent {
-  tank: IEntity;
+  tank: ITank;
 }
 
 declare interface IBaseEvent extends INotifyEvent {
