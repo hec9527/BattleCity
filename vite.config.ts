@@ -16,7 +16,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   define: {
-    BUILD_TIME: JSON.stringify(new Date().toLocaleString()),
-    BUILD_VERSION: JSON.stringify(version),
+    __BUILD_TIME__: JSON.stringify(new Date().toLocaleString()),
+    __BUILD_VERSION__: JSON.stringify(version),
   },
 });

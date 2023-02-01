@@ -4,12 +4,12 @@ const version = document.querySelector('meta[name="__BUILD_VERSION"]') as HTMLMe
 const copyright = (document.querySelector('#copy-right') as HTMLDivElement) || null;
 
 if (time) {
-  time.content = import.meta.env.BUILD_TIME || window.BUILD_TIME || '';
+  time.content = import.meta.env.BUILD_TIME || window.__BUILD_TIME__ || '';
 }
 if (version) {
-  version.content = import.meta.env.BUILD_VERSION || window.BUILD_VERSION || '';
+  version.content = import.meta.env.BUILD_VERSION || window.__BUILD_VERSION__ || '';
 }
 
 if (copyright) {
-  copyright.title = import.meta.env.BUILD_VERSION || window.BUILD_VERSION || '';
+  copyright.title = import.meta.env.BUILD_VERSION || window.__BUILD_VERSION__ || '';
 }

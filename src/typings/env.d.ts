@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly BUILD_TIME: string;
-  readonly BUILD_VERSION: string;
+  readonly __BUILD_TIME__: string;
+  readonly __BUILD_VERSION__: string;
 }
 
 interface ImportMeta {
@@ -10,6 +10,6 @@ interface ImportMeta {
 }
 
 interface Window {
-  readonly BUILD_TIME?: string;
-  readonly BUILD_VERSION?: string;
+  readonly __BUILD_TIME__?: string;
+  readonly __BUILD_VERSION__?: string;
 }
