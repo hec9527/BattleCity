@@ -1,9 +1,9 @@
 import EVENT from '../event';
-import Ticker from '../ticker';
+import Ticker from '../object/ticker';
 import config from '../config';
 
 import { R } from '../loader';
-import { isControlEvent } from '../guard';
+import { isControlEvent } from '../object/guard';
 
 export default class OverWin implements IGameWin, ISubScriber {
   private winManager: IWindowManager;

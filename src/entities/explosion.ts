@@ -1,8 +1,8 @@
 import EVENT from '../event';
 import Entity from './entity';
 import config from '../config';
-import Ticker from '../ticker';
-import StatusToggle from '../status-toggle';
+import Ticker from '../object/ticker';
+import StatusToggle from '../object/status-toggle';
 
 import { R } from '../loader';
 

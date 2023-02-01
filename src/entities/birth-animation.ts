@@ -1,7 +1,7 @@
 import Entity from './entity';
 import Config from '../config';
-import StatusToggle from '../status-toggle';
-import Ticker from '../ticker';
+import StatusToggle from '../object/status-toggle';
+import Ticker from '../object/ticker';
 import { R } from '../loader';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;

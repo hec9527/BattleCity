@@ -2,11 +2,11 @@ import Tank from './tank';
 import EVENT from '../event';
 import config from '../config';
 import Entity from './entity';
-import DelayStatusToggle from '../delay-status-toggle';
+import DelayStatusToggle from '../object/delay-status-toggle';
 
 import { R } from '../loader';
 import { randomInt, isEntityCollision } from '../util';
-import { isAwardDetectEvent } from '../guard';
+import { isAwardDetectEvent } from '../object/guard';
 
 const { paddingLeft: PL, paddingTop: PT } = config.battleField;
 

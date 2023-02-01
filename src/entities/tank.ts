@@ -1,10 +1,10 @@
 import Config from '../config';
 import EVENT from '../event';
-import StatusToggle from '../status-toggle';
+import StatusToggle from '../object/status-toggle';
 import EntityMoveable from './entity-moveable';
 
 import { R } from '../loader';
-import { isBulletEvent, isCollisionEvent } from '../guard';
+import { isBulletEvent, isCollisionEvent } from '../object/guard';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 

@@ -1,10 +1,10 @@
 import config from '../config';
 import EVENT from '../event';
-import Ticker from '../ticker';
+import Ticker from '../object/ticker';
 import AllyTank, { birthPlace } from './ally-tank';
 import AllyController from './ally-controller';
 import BirthAnimation from './birth-animation';
-import { isTankEvent } from '../guard';
+import { isTankEvent } from '../object/guard';
 import { R } from '../loader';
 
 const PT = 245;

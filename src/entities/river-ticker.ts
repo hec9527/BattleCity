@@ -1,5 +1,5 @@
 import EVENT from '../event';
-import StatusToggle from '../status-toggle';
+import StatusToggle from '../object/status-toggle';
 
 export default class RiverTicker {
   private readonly eventManager = EVENT.EM;

@@ -1,9 +1,9 @@
 import { R } from '../loader';
-import StatusToggle from '../status-toggle';
 import Config from '../config';
 import Entity from './entity';
 import EVENT from '../event';
-import Ticker from '../ticker';
+import Ticker from '../object/ticker';
+import StatusToggle from '../object/status-toggle';
 
 const { UP, DOWN, SELECT } = EVENT.CONTROL.P1;
 

@@ -15,7 +15,7 @@ import BrickFragment from './brick-fragment';
 import { R } from '../loader';
 import { getBrickType } from '../util/map-tool';
 import brick, { missLeftBottomBrick, missLeftTopBrick, missRightBottomBrick, missRightTopBrick } from '../config/brick';
-import { isCollisionEvent, isRiverEvent } from '../guard';
+import { isCollisionEvent, isRiverEvent } from '../object/guard';
 import { isEntityCollision } from '../util';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;

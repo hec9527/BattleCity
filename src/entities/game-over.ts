@@ -1,5 +1,5 @@
 import config from '../config';
-import Ticker from '../ticker';
+import Ticker from '../object/ticker';
 import Entity from './entity';
 
 export default class GameOver extends Entity {

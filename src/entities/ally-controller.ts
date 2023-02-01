@@ -1,5 +1,5 @@
 import EVENT from '../event';
-import { isControlEvent, isTankEvent } from '../guard';
+import { isControlEvent, isTankEvent } from '../object/guard';
 
 export default class AllyController implements ISubScriber {
   private eventManager = EVENT.EM;

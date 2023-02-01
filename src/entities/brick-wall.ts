@@ -2,9 +2,9 @@ import EVENT from '../event';
 import config from '../config';
 import brick from '../config/brick';
 import BrickFragment from './brick-fragment';
-import DelayStatusToggle from '../delay-status-toggle';
+import DelayStatusToggle from '../object/delay-status-toggle';
 
-import { isCollisionEvent } from '../guard';
+import { isCollisionEvent } from '../object/guard';
 
 class BrickWall extends BrickFragment implements ISubScriber {
   protected brickType: IBrickType = 'brickWall';

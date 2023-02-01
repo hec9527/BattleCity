@@ -1,7 +1,7 @@
 import Loader from './loader/';
 import Printer from './util/print';
-import keyboard from './object/keyboard';
-import './object/simulator';
+import keyboard from './controller/keyboard';
+import './controller/simulator';
 import './util/orientation';
 import './util/build-info';
 import './less/index.less';

@@ -1,6 +1,6 @@
 import EVENT from '../event';
 import config from '../config';
-import { isCollisionEvent, isTankEvent } from '../guard';
+import { isCollisionEvent, isTankEvent } from '../object/guard';
 
 export default class EnemyController implements ISubScriber, IEnemyController {
   private tank: IEnemyTank;

@@ -1,7 +1,7 @@
 import config from '../config';
 import ScorePoint from '../entities/score-point';
-import TaskManager from '../task';
-import { Delay } from '../delay';
+import TaskManager from '../object/task';
+import { Delay } from '../object/delay';
 import { R } from '../loader';
 
 class SettleWin implements IGameWin {

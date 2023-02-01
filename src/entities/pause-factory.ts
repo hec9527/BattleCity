@@ -1,9 +1,9 @@
 import config from '../config';
 import EVENT from '../event';
-import StatusToggle from '../status-toggle';
+import StatusToggle from '../object/status-toggle';
 
 import { R } from '../loader';
-import { isControlEvent } from '../guard';
+import { isControlEvent } from '../object/guard';
 
 export default class PauseFactory implements ISubScriber {
   private eventManager = EVENT.EM;

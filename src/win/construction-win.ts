@@ -5,7 +5,7 @@ import BrickConstructor from '../entities/brick-constructor';
 import ConstructionCursor from '../entities/construction-cursor';
 import Map from '../map';
 
-import { isControlEvent } from '../guard';
+import { isControlEvent } from '../object/guard';
 import { isEntityCollision } from '../util';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;

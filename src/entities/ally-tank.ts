@@ -1,10 +1,10 @@
 import Tank from './tank';
 import EVENT from '../event';
 import config from '../config';
-import StatusToggle from '../status-toggle';
+import StatusToggle from '../object/status-toggle';
 
 import { R } from '../loader';
-import { isTankEvent } from '../guard';
+import { isTankEvent } from '../object/guard';
 
 const { paddingLeft: PL, paddingTop: PT } = config.battleField;
 export const birthPlace = {

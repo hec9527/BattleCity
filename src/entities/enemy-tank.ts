@@ -1,7 +1,7 @@
 import Tank from './tank';
 import EVENT from '../event';
 import Config from '../config';
-import StatusToggle from '../status-toggle';
+import StatusToggle from '../object/status-toggle';
 
 import { R } from '../loader';
 import { randomInt } from '../util';

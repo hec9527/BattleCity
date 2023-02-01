@@ -2,7 +2,7 @@ import EVENT from '../event';
 import Entity from './entity';
 import config from '../config';
 import { R } from '../loader';
-import { isCollisionEvent } from '../guard';
+import { isCollisionEvent } from '../object/guard';
 
 const { paddingLeft: PL, paddingTop: PT } = config.battleField;
 

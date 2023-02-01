@@ -2,7 +2,7 @@
 import EVENT from '../event';
 import Entity from './entity';
 import Config from '../config';
-import { isCollisionEvent } from '../guard';
+import { isCollisionEvent } from '../object/guard';
 
 export default abstract class EntityMoveable extends Entity implements IEntityMoveable {
   protected speed = 0;

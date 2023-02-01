@@ -1,5 +1,5 @@
 import EVENT from '../event';
-import { isAwardEvent, isEnemyTankKilledEvent, isExplosionEvent } from '../guard';
+import { isAwardEvent, isEnemyTankKilledEvent, isExplosionEvent } from '../object/guard';
 import Score, { IScoreValue } from './score';
 
 export default class ScoreFactory implements ISubScriber {

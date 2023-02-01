@@ -5,7 +5,7 @@ import EntityMoveable from './entity-moveable';
 import config from '../config';
 
 import { R } from '../loader';
-import { isCollisionEvent } from '../guard';
+import { isCollisionEvent } from '../object/guard';
 
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;
 

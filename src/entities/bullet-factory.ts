@@ -1,6 +1,6 @@
 import EVENT from '../event';
 import Bullet from './bullet';
-import { isTankEvent } from '../guard';
+import { isTankEvent } from '../object/guard';
 import { R } from '../loader';
 
 export default class BulletFactory implements ISubScriber {

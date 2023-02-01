@@ -1,10 +1,10 @@
 import EVENT from '../event';
 import Config from '../config';
-import StatusToggle from '../status-toggle';
+import StatusToggle from '../object/status-toggle';
 import EntityMoveable from './entity-moveable';
 
 import { R } from '../loader';
-import { isControlEvent } from '../guard';
+import { isControlEvent } from '../object/guard';
 
 const { UP, DOWN, LEFT, RIGHT, A, B } = EVENT.CONTROL.P1;
 const { paddingLeft: PL, paddingTop: PT } = Config.battleField;

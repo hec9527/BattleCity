@@ -1,4 +1,4 @@
-import EVENT from './event';
+import EVENT from '../event';
 
 export function isCollisionEvent(event: INotifyEvent): event is ICollisionEvent {
   return event.type === EVENT.COLLISION.BORDER || event.type === EVENT.COLLISION.ENTITY;

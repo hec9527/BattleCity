@@ -1,5 +1,5 @@
 import EVENT from '../event';
-import Ticker from '../ticker';
+import Ticker from '../object/ticker';
 import Config from '../config';
 import Curtain from '../entities/curtain';
 import EntityContainer from '../entities/entity-container';

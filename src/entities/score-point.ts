@@ -1,5 +1,5 @@
 import config from '../config';
-import Ticker from '../ticker';
+import Ticker from '../object/ticker';
 import { R } from '../loader';
 
 export default class ScorePoint {

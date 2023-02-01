@@ -6,7 +6,7 @@ import EnemyController from './enemy-controller';
 import EnemyControllerContainer from './enemy-controller-container';
 
 import { R } from '../loader';
-import { isTankEvent } from '../guard';
+import { isTankEvent } from '../object/guard';
 import { randomInt } from '../util';
 
 const { paddingLeft, paddingTop } = config.battleField;

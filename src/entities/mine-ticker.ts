@@ -1,6 +1,6 @@
 import config from '../config';
 import EVENT from '../event';
-import Ticker from '../ticker';
+import Ticker from '../object/ticker';
 
 export default class MineTicker implements ISubScriber {
   private eventManager = EVENT.EM;

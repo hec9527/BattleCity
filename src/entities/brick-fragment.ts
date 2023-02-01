@@ -4,7 +4,7 @@ import Entity from './entity';
 import EVENT from '../event';
 import { R } from '../loader';
 import { getCanvas } from '../util';
-import { isCollisionEvent } from '../guard';
+import { isCollisionEvent } from '../object/guard';
 import { getBrickType } from '../util/map-tool';
 
 const PL = Config.battleField.paddingLeft;

@@ -1,5 +1,5 @@
 import EVENT from '../event';
-import { isBaseEvent, isBulletExplosionEvent, isTankEvent } from '../guard';
+import { isBaseEvent, isBulletExplosionEvent, isTankEvent } from '../object/guard';
 import Explosion from './explosion';
 
 export default class ExplosionFactory implements ISubScriber {
