@@ -92,9 +92,7 @@ class SettleWin implements IGameWin {
 
   private nextWindow(): void {
     if (this.state.getGameOver()) {
-      // this.winManager.toGameOverWin();
-      // TODO 完成gameOverWin后替换
-      this.winManager.toMenuWin();
+      this.winManager.toOverWin();
     } else {
       this.state.nextStage();
       this.winManager.toBattleWin();

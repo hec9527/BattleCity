@@ -8,7 +8,7 @@ interface IWindowManager extends IGameWin {
   toConstructWin(): void;
   toStageWin(): void;
   toBattleWin(): void;
-  toGameOverWin(): void;
+  toOverWin(): void;
   toSettleWin(): void;
   setGameMode(mode: IGameMode): void;
   getGameMode(): IGameMode;

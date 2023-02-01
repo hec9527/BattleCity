@@ -5,7 +5,7 @@ import { getCanvas } from '../util';
 
 import BattleWin from './battle-win';
 import ConstructionWin from './construction-win';
-import GameOverWin from './game-over-win';
+import OverWin from './over-win';
 import MenuWin from './menu-win';
 import SettleWin from './settle-win';
 import StageWin from './stage-win';
@@ -26,7 +26,7 @@ class WindowManager implements IWindowManager {
     // this.toStageWin();
     // this.toBattleWin();
     // this.toSettleWin();
-    // this.toGameOverWin()
+    // this.toGameOverWin();
   }
 
   public setStage(stage: number): void {
@@ -56,9 +56,9 @@ class WindowManager implements IWindowManager {
     this.gameWin = new ConstructionWin(this);
   }
 
-  public toGameOverWin(): void {
+  public toOverWin(): void {
     this.eventManager.removeAllSubscribers();
-    this.gameWin = new GameOverWin(this);
+    this.gameWin = new OverWin(this);
   }
 
   public toMenuWin(): void {

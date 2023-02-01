@@ -66,7 +66,7 @@ const Config = {
     explodeBullet: 10,
     explodeStatus: 3,
     /** 战斗结束停留时间 */
-    battleOver: 150,
+    battleOver: 200,
     /** 围墙建造后保持时间 */
     wallBuildKeep: 600,
     /** 围墙建造后闪烁时间 */
