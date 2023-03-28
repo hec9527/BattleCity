@@ -195,34 +195,35 @@ abstract class Tank extends EntityMoveable implements ITank {
   public notify(event: INotifyEvent<ICollisionEvent>): void {
     super.notify(event);
 
-    if (isCollisionEvent(event) && event.type === EVENT.COLLISION.ENTITY) {
-      if (event.initiator === this) {
-        switch (event.entity.getEntityType()) {
+    const { type, initiator, entity } = event;
+
+    if (isCollisionEvent(event) && type === EVENT.COLLISION.ENTITY) {
+      if (initiator === this) {
+        const entityType = entity.getEntityType();
+        switch (entityType) {
           case 'allyTank':
           case 'enemyTank':
           case 'base':
           case 'brick':
-            if (!event.entity.getCollision()) return;
-            this.resolveCollisionEntity(event.entity);
+            if (!entity.getCollision() || (entityType === 'brick' && (entity as IBrick).getBrickType() === 'grass'))
+              return;
+
+            this.resolveCollisionEntity(entity);
             break;
           case 'bullet':
-            if (event.entity.getCamp() !== this.camp) {
-              this.hit(event.entity as IBullet);
+            if (entity.getCamp() !== this.camp) {
+              this.hit(entity as IBullet);
             }
             break;
           case 'award':
-            this.pickAward(event.entity as IAward);
+            this.pickAward(entity as IAward);
             break;
         }
-      } else if (
-        event.entity === this &&
-        event.initiator.getEntityType() === 'bullet' &&
-        event.initiator.getCamp() !== this.getCamp()
-      ) {
-        this.hit(event.initiator as IBullet);
+      } else if (entity === this && initiator.getEntityType() === 'bullet' && initiator.getCamp() !== this.getCamp()) {
+        this.hit(initiator as IBullet);
       }
     } else if (isBulletEvent(event)) {
-      if (event.type === EVENT.BULLET.DESTROYED && event.bullet.getTank() === this) {
+      if (type === EVENT.BULLET.DESTROYED && event.bullet.getTank() === this) {
         this.bullets -= 1;
       }
     }
