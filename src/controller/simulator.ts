@@ -2,10 +2,12 @@ import { $ } from '../util';
 import keyboard from './keyboard';
 
 type Direction = 'right' | 'left' | 'bottom' | 'top';
+type DirectionMap = { [K in Direction]: string };
 
 const isMobile = /iphone|ipad|ipod|android|micromessenger/i.test(window.navigator.userAgent);
 const landScapeCacheKey = 'tank_landScape_simulator_layout';
 const verticalCacheKey = 'tank_vertical_simulator_layout';
+const canvas = $('#game') as HTMLCanvasElement;
 const wrap = $('#control-wrap') as HTMLDivElement;
 const control = $('#control') as HTMLDivElement;
 const rocker = $('#rocker') as HTMLDivElement;
@@ -18,12 +20,19 @@ const b = $('#B') as HTMLDivElement;
 const c = $('#C') as HTMLDivElement;
 const d = $('#D') as HTMLDivElement;
 
-enum dir_keys {
-  top = 'w',
-  right = 'd',
-  bottom = 's',
-  left = 'a',
-}
+const dir_keys: DirectionMap = {
+  top: 'a',
+  right: 'w',
+  bottom: 'd',
+  left: 's',
+};
+
+const dir_keys_landscape: DirectionMap = {
+  top: 'w',
+  right: 'd',
+  bottom: 's',
+  left: 'a',
+};
 
 let config: ISimulatorConfig;
 let originX = 0;
@@ -32,6 +41,7 @@ let radius = control.offsetWidth / 2;
 let currentDirection: Direction | undefined;
 let lastDirection: Direction | undefined;
 let emitInterval: NodeJS.Timeout | undefined;
+let keys: DirectionMap = dir_keys;
 
 if (isMobile) {
   window.onload = function () {
@@ -48,9 +58,7 @@ if (isMobile) {
 
     list.forEach(([el, key]) => {
       el.addEventListener('touchend', () => keyboard.release(key));
-      el.addEventListener('touchstart', e => {
-        keyboard.press(key);
-      });
+      el.addEventListener('touchstart', () => keyboard.press(key));
     });
   };
 
@@ -74,14 +82,24 @@ if (isMobile) {
 }
 
 function initSimulatorWidget() {
-  const key = window.isLandScape ? landScapeCacheKey : verticalCacheKey;
-  console.log({ landScape: window.isLandScape });
+  const { isLandScape } = window;
+  const key = isLandScape ? landScapeCacheKey : verticalCacheKey;
+  console.log({ isLandScape });
 
   try {
-    if (!Object.keys(config).length) throw new Error('');
     config = JSON.parse(localStorage.getItem(key) || '');
   } catch {
-    config = window.isLandScape ? getLandScapeDefaultLayout() : getVerticalDefaultLayout();
+    config = isLandScape ? getLandScapeDefaultLayout() : getVerticalDefaultLayout();
+  }
+
+  keys = isLandScape ? dir_keys_landscape : dir_keys;
+
+  if (isLandScape) {
+    canvas.setAttribute('style', 'unset');
+  } else {
+    const sw = window.innerWidth;
+    canvas.style.height = sw + 'px';
+    canvas.style.width = (516 / 456) * sw + 'px';
   }
 
   localStorage.setItem(key, JSON.stringify(config));
@@ -179,24 +197,24 @@ function handleTouchStart(e: TouchEvent) {
   const target = e.target as HTMLDivElement;
 
   // 点击摇杆轮盘范围内，不重新计算轮盘位置
-  if ((target.id != 'rocker' && target.id != 'control') || !originX || !originY) {
-    originX = controlTouch.pageX;
-    originY = controlTouch.pageY;
+  // if ((target.id != 'rocker' && target.id != 'control') || !originX || !originY) {
+  originX = controlTouch.pageX;
+  originY = controlTouch.pageY;
 
-    const x = originX - radius;
-    const y = originY - radius;
+  const x = originX - radius;
+  const y = originY - radius;
 
-    control.style.left = x + 'px';
-    control.style.top = y + 'px';
-  }
+  control.style.left = x + 'px';
+  control.style.top = y + 'px';
+  // }
 
   emitInterval = setInterval(() => {
     if (lastDirection && lastDirection != currentDirection) {
-      keyboard.release(dir_keys[lastDirection]);
+      keyboard.release(keys[lastDirection]);
     }
 
     if (currentDirection) {
-      keyboard.press(dir_keys[currentDirection]);
+      keyboard.press(keys[currentDirection]);
       lastDirection = currentDirection;
     }
   }, 84);

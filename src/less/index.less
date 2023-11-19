@@ -386,4 +386,19 @@ body.gaming {
       }
     }
   }
+  // 设备竖屏
+  #container:not(.landScape) {
+    #video-container {
+      align-items: center;
+
+      canvas {
+        transform: rotate(90deg);
+      }
+    }
+
+    #control-wrap {
+      width: 100%;
+      height: 50%;
+    }
+  }
 }
