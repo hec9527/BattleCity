@@ -14,15 +14,21 @@ Loader().then(() => {
   Printer.info('资源加载完毕');
   import('./win').then(win => {
     const windowManager = new win.default();
+    let lastTime = 0;
 
-    function gameLoop() {
-      // requestAnimationFrame(gameLoop);
+    function gameLoop(time: number) {
+      requestAnimationFrame(gameLoop);
+      if (time - lastTime < 16) {
+        return;
+      }
+
+      lastTime = time;
+
       keyboard.emitControl();
       windowManager.update();
       windowManager.draw();
     }
 
-    // gameLoop();
-    setInterval(gameLoop, 1000 / 60);
+    gameLoop(lastTime);
   });
 });
