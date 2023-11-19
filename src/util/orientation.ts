@@ -6,10 +6,10 @@ const isMobile = /iphone|ipad|ipod|android|micromessenger/i.test(window.navigato
 const container = $('#container') as HTMLDivElement;
 
 /** @returns isLandScape */
-const checkOrientation = () => {
+const checkLandScape = () => {
   if (!isMobile) return false;
   const { width, height } = window.screen;
-  if (width < height) {
+  if (width > height) {
     return true;
   } else {
     return false;
@@ -21,25 +21,33 @@ const handleOrientationChange = () => {
     case -90:
     case 90:
       console.debug('横屏:' + window.orientation);
-      container.classList.remove('rotate');
+      container.classList.add('landScape');
+      window.isLandScape = true;
       break;
     case 0:
     case 180:
-      container.classList.add('rotate');
+      container.classList.remove('landScape');
       console.debug('竖屏:' + window.orientation);
+      window.isLandScape = false;
       break;
     default:
-      checkOrientation();
+      checkLandScape();
   }
 };
 
+const isLandScape = (window.isLandScape = window.orientation == 90 || window.orientation == -90 || checkLandScape());
+
 // 判断屏幕方向;
-if (window.orientation == 0 || window.orientation == 180 || checkOrientation()) {
-  if (!container.classList.contains('rotate')) {
-    container.classList.add('rotate');
+if (isLandScape) {
+  if (!container.classList.contains('landScape')) {
+    container.classList.add('landScape');
   }
 }
 
 // 监听屏幕方向;
 window.onorientationchange = handleOrientationChange;
 window.onresize = handleOrientationChange;
+// TODO 新的change API
+window.addEventListener('change', e => {
+  console.log(e);
+});

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rocker</title>
+    <style>
+        html,
+        body {
+            min-height: 100vh;
+            background-color: #f8f8f8;
+            padding: 0;
+            margin: 0;
+            position: relative;
+        }
+
+        #wrap {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        #control {
+            visibility: visible !important;
+            /* visibility: hidden; */
+            position: relative;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(#f3e5d833, #f3e5d866, #f3e5d866);
+            border-radius: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #rocker {
+            transition: transform 0.05s ease;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(#d9888499, #d9888466, #d9888433);
+            border-radius: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <div id="control">
+            <div id="rocker"></div>
+        </div>
+    </div>
+</body>
+
+<script src="./index.js"></script>
+
+</html>

@@ -29,6 +29,15 @@ body {
   overflow: hidden;
 }
 
+body.gaming {
+  .menu {
+    opacity: 0.4;
+  }
+  .action {
+    opacity: 0.7;
+  }
+}
+
 // PC
 @media screen and(min-width:1024px) {
   body {
@@ -160,7 +169,6 @@ body {
       position: absolute;
       right: 15px;
       bottom: 15px;
-      // color: #abf;
       color: transparent;
       background-image: linear-gradient(10deg, rgb(10, 45, 201), rgb(7, 184, 10));
       background-clip: text;
@@ -194,30 +202,99 @@ body {
     justify-content: center;
   }
 
+  // 设备未横屏， 调整控件布局
   #controller-container {
-    position: absolute;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    z-index: 90;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 30px;
-    opacity: 0.7;
+    position: fixed;
+    z-index: 100;
+    inset: 0;
     box-sizing: border-box;
+    writing-mode: vertical-lr;
 
-    > div {
-      flex: 1;
+    .btn {
+      overflow: hidden;
+      position: relative;
 
-      &:nth-of-type(2) {
-        flex: 2;
+      &:active:after {
+        content: '';
+        background-color: #3333;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
       }
     }
 
-    .direction {
-      display: grid;
+    > div {
+      transform-origin: center center;
+      position: absolute;
+      display: inline-block;
+      writing-mode: vertical-lr;
+    }
+
+    #layout {
+      right: 20px;
+      top: 50px;
+      // TODO
+      display: none;
+
+      > div {
+        text-orientation: sideways-right;
+        color: #fff;
+        padding-inline: 8px;
+        padding-block: 4px;
+        background-color: #33364b;
+        border-radius: 2px;
+      }
+    }
+
+    #control-wrap {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      // background-color: #abf4;
+    }
+
+    .control {
+      width: 140px;
+      height: 140px;
+      border-radius: 100%;
+      background-color: #f783;
+      display: inline-grid;
+      place-items: center;
+      position: relative;
+
+      #rocker {
+        width: 60px;
+        height: 60px;
+        background-color: #78f3;
+        border-radius: 100%;
+      }
+    }
+
+    .menu {
+      > div {
+        font-family: 'prestart';
+        color: #fff;
+        font-size: 12px;
+        background: #7c5e15;
+        border-radius: 8px;
+        padding-block: 8px;
+        padding-inline: 12px;
+        display: inline-block;
+        text-align: center;
+
+        &#start {
+          margin-inline-start: 16px;
+          background: #d17045;
+        }
+      }
+    }
+
+    .action {
+      display: inline-grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(3, 1fr);
       gap: 5px;
@@ -226,8 +303,6 @@ body {
       color: #f5f5f5;
       font-size: 18px;
       text-align: center;
-      line-height: 50px;
-      margin: 0 20px 40px;
 
       > div {
         width: 60px;
@@ -240,22 +315,24 @@ body {
         &:nth-of-type(1),
         &:nth-of-type(4) {
           height: 70px;
+          line-height: 60px;
         }
 
         &:nth-of-type(2),
         &:nth-of-type(3) {
           width: 70px;
+          line-height: 50px;
         }
 
         &:nth-of-type(1) {
-          grid-area: 1/2/2/3;
+          grid-area: 2/1/3/2;
           background: #efcd8d;
           border-radius: 6px 6px 0 0;
           clip-path: polygon(0 0, 60px 0, 60px 40px, 30px 70px, 0 40px, 0 0);
           margin-bottom: -30px;
         }
         &:nth-of-type(2) {
-          grid-area: 2/1/3/2;
+          grid-area: 1/2/2/3;
           background: #d98884;
           border-radius: 6px 0 0 6px;
           clip-path: polygon(0 0, 40px 0, 70px 30px, 40px 60px, 0 60px, 0 0);
@@ -263,7 +340,7 @@ body {
           padding-right: 15px;
         }
         &:nth-of-type(3) {
-          grid-area: 2/3/3/4;
+          grid-area: 3/2/4/3;
           background: #a1caa0;
           border-radius: 0 6px 6px 0;
           clip-path: polygon(30px 0, 70px 0, 70px 60px, 30px 60px, 0 30px);
@@ -271,7 +348,7 @@ body {
           padding-left: 15px;
         }
         &:nth-of-type(4) {
-          grid-area: 3/2/4/3;
+          grid-area: 2/3/3/4;
           background: #f3e5d8;
           border-radius: 0 0 6px 6px;
           clip-path: polygon(0 30px, 30px 0, 60px 30px, 60px 70px, 0 75px, 0 0);
@@ -280,85 +357,32 @@ body {
         }
       }
     }
-
-    .menu {
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-
-      > div {
-        font-family: 'prestart';
-        width: 90px;
-        height: 25px;
-        color: #fff;
-        font-size: 12px;
-        background: #7c5e15;
-        border-radius: 8px;
-        box-sizing: border-box;
-        display: grid;
-        place-items: center;
-
-        &#start {
-          margin-left: 16px;
-          background: #d17045;
-        }
-      }
-    }
-
-    .action {
-      width: 80px;
-      height: 80px;
-      position: relative;
-
-      > div {
-        position: absolute;
-        display: inline-grid;
-        place-items: center;
-        font-size: 30px;
-        color: #fff;
-        font-family: 'prestart';
-        top: 0;
-        left: -20px;
-        width: 80px;
-        height: 80px;
-        background: #e6d9a4;
-        border-radius: 100%;
-
-        &:nth-of-type(2) {
-          transform: translate(50%, -120%);
-          background: #a6b2aa;
-        }
-      }
-    }
   }
 
-  // 设备未横屏，旋转控件
-  #container.rotate {
-    width: 100vh;
-    height: 100vw;
-    transform: rotate(90deg) translateY(-100%);
-    transform-origin: left top;
-    overflow: hidden;
-
-    #video-container {
-      width: 100vh;
-      height: 100vw;
-      overflow: hidden;
+  // 设备横屏，旋转控件
+  #container.landScape {
+    #controller-container,
+    #controller-container > div {
+      writing-mode: unset;
     }
 
-    #controller-container {
-      width: 100vh;
-      height: 100vw;
-      // IOS safari，canvas旋转后层级会出现问题，覆盖在控件上面
-      transform: translateZ(1px);
+    #controller-container .action > div {
+      &:nth-of-type(1) {
+        grid-area: 1/2/2/3;
+      }
+      &:nth-of-type(2) {
+        grid-area: 2/1/3/2;
+      }
+      &:nth-of-type(3) {
+        grid-area: 2/3/3/4;
+      }
+      &:nth-of-type(4) {
+        grid-area: 3/2/4/3;
+      }
 
-      .action > div {
-        &:nth-of-type(1) {
-          transform: translate(-30%, 0%);
-        }
-        &:nth-of-type(2) {
-          transform: translate(20%, -120%);
-        }
+      &:nth-of-type(2),
+      &:nth-of-type(3) {
+        line-height: 60px;
       }
     }
   }

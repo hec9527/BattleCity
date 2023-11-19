@@ -16,6 +16,7 @@ class MenuWin implements IGameWin, ISubScriber {
     this.eventManager.addSubscriber(this, [EVENT.KEYBOARD.PRESS]);
 
     document.addEventListener('touchend', () => R.Audio.play('count'), { once: true });
+    document.body.classList.remove('gaming');
   }
 
   private updateScrollY(): void {
@@ -29,6 +30,8 @@ class MenuWin implements IGameWin, ISubScriber {
   }
 
   private nextWin(): void {
+    document.body.classList.add('gaming');
+
     const index = this.MenuCursor.getMenuIndex();
     switch (index) {
       case 0:

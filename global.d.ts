@@ -3,6 +3,7 @@
 /// <reference path='src/typings/entity.d.ts'/>
 /// <reference path='src/typings/win.d.ts'/>
 /// <reference path='src/typings/game.d.ts'/>
+/// <reference path='src/typings/simulator.d.ts'/>
 /// <reference path='src/typings/player.d.ts'/>
 /// <reference path='src/typings/control.d.ts'/>
 /// <reference path='src/typings/env.d.ts'/>
@@ -35,4 +36,7 @@ declare type IMapData = TupleArray<TupleArray<number, 13>, 13>;
 declare interface Window {
   /** 是否允许敌方坦克获取奖励 */
   allowEnemyPick: boolean;
+
+  /** 是否横屏 */
+  isLandScape: boolean;
 }

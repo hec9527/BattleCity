@@ -46,11 +46,13 @@ class Keyboard implements IController {
   }
 
   public press(key: string) {
+    console.debug('press key:', key);
     this.keys[key] = true;
     this.events.push({ type: 'KEY_PRESS', key: mapper[key] });
   }
 
   public release(key: string) {
+    console.debug('release key:', key);
     this.keys[key] = false;
     this.events.push({ type: 'KEY_RELEASE', key: mapper[key] });
   }

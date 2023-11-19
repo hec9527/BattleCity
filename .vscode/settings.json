@@ -16,5 +16,8 @@
     "pnpm",
     "prestart",
     "prstart"
-  ]
+  ],
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  }
 }
