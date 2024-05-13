@@ -49,10 +49,10 @@ const Config = {
     /** 出身动画时间 */
     birth: 70,
     birthStatus: 5,
-    /** 保护罩 800帧 --> 800/5=160次状态切换 */
-    protector: 160,
-    /** 我方出生保护罩 300帧 300/5=60次状态切换 */
-    protectorShort: 60,
+    /** 保护罩 600帧 --> 600/5=120次状态切换 */
+    protector: 120,
+    /** 我方出生保护罩 200帧 300/5=40次状态切换 */
+    protectorShort: 40,
     /** 每次状态切换帧数 */
     protectorStatus: 5,
     /** 20帧内只能触发一次暂停 */
@@ -75,10 +75,10 @@ const Config = {
     wallBlinkStatus: 30,
   },
   speed: {
-    ally: 1.5,
+    ally: 1.4,
     enemySlow: 1,
-    enemyNormal: 1.3,
-    enemyFast: 2,
+    enemyNormal: 1.2,
+    enemyFast: 1.8,
     bullet: 4,
     bulletEnhance: 7.5,
   },
@@ -99,7 +99,7 @@ const Config = {
   entity: {
     createAllyInterval: 50,
     createEnemyInterval: 80,
-    maxEnemyAlive: 5,
+    maxEnemyAlive: 10,
   },
   base: [12 * 32, 6 * 32],
 };
