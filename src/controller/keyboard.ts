@@ -20,6 +20,8 @@ const mapper: { [K in string]: string } = {
 };
 
 const preventKey = ['arrowup', 'arrowleft', 'arrowdown', 'arrowright'];
+const P1_DIRECTION = ['w', 'a', 's', 'd'];
+const P2_DIRECTION = ['arrowup', 'arrowleft', 'arrowdown', 'arrowright'];
 
 /**
  * keyboard Control
@@ -35,6 +37,20 @@ class Keyboard implements IController {
       if (preventKey.includes(key)) {
         e.preventDefault();
       }
+      if (P1_DIRECTION.includes(e.key)) {
+        P1_DIRECTION.forEach(key => {
+          if (this.keys[key]) {
+            this.release(key);
+          }
+        });
+      } else if (P2_DIRECTION.includes(e.key)) {
+        P2_DIRECTION.forEach(key => {
+          if (this.keys[key]) {
+            this.release(key);
+          }
+        });
+      }
+
       this.press(key);
     });
     document.addEventListener('keyup', e => {
