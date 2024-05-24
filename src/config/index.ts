@@ -99,7 +99,7 @@ const Config = {
   entity: {
     createAllyInterval: 50,
     createEnemyInterval: 80,
-    maxEnemyAlive: 10,
+    maxEnemyAlive: 5,
   },
   base: [12 * 32, 6 * 32],
 };

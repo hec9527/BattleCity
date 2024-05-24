@@ -115,7 +115,7 @@ function getVerticalDefaultLayout(): ISimulatorConfig {
 
   obj.control = {
     x: w * 0.15,
-    y: h * 0.1,
+    y: h * 0.05,
     scale: 1,
   };
 
@@ -127,7 +127,7 @@ function getVerticalDefaultLayout(): ISimulatorConfig {
 
   obj.action = {
     x: w * 0.15,
-    y: h - actionDefaultSize[1] - 0.15 * h,
+    y: h - actionDefaultSize[1] - 0.1 * h,
     scale: 1,
   };
 
@@ -143,7 +143,7 @@ function getLandScapeDefaultLayout(): ISimulatorConfig {
   const h = window.innerHeight;
 
   obj.control = {
-    x: 0.1 * w,
+    x: 0.05 * w,
     y: h - directionDefaultSize[0] - 0.1 * h,
     scale: 1,
   };
@@ -155,7 +155,7 @@ function getLandScapeDefaultLayout(): ISimulatorConfig {
   };
 
   obj.action = {
-    x: w - actionDefaultSize[0] - 0.1 * w,
+    x: w - actionDefaultSize[0] - 0.05 * w,
     y: 0.75 * h - actionDefaultSize[1],
     scale: 1,
   };
