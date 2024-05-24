@@ -86,11 +86,11 @@ function initSimulatorWidget() {
   const key = isLandScape ? landScapeCacheKey : verticalCacheKey;
   console.log({ isLandScape });
 
-  try {
-    config = JSON.parse(localStorage.getItem(key) || '');
-  } catch {
-    config = isLandScape ? getLandScapeDefaultLayout() : getVerticalDefaultLayout();
-  }
+  // try {
+  //   config = JSON.parse(localStorage.getItem(key) || '');
+  // } catch {
+  config = isLandScape ? getLandScapeDefaultLayout() : getVerticalDefaultLayout();
+  // }
 
   keys = isLandScape ? dir_keys_landscape : dir_keys;
 
