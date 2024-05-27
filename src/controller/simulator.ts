@@ -256,6 +256,11 @@ function handleTouchEnd(e: TouchEvent) {
 
   clearInterval(emitInterval);
 
+  const { isLandScape } = window;
+  config = isLandScape ? getLandScapeDefaultLayout() : getVerticalDefaultLayout();
+
+  requestAnimationFrame(() => setSimulatorWidgetPosition(config));
+
   ['w', 'a', 's', 'd'].forEach(key => {
     keyboard.release(key);
   });
