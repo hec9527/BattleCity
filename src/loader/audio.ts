@@ -1,7 +1,7 @@
 import config from '../config';
 import Printer from '../util/print';
 
-type Files = typeof files[number];
+type Files = (typeof files)[number];
 
 type Sounds = { [key in Files]: AudioBuffer };
 
@@ -41,7 +41,7 @@ export function loadAudio() {
   const audio = new AudioLoader();
 
   const fetchAudio = (src: Files) => {
-    return fetch(`/audio/${src}.wav`)
+    return fetch(`audio/${src}.wav`)
       .then(res => res.arrayBuffer())
       .then(res => {
         return audioCtx.decodeAudioData(res);

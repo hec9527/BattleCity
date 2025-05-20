@@ -10,6 +10,7 @@ export default defineConfig({
   },
   plugins: [VitePWA({ registerType: 'autoUpdate' })],
   publicDir: './src/assets',
+  base: './',
   build: {
     outDir: 'dist/',
     assetsInlineLimit: 10240,

@@ -13,6 +13,7 @@ window.allowEnemyPick = true;
 Loader().then(() => {
   Printer.info('资源加载完毕');
   import('./win').then(win => {
+    Printer.info('开始游戏循环');
     const windowManager = new win.default();
     let lastTime = 0;
 
@@ -28,7 +29,6 @@ Loader().then(() => {
       windowManager.update();
       windowManager.draw();
     }
-
     gameLoop(lastTime);
   });
 });

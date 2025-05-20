@@ -36,6 +36,7 @@ const handleOrientationChange = () => {
 };
 
 const isLandScape = (window.isLandScape = window.orientation == 90 || window.orientation == -90 || checkLandScape());
+console.log({ isLandScape });
 
 // 判断屏幕方向;
 if (isLandScape) {

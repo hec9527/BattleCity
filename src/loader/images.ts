@@ -8,7 +8,7 @@ import Config from '../config';
 
 const files = Config.resource.images;
 
-export type Files = typeof files[number];
+export type Files = (typeof files)[number];
 
 export type ICacheImg = { [K in Files]: HTMLImageElement };
 
@@ -23,7 +23,7 @@ export async function loadImages(): Promise<ICacheImg> {
         resolve();
         cache[str] = img;
       };
-      img.src = `/img/${str}.png`;
+      img.src = `img/${str}.png`;
     });
   };
 
