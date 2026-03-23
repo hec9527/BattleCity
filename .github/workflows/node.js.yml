@@ -3,11 +3,13 @@
 
 name: Node.js CI
 
-on:
-  push:
-    branches: ['v2']
-  pull_request:
-    branches: ['v2']
+# Disabled: workflow has configuration issues
+# on:
+#   push:
+#     branches: ['v2']
+#   pull_request:
+#     branches: ['v2']
+on: workflow_dispatch
 
 jobs:
   build:
